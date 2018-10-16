@@ -1,0 +1,128 @@
+
+SpringBoot 
+注意关注：spring-boot的自动配置(spring-boot-autoconfigure.jar)，自动配置细节都在该模块中。
+@EnableXXX 注解类使用原理 及 spring.factories方式使用原理
+   @EnableScheduling是通过@Import将Spring调度框架相关的bean定义都加载到IoC容器
+   @EnableMBeanExport是通过@Import将JMX相关的bean定义加载到IoC容器。
+   
+@Conditional 原理
+@EnableAutoConfiguration： 该注解可以让Spring Boot根据类路径中的jar包依赖为当前项目进行自动配置，
+             @EnableAutoConfiguration也是借助@Import的帮助，将所有符合自动配置条件的bean定义加载到IoC容器。
+
+自动配置：
+	简单点说就是它会根据定义在classpath下的类，自动的给你生成一些Bean，并加载到Spring的Context中。
+	自动配置充分的利用了spring 4.0的条件化配置特性，能够自动配置特定的Spring bean，用来启动某项特性。
+
+spring.factories：	EnableAutoConfigurationImportSelector，其实实现也比较简单，主要就是使用Spring 4 提供的的SpringFactoriesLoader工具类。
+					通过SpringFactoriesLoader.loadFactoryNames()读取了ClassPath下面的META-INF/spring.factories文件。
+
+@EnableXXX 与 spring.factories 都可以用来导入某些配置类					
+
+@PropertySources
+@PropertySource: 通过@PropertySource注解将properties配置文件中的值存储到Spring的 Environment中，Environment接口提供方法去读取配置文件中的值，参数是properties文件中定义的key值
+      @Value配合该注解使用，或者直接从enviroment获取调用getProperty()(@Autowired 注入Enviroment 对象)
+	  
+@ConfigurationProperties(prefix="XXX")：
+	
+1. 注解 @SpringBootApplication 该注解主要由三个注解构成(@SpringBootConfiguration @EnableAutoConfiguration @ComponentScan)
+
+2. Springboot 配置
+  2.1 springboot的默认配置文件名字为application.properties(.yml)，其中的变量可以互相引用
+  2.2 默认配置文件的位置在classpath根目录或者根目录下的config目录下。。
+  2.3 修改默认的配置文件名字及位置：
+		a. 通过命令行参数修改文件名字，扩展名可以省略 --spring.config.name=XXXX
+		b. 命令行参数修改配置文件位置: --spring.config.location=XXXXX, 可以指定多个文件，文件之间使用逗号隔开，文件路径支持:classpath:XXXX 或文件系统方式: file://
+3. 获取application.properties 中定义的属性值:
+  3.1 通过context
+		ConfigurableApplicationContext context = SpringApplication.run(App.class, args);
+		context.getBean(Runnable.class).run();
+		System.out.println(context.getEnvironment().getProperty("local.ip"));
+  3.2 将Enviroment对象通过@Autowired 注入到需要的类中,通过该对象获取
+  3.3 在属性上标注@Value注解获取属性值,会自动进行类型转换,@Value注解中可以给出该属性的默认值(使用冒号隔开): @Value("${tomcatPort:9090}")
+  3.4 使用@Configuration 及 @PropertySource注解 或者 @PropertySources 指定多个属性文件
+  3.5 使用@ConfigurationProperties 注解,指定前缀属性
+  3.6 集合及数组元素注入到Bean中，properties文件中使用db.hosts[0]=XXX 注入到集合中
+4. 动态引入配置文件或者属性
+  4.1 EnvironmentPostProcessor 接口，该接口需要配合spring.factories 文件使用
+5. profile 使用(多profile既可以是独立的多个文件也可以是同一个文件中通过特定的分隔符标识不同profile起止)
+   5.1 激活不同的profile： 
+		编程方式: SpringApplication#setAdditionalProfiles
+		启动参数: --spring.profiles.active=XXXX，XXXX , 可以同时激活多个profile
+   5.2 @Profile 注解：可以在javaconfig 配置中指定在特定环境下才装配所需的Bean，跟@Bean 注解一起使用
+6. Spring-Boot的自动配置
+   6.1 基于条件的自动装配: Condition接口配合@Conditional注解（注解的属性值为自定义的实现Condition接口的类），接口中方法返回true时候意味着需要装配bean，否则不装配
+        @Conditional 可以用于类或者方法上，该注解参数传递多个class对象表示所有都返回true才装配Bean
+   6.2 spring-boot 内置的基于条件的注解工具类：spring-boot-autoconfigure.jar的org.springframework.boot.autoconfigure.condition包下，
+		如：@ConditionalOnProperty-- 当存在某个配置时候装配；@ConditionOnClass -- 表示classpath中有某个类时候才装配；@ConditionalOnBean:存在某个Bean时才装配
+7. Spring-Boot @Enable注解生效机制 
+   7.1 自动配置：@EnableAutoConfiguration该注解真正起作用是@EnableConfigurationProperties(该注解启用特性为：将properties文件的属性装配到对应的Bean类中)
+   7.2 启用异步：@EnableAsync 配合 @Async
+   7.3 所有@Enable 注解背后原理都是@Import注解，该注解用于引入一个类或者一组类（即将该bean纳入spring 容器的管理之中），注入操作是spring自动完成的。
+    7.3.1  @Import 导入一个普通的类
+	7.3.2  @Import 导入一个配置类（用于生成其他类实例的类），该配置类中的所有类对象都会被spring容器托管。
+   7.4 ImportSelector 接口 ：如果导入该类的一个实现，即是导入该接口中的方法的返回值所指定的所有的类。
+   7.5 ImportBeanDefinitionRegistrar 接口，该接口中有一个方法，利用其参数可以自己决定注入哪些类。
+8. @EnableAutoConfiguration 注解 
+   8.1 该注解从classpath中搜索所有META-INF/spring.factories配置文件，然后将其中名字为org.springframework.boot.autoconfigure.EnableAutoConfiguration的值对应的类加入到spring容器中，
+        该key可以配置多个值，值之间使用逗号隔开。
+   8.2 内部是@import注解及ImportSelector 来实现，利用SpringFactoriesLoader从spring.factories中读取条目数据。
+9. 事件监听
+   9.1 自定义事件一般继承ApplicationEvent，定义事件监听一般实现ApplicationListener
+		监听器配置：编程方式context.addListener 或
+		使用@Component注解标注监听器 或
+		在属性配置文件中定义context.listener.classes属性的值 或
+		自定义一个spring bean，在该bean中定义一个方法，其参数任意，但不能为空参数，并且在该方法上标注@EventListener
+10. 扩展点
+	10.1 ApplicationContextInitializer 接口，其中方法在context的refresh之前执行，实现该类并利用SpingApplication对象加入该实现即可
+	    或 在属性文件中配置key为context.initializer.classes  或者 通过在spring.factories文件中指定也可
+	10.2 CommandLineRunner接口：在spring容器初始化完成之后的最后的回调
+11. springboot启动流程.png
+12. spring-boot-web
+    12.1 使用JSP作视图：
+		jsp需要放到src/main/webapp下，
+		在属性文件中配置视图的前后缀spring.mvc.view.prefix=XXX,spring.mvc.view.suffix=.jsp 
+		加入支持jsp的依赖：tomcat-embed-jasper，jstl ，servlet等依赖
+		传参到jsp：Model类
+	12.2 使用其他模板技术
+	12.3 使用静态资源
+	12.4 使用servlet : @WebServlet注解标注，@ServletComponentScan注解扫描 或者 使用配置类方式注册servlet(ServletRegistrationBean)
+	12.5 拦截器使用：HandlerIntercptor接口(拦截目标是Controller)，WebMvcConfigurerAdapter#addInterceptors
+	12.6 异常处理：springboot的默认处理异常的类：org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration.class
+			使用自己的自定义类需要排除该类:@SpringBootApplication(exclude=ErrorMvcAutoConfiguration.class),利用ErrorPageRegistrar接口来注册自定义页面
+			或者@ExceptionHandler注解处理当前Controller中指定的异常
+		 12.6.1 统一异常处理：利用@ControllerAdvice注解标注自定义的controller，并使用@ExceptionHandler标注方法来配合处理特定异常
+13. 内嵌Tomcat日志及调优
+   13.1 spring-boot本身内嵌了tomcat , jetty ,undertow 3中容器
+   13.2 配置项相关类：ServerProperties.java  ，ServerProperties.java其内部有一个Tomcat静态类用于配置Tomcat（如:server.tomcat.accesslog.enabled=false）
+   13.3 通过编程配置：接口EmbeddedServletContainerCustomizer,TomcatConnectorCustomizer(该接口用于定义连接相关选项如最大连接数，线程数等)
+14. spring-boot-jdbc： 自动装配datasource（默认数据源是tomcat-datasource），JdbcTemplate 可以直接使用
+	14.1 配置项对应的类：DataSourceProperties.class, JDBCTemplate 工具类
+	14.2 使用其他数据源： 一种是加入其他数据源依赖，同时从spring-boot-jdbc中排除tomcat-jdbc依赖即可，或者
+	      使用配置项指定数据源类型：spring.datasource.type=需要的数据源的类型-类全限定名，支持的类型可以看DataSourceAutoConfiguration.class 
+		  或者 直接使用javaconfig 产生一个目标数据源即可
+	***********spring-boot总是优先使用你自定义的配置，然后使用内置的默认配置，扩展性相当好*********************
+	14.3 事务: @EnableTransactionManagement @Transactional
+15. spring-boot-aop 
+	相关注解： @Aspect @Before(execution(表达式))  ,JoinPoint类
+	配置类：AopAutoConfiguration.class ,配置使用CGlib还是jdk动态代理
+16. 自定义spring-boot-starter
+	 新项目，加入spring-boot-starter依赖，
+	 写一个配置类（该类中需要生成需要提供的bean）,可以配合properties做配置项封装
+	 将配置类纳入spring容器: @EnableXXX方式(利用@Import注解导入配置类)或者spring.factories方式都可以 
+	 将该项目坐标加入到其他项目依赖即可使用
+17. spring-boot 日志 （LoggingSystemProperties.class）
+    默认日志级别为info, 配置修改logging.level.root=debug  ：所有包日志级别都为debug ，或者启动参数: --debug (这种方式只会输出spring自己的debug)
+	定义某个包的日志级别：loggin.level.com.huhu=debug
+	logging.level.*=XXX : * 可以是root，某个包，或者某个类
+	关闭日志：logging.level.xxxx=off
+	logging.path=日志路径
+	logging.file=日志文件名字
+	path及file方式的日志文件的分割大小是10M 
+	spring-boot 默认使用logback日志框架，classpath下放置相关日志配置文件即可改变日志配置。
+	使用其他日志组件：依赖中排除默认的日志组件，加入新的日志依赖，加入相应的日志配置文件到classpath
+18. spring-boot监控及度量
+     加入spring-boot-actuator依赖后，系统控制台会列出很多可用的url用于监控信息,如健康检查（数据库 消息队列等）
+	 自定义检查扩展点：HealthIndicator接口
+	 内置一些服务:CounterService(如利用该类统计方法被访问次数，或者请求成功 错误次数)；GaugeService：
+19. spring-boot测试
+	依赖：spring-boot-starter-test 

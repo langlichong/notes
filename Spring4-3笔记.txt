@@ -1,0 +1,24 @@
+Spring4  
+1.注解方式(springboot基于spring4开始 ) 的spring的 bean的装配:                                                                                           
+	1.1 @Configuration类中@Bean 直接生成该类                                                                                                          
+ 1.2 @Configuration类中生成FactoryBean(利用beanfactory创建bean) 或者自己定义一个factory，factory中创建目标类，配置类中配置两次即可(Car.java)                                 
+ 1.3 利用@Component 及 创建注解上下文时候将该类加入即可(User.java): AnnotationConfigApplicationContext(MyConfig.class,User.class);                            
+ 	此种方式无法指定该类初始化及销毁方法, 注入时候默认bean的名字为类名                                                                                                  
+ 1.4 @Repository @Service  @Controller 等注解                                                                                                 
+ 1.5 @ComponentScan 注解及利用其某些属性排除不需要扫描的包 ,参看AnnotationScan.java                                                                             
+2. 如何实现在bean初始化时候完成某些工作？？？                                                                                                                 
+	2.1  bean本身实现一些spring预留的接口：InitializingBean,DisposableBean ；Cat.java                                                                      
+ 2.2 通过@Bean注解的initMethod 和destroyMethod 指定                                                                                                
+ 2.3 通过JSR250的注解实现 : @PostConstruct  @PreDestroy                                                                                           
+3. 基于注解的Bean的依赖注入                                                                                                                          
+	3.1 @Autowired 注入: 该注解一般不需要set方法 ; 当容器中有多个（ctx.getBeansOfType(UserDao.class)）同类型bean时候使用 @Qualifier 注解指定需要注入的名称                           
+			若 @Qualifier("XXX")失效，则需要使用 @Primary 注解标注你需要的bean即可                                                                               
+ 3.2 @Resource (JSR250)                                                                                                                    
+ 3.3 @Inject  javax.inject非se标准的(加入了该依赖后，启动时候会有提示: JSR330 之类的信息)                                                                           
+4. 如何使用ApplicationContext???                                                                                                               
+	4.1   使用 @Autowired 或 @Resource 或 @Inject 注解注入 ApplicationContext 对象 (不需要其他操作)                                                            
+ 4.2 实现 ApplicationContextAware 接口,覆盖方法setApplicationContext方法（原理就是BeanPostProcessor接口,其中方法是指在bean的init方法之前或之后执行，是spring的一个扩展点）            
+ 4.3 利用spring4.3新特性—— 构造函数参数方式：将ApplicationContext 作为构造函数参数即可，该方法有缺陷，构造函数必须只有一个参数，且不存在构造函数重载（只有一个构造函数）                                     
+5. BeanFactoryPostProcessor接口： 在spring容器初始化之后执行，且只执行一次：其方法执行在BeanPostProcessor之前执行                                                         
+6. BeanDefinitionRegistryPostProcessor: 利用该接口可以动态注册bean到容器中。（一般需要BeanDefinitionBuilder做配合），该接口比5中更高级点                                      
+                                                                                                                                           
