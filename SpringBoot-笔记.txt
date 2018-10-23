@@ -11,6 +11,11 @@ SpringBoot
 	     
 @Configuration用于定义配置类，可替换xml配置文件，被注解的类内部包含有一个或多个被@Bean注解的方法，这些方法将会被AnnotationConfigApplicationContext或AnnotationConfigWebApplicationContext类进行扫描，并用于构建bean定义，初始化Spring容器。
 
+@Configuration注解的配置类有如下要求：
+@Configuration不可以是final类型；
+@Configuration不可以是匿名类；
+****  嵌套的configuration必须是静态类**************************
+
 自动配置：
 	简单点说就是它会根据定义在classpath下的类，自动的给你生成一些Bean，并加载到Spring的Context中。
 	自动配置充分的利用了spring 4.0的条件化配置特性，能够自动配置特定的Spring bean，用来启动某项特性。
