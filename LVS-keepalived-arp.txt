@@ -1,0 +1,59 @@
+LAN中是采用MAC通信，但是上层协议没法直接调用MAC协议，必须使用ARP协议将IP地址转换为MAC地址才能通信。如果你自己写程序，可以直接调用MAC，这时就不需要配置IP地址了。
+
+
+在主机或路由器上要使用ARP协议进行IP到MAC的转换。两台电脑通讯的全过程为：1.根据子网掩码判断源IP与目标IP是属于同一网络；2.使用ARP协议找到相应IP的MAC地址；3.使用MAC地址在LAN内进行通信。
+
+在局域网内，数据传输需要依靠MAC来识别对方地址。发生数据的时候，数据发送端计算机首先拿接收端的计算机IP与自己主机子网掩码相匹配，匹配后，发现跟自己是同一网段的，则使用MAC地址去寻找对方，如果不是同一网段的，则封装上对方的IP地址为目标地址，发现网关，由网关发现其他网络。不过到达了目标网络后，还是要根据对方MAC地址来寻找目标主机。 简单的说，局域网内传输用MAC，网间传输就要在MAC外面再加一层IP。
+
+1、ARP -  Address Resolution Protocol  ： 将IP地址转换为MAC地址（根据IP地址查找MAC（48位））
+
+  要求： ARP协议要求通信的主机双方必须在同一个网段（同一个局域网）
+  
+2、ARP工作原理
+
+	a、主机通信之前先查看arp缓存——查看arp缓存表
+	b、缓存中没有时，向局域网内发送arp广播，目标机器做单播应答
+	c、双方会互相缓存对方的地址
+	
+	广播风暴
+	
+3、ARP缓存表
+	windows:  arp -a   查看arp缓存
+	
+	ARP表双刃剑： 加速了arp解析，但也存在风险——ARP欺骗
+	
+	
+	类似DNS（IP 与 域名解析）：
+		dns列表查询： ipconfig /displaydns 
+					   ipconfig /flushdns : 清空dns缓存
+					   
+4、负载均衡软件
+
+	LVS、Nginx、HAProxy、Lighttpd
+	
+集群：
+	高可用集群、负载均衡集群
+	
+LVS ： IPVS(工作在内核层，不可直接管理)、ipvsadm （工具，管理ipvs，或者使用keepalived管理IPVS）
+	
+	VIP：
+	DIP：负责在均衡服务器IP
+	CIP：客户端IP
+	RIP：真实服务器IP
+	
+LVS DR模式： 直接路由模式，请求经过LVS服务器，响应直接返回给客户端，不需要经过LVS负载服务器——不修改源地址，
+		将VIP的MAC修改成RMAC，即修改DMAC（vip对应的MAC地址改成某一台real SERVER的MAC地址） 。
+		（局域网内通信是通过MAC进行）
+LVS NAT模式： 请求经过负载LVS、响应原路返回。
+
+LVS DR模式（修改目的MAC）：为了让real server接收数据请求，其上需要绑定VIP（为了接受数据包或者请求，如果不绑定，当real server接收到数据包后解开发现MAC匹配但ip不匹配就会丢弃），同时VIP绑定到本地的LO接口上（不绑定到真实网卡上，因为LVS负载服务器上已经绑定了VIP，再绑定则局域网IP冲突），最后需要抑制real server上的ARP（不要跟LVS负载均衡机器抢VIP的数据包） 。
+
+LVS-DR模式特点：
+ 1、ARP由于是通过修改MAC地址实现转发，所以所有RS(real server)跟LB调度器必须在同一个局域网。
+ 2、需要在RS的LO上绑定VIP，同时抑制ARP。
+
+LVS-NAT：模式（请求来去均经过LVS负载均衡器），主要是修改目的IP（修改vip为某个rip），同时Real Server的GW的IP是LVS IP 。
+
+
+机器间同步：
+ SCP、NFS（挂载远端的目录）、SFTP、Samba、rsync、drbd

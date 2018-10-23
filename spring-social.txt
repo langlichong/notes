@@ -1,0 +1,22 @@
+1. 解决问题：利用令牌用于授权（不用用户名密码）某些操作，该令牌具有一定有效期
+2. Oauth协议基本： 
+  2.1 基本概念
+	provider：提供令牌，谁提供令牌谁就是provider,提供AuthorizationServer（授权服务器），提供资源服务器(Resource Server):存储用户资源及验证令牌
+	ResourceOwner:资源所有者（用户）
+	第三方应用--client: 第三方应用最终请求是发往资源服务器的
+  2.2 授权4中模式
+                授权码模式(authorization code),简化模式(implicit), 密码模式(resource owner password credencials),客户端模式(client cridencial)
+               授权码模式是最完善的，其授权认证过程都在授权服务器上完成，不存在伪造性（授权码换令牌）
+3. spring-social第三方登录
+   3.1 spring-social将oauth协议标准过程进行封装，封装到一个SocialAuthenticationFilter中，然后将该过滤器加入spring-security的过滤器链中。
+   3.2 spring-social中关键类：
+        ServiceProvider(AbstractOauth2ServiceProvider): 是服务提供商的一个抽象
+        OAuth2Operations： 封装Oauth2协议的标准处理流程中的操作（spring-social提供了一个默认实现Oauth2Template）
+        API: 每个提供商对于用户基本信息调用都是有区别的，所以没有具体的类,一般需要自己实现并封装获取用户信息的API.(AbstractOAuth2ApiBinding spring提供的帮助类)
+                       获取用户信息后（回到第三方应用中）需要构造Authentication并放入SecurityContext，与该步骤相关类：
+           Connection（OAuth2Connection）,ConnectionFactory(OAuth2ConnectionFactory):该工厂需要走auth2流程，所以他里面有一个service-provider
+        APIAdatpter：将各种用户信息转化为Connection标准的用户信息
+        UserConnection数据库表：存储了业务系统中用户与服务提供商的用户的对应关系。（操作该表的类：UserConnectionRepository（JdbcUserConnectionRepository））
+        SocialUserDetailService: spring-social验证成功后会调用，类似security的UserDetailService
+        SocialProperties
+   

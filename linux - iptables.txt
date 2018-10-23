@@ -1,0 +1,148 @@
+
+数据库事务都可以抽象成一个查询加更新过程（插入= 先查询+后写入 ，删除= 先查询后删除）
+
+事务的本质就是在做查询的时候先上锁，把系统的某一部分数据独占起来，不让其他线程看到，既看不到也不能写入。
+
+但是如上的枷锁机制还可以优化，这就是事务的四种不同级别的隔离措施，其实是为了解决上述加锁模式产生的性能问题。
+
+人脑思考是顺序的，利于人脑理解的模型其实其性能就比较差，反之，越复杂的模型，性能越高的模型人脑却难以清楚地理解。
+
+事务单元之间也是有先后关系的。
+
+NOSQL 说白了就是map套map，第一个map说数据在那一台服务器，第二个map则说明我的数据是什么。
+
+NFS服务 
+
+
+防火墙 iptables ：
+
+关闭两项功能：
+ selinux ，生产中也一般关闭，也可以做ids入侵检测
+ iptables ，生产中内网关闭，外网打开，大并发情况下需要关闭，否则影响性能
+ 
+ 安全优化：
+ 
+ 1. 尽量不要给服务器配置外网ip，可以通过代理转发。
+ 
+ 
+ Netfilters/iptables 是开源的基于包过滤的防火墙工具，主要工作在OSI七层模型的2 ，3，4层，如果编译内核的话，iptables也支持7层控制（squid + iptables）。
+ 
+ Nginx负载均衡：
+ 四层负载均衡： IP + 端口的负载
+ 七层负载均衡： 基于URL等应用层信息的负载均衡
+ 二层负载 ： 基于MAC地址
+ 三层负载均衡： 基于IP
+ 
+ 
+iptables涉及的名词 ：
+  容器 ： 用于形容包含与被包含的关系
+  Netfilter ： 是表的容器，即是说iptables或者netfilter中包含的是各个表（filter表，NAT表，MANGLE表，RAW表）
+  iptables的表又是链的容器
+
+  链 ： INOUT ， OUTPUT , FORWARD(转发) ,  PREROUTING(预路由，进来之前路由) ， POSTROUTING 
+ 
+  链式规则的容器 
+  
+  规则 ： 一条条过滤的语句 
+  
+  表与链之间关系 ：
+  
+   filter表包含的链有  ：  INPUT , OUTPUT , FORWARD ， filter表主要与主机自身相关，是默认的表，
+   nat表包含的链有  ： OUTPUT , PREROUTING(发生在路由判断之前,主要作用是修改数据包的目标地址及端口，外网映射内网) , POSTROUTING(改变数据包的源地址，源端口，内网映射外网 如共享上网) 
+   mangle表包含所有的链  。
+ 
+查看iptables规则  ：  iptables  -L -n  或  iptables -L -n --line-numbers  (会给规则显示序号，方便删除)
+
+iptables  -V  : 查看版本信息
+iptables -h : 查看帮助信息
+
+启动iptables ：
+/etc/iinit.d/iptables start 
+
+iptables -F : 清除所有规则，除了默认的
+iptables -X : 清除用户自定义的链
+iptables -Z : 链的计数器清零 
+
+注意  ： 使用iptables所做的操作属于临时生效，重启iptables或者主机就没效果了
+demo :
+1. 封端口 
+  找出ssh端口  ： netstat -lntup |  grep ssh  等价于命令  ss -lntup | grep ssh         结果为  22 
+  
+  语法  ：  iptables  -t 表明  -A|-D   链   具体规则  处理选项(-j)（DROP | REJECT | ACCEPT）
+  然后禁用  ：   iptables -t  filter  -A  INPUT -p tcp  --dport 22  -j DROP
+  
+  恢复 ： -F 参数删除所有 ，有点暴力
+  通过序号删除 ：  iptables  -D  INPUT  规则序号 
+  
+  注意： 封ip时，需要使用-i参数添加规则到链首，-a 在链尾，可能不起作用
+  
+ 2. 禁止10.0.0.0网段连接或者封IP
+    iptables -t filter  -A  INPUT  -i eth0  -s 10.0.0.0/24  -j DROP  # -i 表示进入的接口   -s 是源地址（可以是ip或者网段）  // 效果测试  ping不通
+	
+	可以禁止别人而放行自己 ： 利用感叹号 ，即取非运算，感叹号在 -s 前边或者后边与os版本有关   ，效果测试： 自己可以ping通自己，但别人ping不通 
+	
+3. 封端口段
+   iptables  -A INPUT  -p tcp  --sport  22:88    # --sport 源端口  	
+   或
+    iptables  -A INPUT  -p tcp  -m mutiport  -dport 21,22,23,24  
+	
+匹配制定的网络接口：
+iptables -A INPUT -i    eth0   # 从eth0 进入的  
+iptables -A OUTPUT -o    eth0    #  从 eth0出去的
+
+配置一个企业防火墙 ：
+iptables -F
+iptables -X
+iptables -Z
+iptables -A  INPUT  -p tcp  --dport 22  -s 10.0.0.0/24  -j ACCEPT    #  允许企业内网主机连接22端口 ssh
+iptables -A INPUT -i lo  -j ACCEPT   # 允许从本地回路进入
+iptables -A INPUT -o lo  -j ACCEPT   
+iptables  -A  OUTPUT  -o lo  -j ACCEPT   # 允许从本地回路出去
+
+默认规则： -P参数  大写P
+iptables  -P  INPUT DROP  
+
+生产操作  :
+ 编辑文件 ：  /etc/sysconfig/iptables  
+ 
+4、使用linux做网关
+					
+	原理： 利用iptable的NAT表的POSTROUTING链
+
+	服务器网关需具备的条件：
+	a. 物理条件  具备双网卡，建议eth0 外网(10.0.0.19 ,GW 10.0.0.254) ，eth1 内网(192.168.1.19,内网卡不配置网关)
+	b. 内核文件/etc/sysctl.conf 开启转发功能 ， net.ipv4.ip_forward=1  执行  sysctl -p 使修改生效
+	c. iptables的filter表的FORWARD允许转发 ：  intables -P  FORWARD ACCEPT  
+  加载iptables内核模块 ，并放入rc.local ：
+    lsmod | egrep ^ip :查看是否有相关模块，如果没有则加载下面的模块
+  载入内核模块 :
+  modprobe  iptables
+  modprobe iptable_filter
+  modprobe iptable_nat 
+  modprobe ip_conntrack
+  modprobe ip_conntrack_ftp
+  modprobe ip_nat_ftp
+  modprobe ipt_state
+ 
+局域网NAT共享上网两条命令 :
+法1 ： 适合有固定外网地址的
+   iptables -t nat -A POSTROUTING  -s 192.168.1.0/24  -o eth0 -j SNAT --to-source 10.0.0.19   # 将出去的数据包的源地址改为外网地址10.0.0.19
+   tips :  -s 192.168.1.0/24 办公室或IDC内网网段
+           -o eth0  为网关的外网卡接口
+		   -j SNAT --to-source 10.0.0.19  是网关的外网卡的IP地址
+法2 ： 适合外网地址变化的（如ASDL）
+   iptables -t nat -A  POSTROUTING  -s 192.168.1.0/24  -j MASQUERADE
+   
+
+外网地址映射到内网地址：
+  iptables -t nat -A PREROUTING -d 10.0.0.7 -p tcp  --dport 80 -j  DNAT  --to-destination  192.168.1.17:9000 
+  
+IP转IP一对一转发  :
+ iptables -t nat PREROUTING -A  -d 10.0.0.7 -j DNAT --to-destination 192.168.19.5
+ 
+对于企业上网人数较多，同时有多个外网IP时，可以将ip按段分配：映射多个外网Ip地址上网
+iptables -t nat POSTROUTING -A  -s 10.0.0.0/255.255.240.0  -j SNAT --to-source 124.42.60.11-124.42.60.16
+iptables -t nat POSTROUTING -A  -s 172.16.1.0/255.255.255.0  -j SNAT --to-source 124.42.60.103-124.42.60.106
+
+
+  

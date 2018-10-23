@@ -1,0 +1,370 @@
+
+多态：子类与父类有相同的操作（方法），但是二者的具体动作却不一样
+
+变量： 变量时自由在在的
+属性： 属性属于某个对象
+
+其实属性就是变量，只不过属于某个对象，同理方法就是函数，只不过后者属于某个对象
+
+this：其实说的是当前方法属于谁，那么this就代表谁。
+
+Object：该对象是一个空白的对象，几乎没有什么东西。
+
+工厂方式创建对象：跟设计模式没关系，将需要重复的代码用一个函数包装起来，将需要变化的东西抽取成参数。
+
+ // 用工厂方式创造对象
+ function createPerson(name,sex){    // 构造函数
+ 
+	// 1、创建空白对象，其实就是原料
+	var person = new Object(); 
+	
+	// 2、加工
+	person.name = name ;
+	person.sex = sex ;
+	
+	person.showName = function(){
+		alert(this.name);
+		
+	}
+	person.showSex = function(){
+		alert(this.sex);
+		
+	}
+ 
+	// 3、出厂
+	return person ;
+ }
+ 
+  var p1 = createPerson('tom','male');
+  var p2 = createPerson('jerry','female');
+  
+  其实上面的函数没什么特别，就是一个普通函数，唯一不同就是这个函数用来创建对象，所以好事者就起了个名字—— 构造函数
+  
+  工厂特点：
+	1、原料
+	2、加工
+	3、出厂
+	
+以上方法特点：
+
+	1、没有new 操作
+	2、每一个对象都有一套自己的函数，浪费空间（p1 与p2中的showName不相等，因为 function是简写，其实是new Function 的简写）
+  
+  -----------
+  
+ this: 当前的方法属于谁  
+ 以上this在函数前面有new的情况下是不成立的 
+
+function createPerson(name,sex){    // 构造函数
+ 
+	this.name = name ;
+	this.sex = sex ;
+	
+	this.showName = function(){
+		alert(this.name);
+		
+	}
+	this.showSex = function(){
+		alert(this.sex);
+		
+	}
+
+ }
+ 
+ var p1 = new createPerson('tom','male'); // 前面加了new ，其实是系统帮助我们创建了一个空白的对象，并且最后返回该对象 ，解决了没有new的问题
+  var p2 = new createPerson('jerry','female');
+  
+  ===========其实就是外面不加new，里面就需要加new=================
+  
+  function show() {alert(this)}  
+   show() ; //弹出 window对象
+   new show(); //弹出 Object对象 ，函数前面加了new 系统帮我们在函数内部new了一个空白对象
+   
+ ================
+ 原型 —— prototype：
+ 
+ 类： 其实就是模子，是模板，本身不可用，即不具备实际的功能，只能用来构造对象
+ 对象： 真正具有功能的，被类构造出来的
+ 
+ 原型重要功能：
+	1、扩展系统对象（添加一些属性、方法等）
+	
+原型就是为了解决工厂方法的第二个问题：
+	原型上添加的东西，由该原型产生的所有对象共享添加的东西
+	
+function createPerson(name,sex){
+	this.name = name ;
+	this.sex = sex ;
+}
+
+createPerson.prototype.showName = function(){ alert(this.name);}
+
+// js 中 类其实就是构造函数 ，没必要搞那么复杂 混淆理解
+如： alert(typeof Date)  new Date();
+虽然构造函数就是类，为了在理解上更好，构造函数首字母大写。
+
+原型的优先级： 
+	对象本身添加优先级高于 给原型添加（类似于行间样式与类样式）
+
+原型里的this到底是谁： 看将来用原型产生的对象是谁，this就代表谁。
+	
+===========================
+面向对象 - 写一个选项卡
+
+ 1、所有东西都在onload里面
+ 
+ 2、不能有函数嵌套，可以有全局变量
+ 
+ 3、改写过程规则：
+	-- onload --》构造函数
+	--全局变量 --》属性
+	--函数 --》方法
+	
+ 4、改错：特别注意this
+    this什么时候会出问题：
+		1、用了定时器（但凡被定时器调用的函数他的this必定是window）
+			
+			// 再嵌套一层，保持原来的关系不变（其实就是通过闭包方式将this传递）
+			function Aaa(){
+			
+				var _this = this ;
+				this.a = 12; 
+				
+				setInterval(function(){_this.show()},1000);
+			}
+			
+			Aaa.prototype.show = function(){
+			
+				alert(this.a) ;
+			}
+		
+		2、用了事件
+		 
+ 
+ ============================================
+ 继承、面向对象的拖拽、instanceof
+ 
+ json方式的面向对象：
+ // json中包含函数，this对象也可以使用
+ var obj = {a:1,b:5,c:function(){alert(11);alert(this.a)}}
+ obj.c();
+ 
+优缺点： 1、json方式对象写法简单明了  2、 可扩展性差
+
+// 命名空间（单体） —— 人为分类方式 
+
+var miaov = {} ;
+
+miaov.common = {
+	getByClass:function(){},
+	myAddEvent:function(){}
+};
+
+// 拖拽与继承 
+// 面向对象方式拖拽
+
+window.onload = function(){
+
+	new Drag('div1');
+	new Drag('div2');
+}
+
+function Drag(id){  // 构造函数——类
+	
+	var _this = this ; // 暂存this，解决事件、定时器情况下this问题
+	
+	this.disX = 0;
+	this.disY = 0;
+	this.oDiv = document.getElementById(id);
+	
+	this.oDiv.onmousedown = function(){
+	
+		_this.fnDown();
+	}
+	
+	this.oDiv.onmouseup = function(){
+		_this.fnUp();
+	}
+
+}
+
+Drag.prototype.fnDown = function(ev){
+
+	var _this = this ;
+	var oEvent = ev || event ;
+	this.disX = oEvent.clientX - this.oDiv.offsetLeft ;
+	this.disY = oEvent.clinetY - this.oDiv.offsetTop ;
+
+	document.onmousemove = function(){
+		_this.fnMove();
+	}
+	
+	document.onmouseup = function(){
+		_this.fnUp();
+	}
+}
+
+ // 原型上添加方法
+ Drag.prototype.fnMove = function(ev){
+	var oEvent  = ev|| event ;
+	
+	this.oDiv.style.left = oEvent.clientX - this.disX + 'px' ;
+	this.oDiv.style.top = oEvent.clientY - this.disY + 'px' ;
+ }
+ 
+ Drag.prototype.fnUp = function(){
+	document.onmousemove = null ;
+	document.onmouseup = null ;
+ }
+
+ // 新需求 - 要求拖拽有一定范围限制 ，直接改以上方式不太好，所以利用继承
+ 
+ // js本身没有提供继承机制
+ // 继承： 继承属性、继承方法
+
+function Person(name,sex){
+	this.name = name ;
+	this.sex = sex ;
+}
+
+Person.prototype.showName = function(){
+	alert(this.name);
+}
+
+Person.prototype.showSex = function(){
+	alert(this.sex);
+}
+
+// 定义Worker类 多了job ，一般情况下其他语言实现是通过在构造函数中调用父类的构造函数实现属性添加
+function Worker(name,sex,job){
+
+	// 调用父类构造函数 —— 构造函数伪装 
+	Person.call(this,name,sex); 
+	
+	this.job = job ; // 添加自己的属性
+}
+
+// 通过原型继承父类方法 —— 原型链
+// 引用，二者使用同一个原型链，但有一个问题，子类（添加的东西父类也有了）影响了父类
+// 如何解决——利用循环将父类原型链东西复制一份过来
+
+Worker.prototype = Person.prototype ;    // 方式1
+
+//方式2 
+for(var i in Person.prototype){
+	Worker.prototype[i] = Person.prototype[i];
+}
+
+
+Worker.prototype.showJob = function(){
+	alert(this.job);
+}
+
+var wk1 = new Worker('blue','male','coder');
+ 
+// 通过复制原型链继承方法后，如果再给子类添加同名方法，就可以达到覆盖父类的方法。
+
+
+==============================
+
+事件
+
+如何产生焦点： 点击、tab键、js
+
+焦点:不是所有元素都可以接受焦点，能够响应用户操作的元素才可以
+焦点事件：onfocus 、 onblur  
+焦点方法： focus() ; blur();  obj.select()----选中指定元素中的内容  
+	document.getElementById("eleId").onfocus = function(){ this.value = '' ;}   ;
+	
+事件核心—— event对象：
+	当一个事件发生的时候，和当前这个对象发生的这个事件有关的详细信息都会被临
+	时保存到指定的地方——event对象，供我们需要的时候调用
+	
+	事件对象必须在一个事件调用的函数里面使用才有内容
+
+ 兼容：
+	ie/chrome :  event是一个内置的全局对象
+alert(evnet); // 看到的是null或者undefined，因为没有事件发生
+
+注意 标准方式 : 发生事件的时候，事件对象是通过事件函数的第一个参数传入的
+
+-------------
+事件对象在不同浏览器下可能出现兼容性问题，以下事件函数中的写法是具有兼容性的：
+	function fn1(ev){
+	
+		var ev = ev || event ; // 解决兼容，标准浏览器下有ev，非标准下只能用全局的event对象
+		
+	}
+
+clientX(Y):鼠标距离页面可视区域的位置。(left\top)
+
+div块随着鼠标移动：
+window.onload = function(){
+	
+	//onmousemove : 鼠标移动事件
+	
+	var oDiv = document.getElementById("div1");
+	
+	
+	document.onmousemove = function(ev){ // 鼠标在文档上移动 
+	
+		var ev = ev || event ;
+		
+		var scrollTop = document.documentElement.scroolTop ||
+				document.body.scrollTop ; // 有滚动条时会产生误差
+		
+		//将鼠标的位置赋值给div 就可达到移动
+		oDiv.style.left = ev.clientX + 'px' ;
+		oDiv.style.top = ev.clientY + scrollTop + 'px' ;
+		
+	}
+
+}
+
+事件流：
+
+	事件冒泡：当一个元素接受到的事件传播给自己的父亲，一直到window。
+				跟html中元素物理的结构有关。
+	
+	事件冒泡带来的影响,demo——  点击按钮显示下拉菜单，点击其他地方隐藏 ：
+	var oBtn = document.getElementById('btn');
+	
+	oBtn.onclick = function(ev){
+		oDiv.style.display = 'block' ; // 最开始该div隐藏（display:none），点击按钮时候显示
+		
+		//阻止当前对象的当前事件冒泡：
+		var ev = ev || event ;
+		ev.cancleBubble = true ;
+		
+		
+	}
+	// 点击其他地方（文档）隐藏菜单
+	// 问题： 由于事件冒泡，当第二次点击按钮后，事件冒泡到document导致菜单看不见
+	
+	document.onclick = function(){
+		oDiv.style.display = 'none' ;
+		
+		/*
+		   // 可以清楚看到点击按钮后，菜单由显示变为隐藏
+			setTimeout(function(){
+				oDiv.style.display = 'none' ; 
+			},1000);
+		*/
+	}
+
+	// 阻止事件冒泡： 当前要阻止冒泡的事件函数中调用 event.cancleBubble = true ;
+
+事件捕获：
+	- ie下是没有的，在绑定事件中，标准下是有的
+	
+事件绑定： 给某个元素的的某个事件绑定一个函数，即告诉这个元素当发生这个事件的时候怎么做。
+	注意：元素某个事件上没有绑定函数，但该元素依然可以接受事件，只是什么也不做。
+	
+事件绑定形式：
+ 1、obj.onclick = function(){}    // 存在问题：会覆盖前面绑定的事件函数（因为此种方式为赋值形式）
+
+ 存在此种需求：
+	给同一个对象的同一个事件绑定多个不同的函数。
+ 2、事件绑定方式2—— 给同一个对象的同一个事件绑定多个不同的函数。
+	ie:  obj.attachEvent(事件，时间函数);
+	标准： obj.addEventListener(事件名称，时间函数，是否捕获) ： false——冒泡、true——捕获

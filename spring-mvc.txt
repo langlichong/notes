@@ -1,0 +1,106 @@
+
+
+spring-mvc
+
+核心组件;
+  DispatcherServlet：中央处理器   /* 不好使，可以利用*.do之类
+  Controller ：AbstractController  @controller
+  handlerMapping : 映射处理器 ，负责处理中央处理器转发给controller的映射处理 ，spring有一个默认的 BeanNameUrlHandlerMapping 及ControllerClassNameHandlerMapping、SimpleUrlHandlerMapping ，同时配置多个，相互不影响
+				  
+				  如果指定了handlerMapping，则默认的就不起作用了，类似java里的默认构造器类似
+				   
+  ModelAndView ： 服务层返回的数据及视图层的封装
+  ViewResolver  ： InternalResourceViewResolver  前后缀配置从 WebRoot到某一文件夹的路径
+  Interceptors
+  
+spring默认的配置文件在 WEB-INF下，名字有规则：中央控制器名字+“-servlet”.xml 
+
+基于xml：  定义controller继承AbstractController 、在配置文件里配置controller(通过name属性可以访问)、配置viewresover
+  
+	controller ： 对系统流程的管理
+	
+基于注解配置：
+ 1、开启注解开关： annotation-drivern
+ 2、开启注解扫描器
+ 3、常用注解： 
+		@controller   @requestMapping（指定请求路径，指定请求方法） 、 参数传值、请求方法（get、post)
+         
+1、如何从请求中获取数据
+	String、对象（自定义）、数组 （按名字匹配）
+	
+	a、在方法里的参数里加入  HttpServletRequest ，在方法体中通过request获取参数
+	b、直接在方法参数里定义参数名字，改名字跟请求里传递的参数的名字要一致（注意接受参数类型与请求传递的值之间是匹配的或者可以转换的，否则会报错），多个参数按名字匹配
+	c、引用类型参数传递，有时候需要定义属性编辑器:@InitBinder  ，主要是注册监听器
+			@InitBinder
+			public void initBind(ServletRequestDataBinder binder){
+				binder.registerCustomEditor(Date.class,new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"),true));
+			}
+	d、数组类型参数传递：
+		public String test(String[] arr){}  ,前端参数只需要名字一致的多个参数值即可：http://localhost:8080/hello.do?name=tom&name=jerry&name=hehe 
+	e、自定义类型做方法参数（参数注入时按对象的setter方法的后半部分名字匹配-首字母大小写不敏感）
+
+2、返回值
+	a、利用ModelAndView返回值  ： return  new  ModelAndView("index",Map<String,Object>);  前端利用el表达式:  ${}  
+	b、利用map，方法的参数列表添加一个map对象，将需要的参数放置到map中即可在前台获取到  ，不推荐
+	c、Model，直接利用Model对象做方法参数
+	
+4、拦截器
+	  自定义拦截器需要实现spring提供的HandlerInterceptor
+	    preHandle()  : 在执行controller之前执行 ，返回true则可以继续访问Controller，否则不可以访问Controller，主要用在权限方面
+		postHandle() : Controller执行完，但视图解析器还没有把视图解析成界面 ，主要用于统一对视图(ModelAndView)做统一处理，如统一追加东西等
+	    afterCompletion() : 视图已经解析完毕 ，主要是用于处理页面中出现的异常等（方法参数里有Exception）
+      配置拦截器：  
+			/** : 拦截所有请求
+			/模块名/*  : 对某个模块拦截
+		  <mvc:interceptors> <mvc:interceptor><bean class="自定义拦截器"/><mvc:mapping path="/**"/></mvc:interceptor>
+5、上传文件
+	需要配置新的视图解析器,其名字为 CommonsMutipartResolver  ，注意该resolver的id必须为：mutipartResolver ，该解析器可以配置最大上传文件尺寸（以字节为单位）等信息。
+	后端请求处理方法的参数列表中必须使用HttpServletRequest对象处理上传
+	public String uploadPic(String name,HttpServletRequest request){
+		MutipartHttpServletRequest rm = (MutipartHttpServletRequest)request ;
+		CommonsMultipartFile file = (CommonsMultipartFile)rm.getFile("form中file域的name属性的值");
+		file.getOriginalFilename();
+		file.getBytes();
+		...
+	}
+	
+	前端form的enctype=multipart/form-data
+	
+	
+
+6、如何使用ajax访问spring-mvc
+     @RequestMapping("/ajax.do")
+	public String ajax(String name,HttpServletResponse response){
+		String hello = "hello" + name ;
+		response.getWriter.write(hello);
+	}
+	// HttpServletResponse 可以直接换成PrintWriter对象 ，建议使用
+	
+	前端：
+	  $(function(){
+		  $("#btn").click(function(){
+		  
+			$.ajax({
+				url:"ajax.do",
+				type:"post",
+				dataType:"text",
+				data:{
+					name:"zhangsan"
+				},
+				success:function(res){alert(res)},
+				error:function(){}
+			});
+		  });
+	  });
+	  
+7、重定向：注意同一个controller及跨controller重定向
+	  同一个controller ： return "redirect:重定向的目标url" ，e.g.   return "redirect:ajax.do"
+	  跨controller重定向： 假设，A类型Controller 类层次上中标注了@RequestMapping("/test") ,该类里有一个请求方法，url为：/form.do
+							return "redirect:/test/form.do"
+	  
+	
+	
+	
+	
+	
+	

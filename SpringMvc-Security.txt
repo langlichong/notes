@@ -1,0 +1,60 @@
+SpringMVC : 
+1. 正则表达式在请求片段中使用
+2. JsonView 过滤字段：（定义接口，标注属性的get方法，标注controller）
+3. @RequestBody 接受自定义对象
+4. 日期类型处理 : 直接传递时间戳即可（方便后续任何方式格式化显示）
+  	      后端接收直接使用java.util.Date，返回的自定义对象中的Date会自动转为时间戳
+5. @valid 和 BindingResult 验证参数及校验结果(hibernate validate )
+        为啥需要BindingResult??? : 一旦@valid 校验失败(直接返回400状态码)，则不会进入业务方法体，
+       为了记日志或者其他业务处理则必须使用BingdingResult,使用了该类则会进入该业务方法 
+6. 自定义注解--实现业务相关的验证
+7. Spring-boot 默认异常处理机制及自定义异常处理
+		默认处理-- 访问不存在url：浏览器访问时候会返回一个'white error page' 页面，而通过其他客户端或者rest工具则得到一个json响应数据。
+				------ spring-boot是如何来判断发起请求的类型是浏览器或者其他客户端？？？BasicErrorController
+	7.1 spring-boot默认对400 , 404，500都做了默认处理，前端可以收到json提示信息进而排查问题（400 404 这类错误spring-boot框架自动将请求挡回去，根本没进入业务控制方法）
+    	如果需要自己处理某一类错误如404，则可以在项目的src/main/resources目录下建立resources/error/404.html（注意文件夹嵌套关系及页面名称），
+   	            注意此处定义的html页面只会对以浏览器发出的请求有效，对其他客户端发出的依然响应json数据。
+    7.2 自定义异常处理：@ControllerAdvice （ControllerExceptionHandler.java）
+    
+8. Rest API的拦截 
+	场景：如记录日志 记录服务处理时间 
+	8.1     过滤器--filter： 实现javax.servlet.Filter  & 声明为spring组件 @Component  ---- 自定义
+	           注意：如果使用了第三方的filter，且该filter没有纳入spring容器，此时该如何让其生效呢？？？？？ 
+	               利用javaconfig --@Configuration使用 ，注册一个类型为FilterRegistrationBean 使用javaconfig 方式配置filter比自定义Filter并加@Component注解要灵活——可以指定对哪些请求生效
+	   缺点：filter对spring框架并不知道，没法知道该请求是由那个方法 哪个类处理的***** 
+	8.2 拦截器--interceptor,实现spring的 HandlerInterceptor 接口  &&  @Component 注解   &&  额外配置(javaconfig -WebMvcConfigurerAdapter覆盖该类的addInterceptors)  三者组合才生效
+		生效： interceptor会拦截所有Controller（包括spring中已经存在的controller）中方法的调用而不是其他的，因为是handlerInterceptor ,在spring中handler就是controller中的方法。
+		preHandle:
+		postHandle:
+		afterCompletion: 不论controller中方法成功与否都会执行该方法
+	 注意： @ControllerAdvice标识的异常处理类先于spring Interceptor中afterCompletion执行的，所以afterCompletion一般中的异常参数通常会为空。
+	     即如果业务中抛出的异常没有被controlleradvice处理(或者超出了该advice处理的范围)则该异常会进入afterCompletion方法的参数。
+	     缺点： 虽然拦截器可以拦截controller方法，但是被拦截后不能从拦截器的方法中获取到被调用方法的参数的具体传递的值。。。。。
+	     
+	8.3 切片  Aspect (切入点（在哪些方法上切入，在什么时候起作用） + 增强(方法-起作用时候执行的方法))
+	
+   注意：filter，interceptor，aspect三者生效顺序，及出现异常时候异常被捕获的先后顺序:
+       请求进入时候生效顺序：filter --》interceptor ---》aspect
+       当业务handler异常时候，异常被处理的先后顺序刚好与上述相反。
+       
+9. SpringMVC 文件上传下载  
+   MultipartFile 
+
+10. 异步处理Rest服务
+	10.1 使用Runnable异步处理服务
+		在controller的方法中使用Callable，将任务放入Callable中执行，并返回Callable类型。
+	     特点: 该方式Callable异步代码是写在主线程中的，由主线程发起，不能满足某些复杂场景（下单业务中下单线程将下单任务放入任务队列，该业务被处理好后，返回结果是由另一个线程来返回的）
+	10.2 使用DeferredResult异步处理服务： 多个线程之间使用DeferredResult传递消息 @see AsyncController 
+	10.3 异步处理的配置： 拦截异步处理的handler需要使用WebMvcConfigurerAdapter#configureAsyncSupport方法 @See WebConfig
+11. swagger 生成html格式API文档
+    WireMock快速伪造Rest服务
+
+
+   
+
+
+
+
+
+
+	     

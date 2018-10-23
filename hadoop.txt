@@ -1,0 +1,81 @@
+
+1、hadoop名字来源： 作者女儿的玩具的名字
+
+2、Mapreduce： 只能处理离线数据，不支持实时处理，有了YARN就可以改变这种局限
+
+3、YARN：yet another resource Negotiator 另一个资源调度系统 可以支持除了mapreduce外的其他计算模型如storm等
+
+4、Hadoop擅长日志分析 
+
+5、Pig、Hive（国内）
+
+HDFS架构：
+
+	主从结构：
+		主节点：只有一个namenode  高版本集群中有多个
+		从节点: 有很多个datanode
+	namenode：
+		接受用户操作请求
+		维护文件系统的目录结构
+		管理文件与block之间的关系，管理block与datanode的关系
+	datanode：
+		存储文件
+		文件被分割成block存储
+		为保证安全，文件会有多个副本
+		
+YARN架构：
+	ResourceManager —— master
+	NodeManager
+		
+Hadoop部署方式：
+
+	本地模式：
+	伪分布式：
+	集群模式：
+	
+
+	知识点： XXX.tar.gz —— 利用tar打包gz压缩
+	
+	安装：2.2.2版本
+	
+	1、tar -zxvf  xxx.hadoopxxx.2.2.2.tar.gz   -C  /hadoop  (-C 表示解压到某个目录)
+	2、配置hadoop： 修改4个配置文件（2.0后 需要修改5个）
+		hadoop_env.sh  : 配置jdk，javahome
+		core-site.xml : 配置fs.defaultFS(指定主节点的namenode地址)、hadoop.tmp.dir
+		hdfs-site.xml  :   dfs.replication(hdfs数据保存的副本数量)
+		mapred-site.xml : mapreduce.framework.name 属性（其值一般为YARN ,表示hadoop的mapreduce运行在YARN上）
+		yarn-site.xml : yarn.namemanager.aux-services(mapreduce_shuffle)——nodemanager获取数据方式为shuffle 、yarn.resourcemanager.hostname
+	3、为方便，添加hadoop到环境变量
+	4、初始化HDFS（格式化文件系统）；  
+				hadoop namenode -format(命令过时，但依然有效果)
+				hdfs namenode -format
+				
+	5、启动（hdfs、yarn）： start-all.sh(过时)  ， 可以利用jps 查看相关进程
+	6、ssh免密码登录
+	7、通过hdfs管理界面、yarn管理界面
+	
+HDFS 文件上传下载：
+		上传命令： hadoop fs -put  待上传文件路径  hdfs://主机:端口/目录  (将本地文件系统的文件上传到hdfs文件系统的某个目录)
+		下载： hadoop fs -get hdfs文件地址  
+		
+测试MR和YARN：
+	客户端需要mapreduce jar包在hadoop安装目录下的share目录下
+	运行hadoop样例jar:(hadoop mapreduce 运算的数据的来源于计算结果基本都存放于hdfs文件系统中，所以计算前需要将数据保存到hdfs)
+		hadoop jar  hadoop-examples.jar  wordcount <数据来源hdfs> <计算结果存放位置> 
+		
+查看hadoop hdfs文件系统目录：  hadoop fs -ls /  	
+
+
+----------------HDFS原理---------------
+
+client ---RPC------> NameNode -------查询元数据------》反馈信息client -----》client 写数据到DataNode
+
+ hadoop 2.0 以后block默认大小为128M，每次只写一个block，当该block不够用时候都需要向NameNode申请，写一块申请一块 
+
+---------MapReduce：
+	Map计算：将大任务进行切分
+	Reduce计算：对map后的结果进行汇总
+	用户只需要实现map、reduce函数即可。
+	
+	**** client将任务（其实只是任务描述信息）给ResourceManager，而将具体任务Jar包传递给HDFS，NodeManager每次去RM处领任务，然后到HDFS处拿jar执行任务。*****
+	

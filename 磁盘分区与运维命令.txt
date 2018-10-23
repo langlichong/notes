@@ -1,0 +1,120 @@
+
+磁盘分区实际就是改变DPT-磁盘分区表(64Bytes，每个分区表占16字节)的内容。
+
+linux fdisk 交互式分区测试（注意主分区不可超过4个-磁盘要求，扩展分区只有一个-）：
+
+1、给虚拟机添加一个虚拟磁盘，假设为scsi磁盘,其设备为  /dev/sdb
+
+2、执行命令  : fdisk /dev/sdb  进行分区
+	
+	按提示使用相关命令进行分区。
+	n  - 创建新分区
+	q - 退出不保存
+	w - 将分区信息写入磁盘分区表
+	
+3、通知操作系统，磁盘分区表发生变动
+	命令 ： partprobe /dev/sdb
+	
+	ll /dev/sd*  查看是否可以看到新的磁盘分区
+	
+4、格式化分区（假设有一个分区/dev/sdb1）
+	命令 ： mkfs.ext4  (或者 mkfs.ext2) 
+	
+	格式化本质就是在磁盘分区上创建文件系统（写入块大小、inode信息等）
+	
+5、挂载分区到linux系统的某个文件目录（/mnt）
+	mount /dev/sdb1 /mnt
+	df -l  命令查看
+	
+注意 ： fdisk 一般针对磁盘大小小于2T的，如果大于2T，则需要使用parted 命令 ，当然parted也可以分区小于2T的磁盘。
+
+
+parted非交互式分区实例 ， 1G 磁盘分区 ：
+
+	parted /dev/sdb  mklabel  gpt          # parted 命令需要将整个磁盘转成gpt格式
+	parted  /dev/sdb  mkpart  primary  0  500  # 主分区 从0M 到 500M
+	parted  /dev/sdb  mkpart  primary  501  1000  # 主分区 从501M 到 1000M
+	parted  /dev/sdb  p
+	mkfs -t ext4  /dev/sdb1 /dev/sdb2      # 格式化   sdb1 sdb2  
+	mount  /dev/sdb2   /temp    # 挂载磁盘分区到 /temp 目录   
+
+	
+
+	
+？？？ ？fdisk 如何非交互式分区 ？？？？  
+  ----利用expect工具
+  
+linux运维需要掌握的命令：
+
+文件和目录操作：
+ls , cd , cp,find , mkdir ,mv , pwd ,rename  ,rm ,rmdir , touch ,tree , basename , dirname ,chattr , lsattr , file ,md5sum  。
+
+查看文件及内容操作：
+cat ,tac , more , less ,head ,tail ,cut ,split , paste , sort , uniq , wc , iconv , dos2unix , file , diff , vimdiff , rev ,grep ,egrep , join ,tr , vi/vim  .
+
+文件压缩及解压命令 ：
+tar , unzip , gzip ,  zip 
+
+信息显示命令 ：
+	uname , hostname , dmesg , uptime , file ,stat ,du , df , top ,free ,  date ,cal 
+
+搜索文件命令 ： 
+which ,find ,  whereis , locate 
+
+用户管理命令 ： 
+useradd , usermod , userdel , groupadd , passwd , chage ,  id , su , visudo , sudo 
+
+基础网络操作命令 ：
+telnet , ssh ,  scp ,  wget , ping ,route , ifconfig ,ifup ,ifdown , netstat 
+
+深入网络操作命令 ：
+nmap , lsof , route , mail , mutt , nslookup , dig ,host , traceroute , tcpdump 
+
+磁盘与文件系统 ：
+mount , unmount ,df ,du , fsck ,  dd , dumpe2fs , dump ,fdisk ,  parted , mkfs ,parteprobe , e2fsck ,mkswap , swapon , sync , resize2fs 
+
+关机和查看系统命令 ：
+shutdown ，  halt , init 
+
+系统管理相关 ：
+uptime , top ,free , vmstat ,  mpstat ,  iostat , sar , chkconfig 
+
+系统安全相关 ：
+chmod , chown , chgrp , chage , passwd , su , sudo , umask ,chattr , lsattr 
+
+查看系统登录用户信息 ：
+whoami , who ,  w  , last , lastlog , users ,finger 
+
+其他 ：
+echo ,printf , rmp , yum ,watch , alias , unalias , date ,clear ,history , eject ,time ,nohup ,nc , xargs ,exec , export , unset ,bc ,type 
+
+系统性能监视高级命令 ：
+  内存 ： top , free ,vmstat , mpstat ,iostat ,sar 
+  CPU : top ,vmstat , mpstat ,iostat ,sar 
+  I/O : vmstat , mpstat ,iostat ,sar  
+  进程： ipcs ,ipcrm ,lsof ,strace ,lstrace 
+  负载 ： uptime 
+  
+关机/重启/注销 ：
+关机重启 ：
+	shutdown ， init , halt ,poweroff ,reboot 
+注销退出：
+	logout ,exit , ctrl + d  ——》生产常用
+	
+进程管理：
+	bg , fg ,jobs ,kill ,killall ,pkill ,crontab, ps , pstree ,top ,nice ,nohup , pgrep , strace , ltrace ,vmstat , runlevel init  service 
+
+比较危险的命令 ;
+mv ,rm ,fdisk ,parted ,dd 
+
+linux系统四剑客 :  
+ grep ,egrep ,sed ,awk 
+
+ 
+	
+
+	
+	
+
+
+

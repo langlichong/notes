@@ -1,0 +1,236 @@
+1、求总记录数，按SymmetrixId、StorageGroupId 分组
+db.test.aggregate([{$unwind:"$PerfData"},{$group:{_id:["$SymmetrixId","$StorageGroupId"],total:{$sum:1}}}])
+
+2、unwind加按子文档排序
+db.test.aggregate([{$unwind:"$PerfData"},{$sort:{"PerfData.RESPONSE_TIME":1}}])
+
+3、求PerfData中RESPONSE_TIME的最大值：
+db.test.aggregate([{$unwind:"$PerfData"},{$group:{_id:["$SymmetrixId","$StorageGroupId"],max:{$max:"$PerfData.RESPONSE_TIME"}}}])
+
+	java代码（多个分组条件）：
+	BasicDBObject groupCond = new BasicDBObject().append("sn", "$sn").append("port", "$portNum");
+		portCol.aggregate(Arrays.asList(
+					Aggregates.group(groupCond, Arrays.asList(
+							Accumulators.max("MaxIOPS", "$ios_per_sec"),
+							Accumulators.max("MaxKBPS", "$throughput_in_Kbytes_per_sec")
+						))
+				
+				)).forEach(new Block<Document>() {
+
+					@Override
+					public void apply(Document doc) {
+						
+						System.out.println(doc.toJson());
+					}
+				});
+
+
+4、正则模糊查询
+	db.port_perf_col.find({"PortId":{$regex:/^0:0/}})
+
+5、查询包含某个key的doc  ： db.port_perf_col.find({"PortId":{$exists:true}})
+
+6、查询key值为null的doc :   db.port_perf_col.find({"ArraySn":{$type:"null"}})  // null 类型的别名为"null" ,对应的数字值为 10
+
+7、对文档内部的数组类型操作
+    e.g.  
+	{
+		 _id: 1,
+		 zipcode: "63109",
+		 students: [
+					  { name: "john", school: 102, age: 10 },
+					  { name: "jess", school: 102, age: 11 },
+					  { name: "jeff", school: 108, age: 15 }
+				   ]
+	}
+	对students数组进行操作：
+	
+	方式a、db.doc.find({zipcode:"63109",students.age:{$gte:11}})
+	方式b、db.doc.find({zipcode:"63109"},{$element:{school: 102}})
+
+7、$or
+   db.getCollection('front_port_perf_col').find({$or:[{"PerfData.UTILIZATION":{$eq:13.5351}},{"PerfData.PercentBusy":{$eq:0.003036448}}]})
+
+8、java mongo $or 操作
+public void testOrMultiFields(){  
+    DBObject queryCondition = new BasicDBObject();        
+    //agender=female OR age<=23  
+    queryCondition = new BasicDBObject();  
+    BasicDBList values = new BasicDBList();  
+    values.add(new BasicDBObject("agender", "female"));  
+    values.add(new BasicDBObject("age", new BasicDBObject("$lte", 23)));  
+    queryCondition.put("$or", values);  
+      
+    DBCursor dbCursor = coll.find(queryCondition);  
+    assertEquals(4, dbCursor.size());  
+    assertEquals("Jim", dbCursor.next().get("username"));  
+}  
+
+9、$push 产生数组（行转列，聚合portid为数组ports）（测试文档如 10所列）
+
+	db.port_perf_col.aggregate([
+		{$sort:{"ArraySn":1,"PortId":1}},
+		{$project:{_id:0,ArraySn:1,PortId:1}},
+		{$group:{_id:"$ArraySn",ports:{$push:"$PortId"}}}      
+	])
+
+
+10、mapReduce 3par数据
+
+测试单个文档如下（多条）：
+{
+    "_id" : ObjectId("57452af8189d5a94901544b9"),
+    "IOPSRead" : "819",
+    "IOPSWrite" : "440",
+    "ArraySn" : "123456",
+    "SrvTmTotal" : "13.29",
+    "KBPSTotal" : "35106",
+    "PortId" : "2:0:1",
+    "KBPSWrite" : "11330",
+    "TimeStamp" : "1463997875000",
+    "SrvTmWrite" : "16.69",
+    "IOPSTotal" : "1259",
+    "SrvTmRead" : "11.46",
+    "ReadableTime" : "2016-05-23 18:04:35",
+    "KBPSRead" : "23775"
+}
+-------------------
+ var map = function(){
+       emit(this.ArraySn,this.PortId);
+    };
+    
+var reduce = function(key,values){
+    
+      var ret = {"ArraySn":key,"ports":values}
+      return ret ;
+    }
+    
+db.port_perf_col.mapReduce(map,reduce,{out:'res'})
+
+11、更新文档（查找TimeStamp字段类型为字符串的文档，对每个文档TimeStamp+86400000 ，在存回去）
+ db.port_perf_col.find({"TimeStamp":{$type:2}}).forEach(
+    function(doc){
+        doc.TimeStamp = (parseInt(doc.TimeStamp)+86400000)+"";
+        db.port_perf_col.save(doc);
+    }
+ );
+
+ db.perf.find({}).forEach(
+    function(doc){
+        doc.write_ops = parseInt(doc.write_ops);
+        doc.net_data_sent = parseInt(doc.net_data_sent);
+        doc.net_data_recv = parseInt(doc.net_data_recv);
+        doc.read_ops = parseInt(doc.read_ops);
+        doc.total_ops = parseInt(doc.total_ops);
+        doc.time = parseInt(doc.time);
+        doc.sys_read_latency = parseInt(doc.sys_read_latency);
+        doc.sys_write_latency = parseInt(doc.sys_write_latency);
+        db.port_perf_col.save(doc);
+    }
+ );
+
+12、mongo数据类型注意事项：
+
+ 一般在mongo shell中插入（更新等）输入的是json格式的，此时若某个key的值为数字(time:1234)，则1234进入mongo后数据类型默认为double，
+ 这是因为shell中输入的json，而json只有number类型，并没有细分int、double、long之类，所以在更新、插入时需要制定类型，否则可能更改原来的数据类型：
+ // 将time字段减少86400（inc——减法可以使用加法变通）
+ db.cluster_perf.update({},{$inc:{"time":NumberLong(-86400)}},false,true)
+ 
+ 
+13、mongo java 驱动 distinct
+sgCol.distinct(StorageGroupId,new BasicDBObject(SYMMETRIX_ID, arraySn),String.class).forEach(new Block<String>() {
+
+			@Override
+			public void apply(String sgid) {
+				JSONObject json = new JSONObject();
+				json.put(StorageGroupId, sgid);
+				arr.add(json);
+				
+			}
+		})
+14、mongo 驱动常用的一些类
+    Filters、
+	Aggregates、
+	Accumulators
+	
+15、查看 java jvm所有参数的初设值
+	java -XX:+PrintFlagsInitial | findstr "HeapDumpOnOutOfMemoryError"
+	
+ ======================测试文档============================
+{
+    "StorageGroupId" : "sg_cccms02",
+    "SymmetrixId" : "000498700485",
+    "PerfData" : [ 
+        {
+            "RESPONSE_TIME" : 0.39841834
+        }, 
+        {
+            "RESPONSE_TIME" : 1.2052625
+        }, 
+        {
+            "RESPONSE_TIME" : 0.2690998
+        }, 
+        {
+            "RESPONSE_TIME" : 0.42099932
+        }, 
+        {
+            "RESPONSE_TIME" : 0.8687646
+        }, 
+        {
+            "RESPONSE_TIME" : 0.35699984
+        }
+    ]
+}
+
+==============更新时间----本地测试------==============================================
+db.back_port_perf_col.update(
+    {"StartTime" : { "$gte" : "1464623999999"} , "EndTime" : { "$lte" : "1464710399999"}},
+    {$set:{"StartTime":"1464710399999","EndTime":"1464796799999"}},false,true
+  )
+  
+  --- 86400000
+  =======================
+  
+  db.port_perf_col.aggregate([
+
+{$match:{"TimeStamp" : { "$gte" : "1464580976000"} , "TimeStamp" : { "$lte" : "1464587105000"}}},
+
+{$project:{ArraySn:1,IOPSTotal:1,KBPSTotal:1,SrvTmTotal:1,_id:0}},
+
+{$group:{_id:"$ArraySn",IOAvg:{$avg:"$IOPSTotal"},KBAvg:{$avg:"$KBPSTotal"},SrvTmTotal:{$avg:"$SrvTmTotal"}}}
+
+])
+
+
+
+jvm 选项 ：
+Hotspot JVM提供以下三大类选项： 
+1. 标准选项：这类选项的功能是很稳定的，在后续版本中也不太会发生变化。运行Java或者java -help可以看到所有的标准选项。所有的标准选项都是以-开头，比如-version， -server等。
+2. X选项：比如-Xms。这类选项都是以-X开头，可能由于这个原因它们被称为X选项。运行java -X命令可以看到所有的X选项。这类选项的功能还是很稳定，但官方的说法是它们的行为可能会在后续版本中改变，也有可能不在后续版本中提供了。
+3. XX选项：这类选项是属于实验性，主要是给JVM开发者用于开发和调试JVM的，在后续的版本中行为有可能会变化。
+
+XX选项的语法
+如果是布尔类型的选项，它的格式为-XX:+flag或者-XX:-flag，分别表示开启和关闭该选项。
+针对非布尔类型的选项，它的格式为-XX:flag=value
+在了解这些约定的规范后，我们就可以来看看一些比较常用的选项了。
+
+  
+ 查看XX选项的值： -XX:+PrintCommandLineFlags， -XX:+PrintFlagsInitial和-XX:+PrintFlagsFinal 
+  
+  java -XX:+PrintCommandLineFlags -version
+  
+  相关另外两个选项：-XX:+PrintFlagsInitial表示打印出所有XX选项的默认值，-XX:+PrintFlagsFinal表示打印出XX选项在运行程序时生效的值。
+
+内存大小相关的选项
+
+OutofMemory（OOM）相关的选项
+如果程序发生了OOM后，JVM可以配置一些选项来做些善后工作，比如把内存给dump下来，或者自动采取一些别的动作。
+
+-XX:+HeapDumpOnOutOfMemoryError 表示在内存出现OOM的时候，把Heap转存(Dump)到文件以便后续分析，文件名通常是java_pid<pid>.hprof，其中pid为该程序的进程号。
+-XX:HeapDumpPath=<path>: 用来指定heap转存文件的存储路径，需要指定的路径下有足够的空间来保存转存文件。
+-XX:OnOutOfMemoryError 用来指定一个可行性程序或者脚本的路径，当发生OOM的时候，去执行这个脚本。
+
+比如，下面的命令可以使得在发生OOM的时候，Heap被转存到文件/tmp/heapdump.hprof，同时执行Home目录中的cleanup.sh文件。
+
+$ java -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:OnOutOfMemoryError ="sh ~/cleanup.sh" MyApp
+个人觉得几个选项还是非常有用的，它可以使得你有相关的信息来分析OOM的根源
