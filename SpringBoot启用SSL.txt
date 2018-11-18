@@ -1,0 +1,59 @@
+
+SpringBoot 启用 SSL ：
+启用SSL，此处使用自签证书进行
+
+1、生成一个证书：
+ keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048  -keystore keystore.p12 -validity 3650
+ 
+ 该命令会生成一个文件名为keystore.p12的证书库,生成过程中会要求填写库的密码，这个自定义.
+ 
+ 2、生成一个Spring-boot的工程，将步骤一中的keystore.p12拷贝到resources目录即可。
+ 
+   为了测试方便，在resources目录下建立一个static文件夹，static文件夹中随便放一个html文件或者picture等(如此处放一个index.html)
+ 
+ 3、开启SSL配置项：修改application.properties文件,内容如下：
+   server.port: 8443
+   server.ssl.key-store: classpath:keystore.p12    # 证书位置，注意classpath
+   server.ssl.key-store-password: 123321  # 自己设置的密码
+   server.ssl.keyStoreType: PKCS12   #证书类型
+   server.ssl.keyAlias: tomcat
+   
+   经过上述三个步骤就可以通过: https://localhost:8443/index.html 访问到内容.
+   
+   如果使用http方式访问： http://localhost:8443/index.html ，则会得到提示:
+       Bad Request.  This combination of host and port requires TLS.
+  
+  4、有时候有这样需求：应用需要同时支持http https两种方式访问，主要是为了方便。
+     要同时支持两种方式，就需要配置两个Connector 连接器，springboot 直接通过yml 或property文件难以实现，需要javaconfig方式配置另一个http方式连接器，
+     在应用接到请求后统一转发到https上即可：
+     
+    @Bean
+	  public TomcatServletWebServerFactory servletContainer() {
+		   TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
+	        @Override
+	        protected void postProcessContext(Context context) {
+	          SecurityConstraint securityConstraint = new SecurityConstraint();
+	          securityConstraint.setUserConstraint("CONFIDENTIAL");
+	          SecurityCollection collection = new SecurityCollection();
+	          collection.addPattern("/*");
+	          securityConstraint.addCollection(collection);
+	          context.addConstraint(securityConstraint);
+	        }
+	      };
+	    
+	    tomcat.addAdditionalTomcatConnectors(initiateHttpConnector());
+	    return tomcat;
+	  }
+	  
+	  private Connector initiateHttpConnector() {
+	    Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+	    connector.setScheme("http");
+	    connector.setPort(8080);
+	    connector.setSecure(false);
+	    connector.setRedirectPort(8443);
+	    
+	    return connector;
+	  }
+   
+  经过上述配置，应用也可以通过: http://localhost:8080/index.html访问，此时会自动转换到https协议上.
+  
