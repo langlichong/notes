@@ -1,0 +1,21 @@
+问题： springmvc中经常会碰见400，错误，但是正常情况下，spring直接挡回该错误，不进入handler 方法，导致看不到具体错误日志，网上很多都是写转换器的，
+      严格来说，日志信息都不知道是啥，你就乱猜是转换错误之类的（虽然基本上都是转换引起的），但是这有点乱猜的嫌疑，对此有以下方式查看具体日志来处理为题：
+ 
+ 1、 打开spring的debug日志:  --debug（只会打开spring的debug日志） 或者 直接打开root日志（所有都debug模式）
+ 
+ 2、 其实400类错误日志信息是由ServletInvocableHandlerMethod 类来打印的，所以只需要放开该类的debug日志即可看到具体错误提示：
+ 
+      springboot中：logging.level.org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod=debug  
+      
+ 3、利用注解 @ControllerAdvice 及 @ExceptionHandler  @ResponseStatus 注解 拦截Exception ，并打印该对象即可查看具体提示信息
+ 
+       @ControllerAdvice 
+      public class UnitedExcetionHander{
+      
+           @ExcetionHandler
+           @ResponseStatus(HttpStatus.BAD_REQUEST)
+          public void handle400Err(Exception e){
+             log.info("400 error " , e);
+          }
+      }
+ 
