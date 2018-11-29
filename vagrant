@@ -1,0 +1,55 @@
+Box：http://www.vagrantbox.es/  
+       https://app.vagrantup.com/boxes/search
+-----------------
+Boxes are globally stored for the current user. Each project uses a box as an initial image to clone from, 
+and never modifies the actual base image（基础镜像不会被更改，更改只发生在克隆体上），
+This means that if you have two projects both using the hashicorp/precise64 box we just added, 
+adding files in one guest machine will have no effect on the other machine。
+-------------------
+Boxes are broken down into two parts - the username and the box name - separated by a slash. 
+--------------------------
+vagrant destroy command does not actually remove the downloaded box file. 
+To completely remove the box file, you can use the vagrant box remove command.
+-------------------------------
+Synced Folders
+By using synced folders, Vagrant will automatically sync your files to and from the guest machine.
+----------------------------
+Port Forwarding
+config.vm.network :forwarded_port, guest: 80, host: 4567
+----------------------------
+Providers ：更改provider 
+vagrant up --provider=vmware_fusion  
+vagrant up --provider=aws
+----------------------
+vagrant reload --provision
+------------------------
+vagrant up : 查找vagrantfile的路径：
+    When you run any vagrant command, Vagrant climbs up the directory tree looking for the first Vagrantfile it can find, 
+   starting first in the current directory. 
+（从当前目录开始找，一直找到当前目录的最顶层目录截止，使用第一次找到的配置文件）
+
+配置环境变量VAGRANT_CWD设置搜索路径
+-----------------------
+1、Vagrantfile
+     Vagrant的配置文件，使用Ruby的语法描述。里面定义了项目所使用的box，网络，共享目录，
+     provision脚本等vagrant up命令运行时，将读取当前目录的Vagrantfile。
+
+2、Project
+  一个目录和目录中的Vagrantfile就组成了vagrant的一个项目，项目下可以有子项目，
+ 子项目中的Vagrantfile配置将继承和重写父项目的配置。项目的虚拟机实例并不会存储在这个目录（存储在~/.vagrant.d/box下），
+  所以可以通过git等版本管理工具来管理项目。
+3、Provisioning
+     Provisioning指的是虚拟机实例启动后，所需要完成的基础配置工作。
+     我们通常在安装完操作系统后希望能装一些软件或做一些配置，provisioning脚本正好能完成这个工作
+4、
+先，vagrant会去本地查找box，如果没有就从远程下载（从s3上下载很慢，可以先用迅雷离线下载到本地，然后再通过vagrant box add命令来添加）；
+
+然后，vagrant就会启动虚拟机，做一些网络配置，并将当前目录挂载到虚拟机的/vagrant下，使其能在虚拟机和物理机直接共享。
+
+最后，vagrant会开始provisioning的过程，为虚拟机配置基础的软件(只在第一次启动时进行，以后可通过vagrant provision命令触发)
+
+5、关闭实例可以使用三种方式vagrant suspending, vagrant halt, vagrant destroy。
+
+suspending，暂停虚拟机，保存虚拟机当前的状态（内存和磁盘均不释放），可以使用vagrant up命令恢复运行；
+halt，关机，虚拟机停止运行，但是虚拟机实例保留，不销毁，可以理解为是正常的关机；
+destroy，销毁虚拟机，虚拟机的实例被销毁;
