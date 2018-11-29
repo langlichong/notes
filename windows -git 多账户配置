@@ -1,0 +1,35 @@
+问题描述：
+    工作环境使用vpn 通道连接远程私有git 仓库，windows本地安装Git Extensions 客户端，在生成ssh 私钥时候修改了文件名字(sshkey)，并将sshkey与sshkey.pub 放置到C:\Users\Administrator\.ssh 目录下， 但是git bash 拉取代码时候报错，提示权限有问题？？？
+
+   解决：
+          方式1： 使用 ssh-agent ，ssh-add 添加ssh 私钥 ，问题依旧
+         方式2:   配置多用户方式：
+                       在C:\Users\Administrator\.ssh 目录下建立一个配置文件config，其内容如下：
+
+-------------------------------------------------------
+   Host witon.us
+          HostName witon.us
+          IdentityFile C:\Users\Administrator\.ssh\sshkey
+          User zhangwei_xa
+          port 2022
+
+-------------------------------------------------
+说明:
+ 
+Host 配置的别名
+
+HostName  填写改git账号的官网地址
+
+IdentityFile：是对应的密钥文件
+
+如此就可以在多个账号间切换使用了
+
+------------
+
+使用说明，以克隆为例：
+
+1）从刚才配置的github上克隆项目：git clone git@配置的别名:用户名/项目名.git  （例：git clone git@github.com:用户名/项目.git）
+
+2）切换为刚才配置的smalldemons：
+
+git clone git@smalldemons:用户名/项目.git
