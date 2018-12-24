@@ -1,0 +1,285 @@
+-- 统计报表中经常使用 case when 配合sum或者count做数据统计
+-- 使用case when 原来需要放到where中的条件基本可以省去（所有条件都可以放到case when中）
+
+DECLARE v_rec RECORD;
+BEGIN
+	FOR v_rec IN (
+		select 
+				a.mch_name as hospitalName,
+				a.guide_id as guideId,
+				a.guide_name as guideName,
+
+        -- 总体统计
+       (
+					count( case when  c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when  c.biz_type='挂号' then 1 end )
+				) as all_yyghAmount,
+			  (
+					sum( case when  c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when  c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as all_yyghCash,
+
+				 count(  case when  c.biz_type='门诊费用'  then 1 end ) 
+         as all_mzjfAmount,
+
+				 sum( case when  c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as all_mzjfCash,
+
+				 count( case when c.biz_type='预交金' then 1 end )
+         as all_zyjfAmount,
+
+				sum( case when c.biz_type='预交金' then c.trans_amount else 0 end )
+        as all_zyjfCash,
+
+				count( case when c.biz_type='充值' then 1 end ) 
+        as all_yktAmount,
+
+				sum(case when  c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as all_yktCash,
+
+				count(case when c.biz_type='x' then 1 end ) 
+        as all_qtAmount,
+
+				sum( case when c.biz_type='x' then c.trans_amount else 0 end ) 
+        as all_qtCash,
+
+        -- 微信公众号 自费
+				(
+					count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='挂号' then 1 end )
+				) as wx_zf_yyghAmount,
+				(
+					sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as wx_zf_yyghCash,
+
+				 count(  case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='门诊费用'  then 1 end ) 
+         as wx_zf_mzjfAmount,
+
+				 sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as wx_zf_mzjfCash,
+
+				 count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预交金' then 1 end )
+         as wx_zf_zyjfAmount,
+
+				sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预交金' then c.trans_amount else 0 end )
+        as wx_zf_zyjfCash,
+
+				count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='充值' then 1 end ) 
+        as wx_zf_yktAmount,
+
+				sum(case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as wx_zf_yktCash,
+
+				count(case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='x' then 1 end ) 
+        as wx_zf_qtAmount,
+
+				sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='x' then c.trans_amount else 0 end ) 
+        as wx_zf_qtCash,
+				
+      -- 微信公众号 医保
+        (
+					count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='挂号' then 1 end )
+				) as wx_yb_yyghAmount,
+			  (
+					sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as wx_yb_yyghCash,
+
+				 count(  case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='门诊费用'  then 1 end ) 
+         as wx_yb_mzjfAmount,
+
+				 sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as wx_yb_mzjfCash,
+
+				 count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预交金' then 1 end )
+         as wx_yb_zyjfAmount,
+
+				sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预交金' then c.trans_amount else 0 end )
+        as wx_yb_zyjfCash,
+
+				count( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='充值' then 1 end ) 
+        as wx_yb_yktAmount,
+
+				sum(case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as wx_yb_yktCash,
+
+				count(case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='x' then 1 end ) 
+        as wx_yb_qtAmount,
+
+				sum( case when c.pay_channel='wechat' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='x' then c.trans_amount else 0 end ) 
+        as wx_yb_qtCash, 
+
+        -- 支付宝生活号 自费
+        (
+					count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='挂号' then 1 end )
+				) as alipay_zf_yyghAmount,
+			  (
+					sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as alipay_zf_yyghCash,
+
+				 count(  case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='门诊费用'  then 1 end ) 
+         as alipay_zf_mzjfAmount,
+
+				 sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as alipay_zf_mzjfCash,
+
+				 count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预交金' then 1 end )
+         as alipay_zf_zyjfAmount,
+
+				sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='预交金' then c.trans_amount else 0 end )
+        as alipay_zf_zyjfCash,
+
+				count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='充值' then 1 end ) 
+        as alipay_zf_yktAmount,
+
+				sum(case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as alipay_zf_yktCash,
+
+				count(case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='x' then 1 end ) 
+        as alipay_zf_qtAmount,
+
+				sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='0' and c.biz_type='x' then c.trans_amount else 0 end ) 
+        as alipay_zf_qtCash, 
+
+			-- 支付宝生活号 医保
+        (
+					count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='挂号' then 1 end )
+				) as alipay_yb_yyghAmount,
+			  (
+					sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as alipay_yb_yyghCash,
+
+				 count(  case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='门诊费用'  then 1 end ) 
+         as alipay_yb_mzjfAmount,
+
+				 sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as alipay_yb_mzjfCash,
+
+				 count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预交金' then 1 end )
+         as alipay_yb_zyjfAmount,
+
+				sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='预交金' then c.trans_amount else 0 end )
+        as alipay_yb_zyjfCash,
+
+				count( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='充值' then 1 end ) 
+        as alipay_yb_yktAmount,
+
+				sum(case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as alipay_yb_yktCash,
+
+				count(case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='x' then 1 end ) 
+        as alipay_yb_qtAmount,
+
+				sum( case when c.pay_channel='alipay' and c.product_id='publicno' and c.is_medical_pay='1' and c.biz_type='x' then c.trans_amount else 0 end ) 
+        as alipay_yb_qtCash, 
+
+      --APP 自费
+        (
+					count( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='挂号' then 1 end )
+				) as app_zf_yyghAmount,
+			  (
+					sum( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as app_zf_yyghCash,
+
+				 count(  case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='门诊费用'  then 1 end ) 
+         as app_zf_mzjfAmount,
+
+				 sum( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as app_zf_mzjfCash,
+
+				 count( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='预交金' then 1 end )
+         as app_zf_zyjfAmount,
+
+				sum( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='预交金' then c.trans_amount else 0 end )
+        as app_zf_zyjfCash,
+
+				count( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='充值' then 1 end ) 
+        as app_zf_yktAmount,
+
+				sum(case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as app_zf_yktCash,
+
+				count(case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='x' then 1 end ) 
+        as app_zf_qtAmount,
+
+				sum( case when  c.product_id='app' and c.is_medical_pay='0' and c.biz_type='x' then c.trans_amount else 0 end ) 
+        as app_zf_qtCash, 
+
+       -- APP 医保
+        (
+					count( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='预约' then 1 end ) 
+					 +
+					count( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='挂号' then 1 end )
+				) as app_zf_yyghAmount,
+			  (
+					sum( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='预约' then c.trans_amount else 0 end ) 
+					 +
+					sum( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='挂号' then c.trans_amount else 0 end )
+				) as app_zf_yyghCash,
+
+				 count(  case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='门诊费用'  then 1 end ) 
+         as app_zf_mzjfAmount,
+
+				 sum( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='门诊费用' then c.trans_amount else 0 end ) 
+         as app_zf_mzjfCash,
+
+				 count( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='预交金' then 1 end )
+         as app_zf_zyjfAmount,
+
+				sum( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='预交金' then c.trans_amount else 0 end )
+        as app_zf_zyjfCash,
+
+				count( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='充值' then 1 end ) 
+        as app_zf_yktAmount,
+
+				sum(case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='充值' then c.trans_amount else 0 end ) 
+        as app_zf_yktCash,
+
+				count(case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='x' then 1 end ) 
+        as app_zf_qtAmount,
+
+				sum( case when  c.product_id='app' and c.is_medical_pay='1' and c.biz_type='x' then c.trans_amount else 0 end ) 
+        as app_zf_qtCash
+
+			from   "transaction" c
+			left join witon_user b on c.customer_id = b.customer_id 
+			left join witon_guide_doctor a on a.guide_id = b.guide_id 
+      
+     WHERE 
+			c.mch_name LIKE '%' || _mach_name || '%'
+		  and ( c.createdate BETWEEN _startdate AND (_enddate + INTERVAL '1 days') )
+
+			GROUP BY a.mch_name,a.guide_id,a.guide_name 
+
+			order by hospitalName,guideId,guideName
+
+	) loop RETURN NEXT v_rec;
+
+
+END loop;
+
+RETURN;
+
+
+END;
+
