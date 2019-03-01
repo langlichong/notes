@@ -1,4 +1,8 @@
 
+Spring中几乎对所有的Annotation的处理都是使用一组实现了 bean post processor 接口的处理类。
+Spring context understand annotation by set of classes which implements bean post processor interface. 
+so to handle different type of annotation we need to add different annotation bean post processors.
+
 SpringBoot 
 注意关注：spring-boot的自动配置(spring-boot-autoconfigure.jar)，自动配置细节都在该模块中。
 @EnableXXX 注解类使用原理 及 spring.factories方式使用原理
