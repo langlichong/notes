@@ -21,4 +21,5 @@ Spring4
  4.3 利用spring4.3新特性—— 构造函数参数方式：将ApplicationContext 作为构造函数参数即可，该方法有缺陷，构造函数必须只有一个参数，且不存在构造函数重载（只有一个构造函数）                                     
 5. BeanFactoryPostProcessor接口： 在spring容器初始化之后执行，且只执行一次：其方法执行在BeanPostProcessor之前执行                                                         
 6. BeanDefinitionRegistryPostProcessor: 利用该接口可以动态注册bean到容器中。（一般需要BeanDefinitionBuilder做配合），该接口比5中更高级点                                      
-                                                                                                                                           
+ -------------------可能会有帮助的类-----------------
+ InitializingBean  DisposableBean BeanPostProcessor
