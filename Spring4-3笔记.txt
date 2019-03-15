@@ -22,4 +22,8 @@ Spring4
 5. BeanFactoryPostProcessor接口： 在spring容器初始化之后执行，且只执行一次：其方法执行在BeanPostProcessor之前执行                                                         
 6. BeanDefinitionRegistryPostProcessor: 利用该接口可以动态注册bean到容器中。（一般需要BeanDefinitionBuilder做配合），该接口比5中更高级点                                      
  -------------------可能会有帮助的类-----------------
- InitializingBean  DisposableBean BeanPostProcessor
+ InitializingBean  DisposableBean BeanPostProcessor  
+ ApplicationContextAwareProcessor
+ AnnotationAwareAspectJAutoProxyCreator
+ ImportBeanDefinitionRegistrar
+ Spring对对象的可扩展性主要就是依靠InstantiationAwareBeanPostProcessor和BeanPostProcessor来实现的
