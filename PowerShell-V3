@@ -1,0 +1,145 @@
+PowerShell = cmd + .net + C# 
+
+AS400 、 VMS DCL
+
+-----cmdlet: 格式一般是  动词-名词，如  set-location == cd  、clear-host == cls、get-childitem == dir 
+
+cd\: 根目录   ls、clear 等别名的背后还是 cmdlet
+
+----别名： get-alias  -》 别名 gal
+
+----帮助系统-help system：  help、man
+
+----powershell 支持原生的windows 命令，如 ping 、ipconfig
+
+----WQL 
+
+get-help XXX、help xxx、man xxx ： 查看某个命令帮助文档，如果没有回在线下载，同时支持通配符
+
+get-verb ： 显示所有的动词（cmdlet中动词，动词有规律，名词却无限）
+
+get-verb |measure
+
+get-help g*service* : 查找命令
+get-help get-service -detailed  ： 查看某个cmdlet的详细帮助，并里面会列举好多例子
+get-help get-service -Examples  ： 查看某个cmdlet的详细帮助，并快速跳到到example部分
+get-help get-service -full  ： 查看某个cmdlet的详细帮助，并快速跳到到example部分
+get-help get-service -ShowWindow  ： 查看某个cmdlet的详细帮助，帮助内容会在一个新窗口打开
+
+
+---- powershell 中如果不知道执行命令后会如何，可以带上参数-whatif
+
+get-service | stop-service -whatif 
+get-service | stop-service -confirm 
+get-service -Displayname *bi* | stop-service -whatif
+
+
+---- MMC 的管理单元，安装了某些模块才可获得相关的管理单元，power-shell也是类似的
+
+
+--- Get-Module -ListAvailable ： 列出系统中当前可用的模块
+ 
+ -----对象：cmdlet 所显示的都是对象，最后屏幕看到的文本是尽量推迟后显示出来的对象的部分属性
+ 
+  如：得到handles属性大于900的进程
+     get-process | where handles -gt 900 
+     get-process | where handles -gt 900 | sort handles
+	 
+	 查看一个对象有哪些属性？
+	  get-service -name bits | get-member    or get-service -name bits | gm
+	  
+	 显示对象的部分属性？
+	 get-service | select-object  -property name,status
+	 
+	 
+	$x = [xml](cat ./readme.xml)  : 会将xml文件变为一个内存对象
+	$x.gettype()
+	$x.PLAY
+	
+	where筛选功能：
+	where后面括号形式可以做更多功能，where简化形式则只能做有限的处理（如get-process | where handles -gt 900 ）
+	get-service | where {$_.status -eq "Running" }   : $_ 代表前面获取到的服务列表对象的引用
+	get-service | where {$PSItem.status -eq "Running" }   : $PSItem 代表前面获取到的服务列表对象的引用
+	
+----管道-----
+ get-service | gm  : 通过gm可以查看管道中到底发送了些啥内容
+ 如何确定一个命令是否有接受管道的能力？可以通过查看其参数说明，如 get-help stop-service -Full  该命令输出中会出现Parameters部分，该部分里会提及是否可以接受管道输入(accept pipeline input ,一般会有byValue绑定 ，byPropertyName绑定)
+ 
+ get-process calc | dir : 会列出calc进程的程序所在目录  ： dir 根据name 绑定参数 
+ 
+ 自定义对象中的属性（自定义列），并指定该属性产生怎样的值：自定义一个叫ComputerName的属性，其取值为对象中的name属性值
+  get-adcomputer -filter * | select -property @{n='ComputerName';e={$_.name}} | get-service -name bits  
+  
+ get-wmiobject -class  win32_bios :  WMI 是？？
+ get-wmiobject -class  win32_bios -ComputerName dc1,d2,d3 :  获取多台pc上的bios信息，这可能需要活动目录支持管理多台计算机 --ActiveDirctory
+ 
+ 如果一个cmdlet帮助中所有输入对象（input-object）不支持任何管道输入，又该如何解决？？？
+        如 get-help get-wmiobjcet 帮助中不支持管道输入，但是它支持一个叫computername的参数，那么括号即可解决该问题：
+		         get-wmiobject  -class win32_bios  -ComputerName (get-adcomputer -filter  * | select -expandproperty name)  ---- 括号的伟大意义,powershell v2中写法， v3中加上了点语法
+		     或    get-wmiobject  -class win32_bios  -ComputerName (get-adcomputer -filter  *).name  ---- v3中加上了点语法,同样效果
+			 或	get-adcomputer -filter * | get-wmiobject -class win32_bios -ComputerName {$_.name} --- $_会获取前一个命令的输出，花括号表示一段脚本
+ 
+-----远程管理：WinRM -----
+
+ 一对一连接：Enter-pssession -computername dc  : 连接远程计算机 dc，
+ mstsc /v:dc  : 
+ 远程执行命令：invoke-command -computername dc，dc2 {这里写需要运行的命令} : 其实任何一条命令都可以在任何一台计算机上运行（序列化与反序列化对象）
+  invoke-command (alias icm )  {这里写需要运行的命令} ： 这将在本地计算机运行
+  
+  Windows Powershell Web Access 
+  get-volume   |
+
+----自动化-----
+   get-psdriver : 获取所有的驱动，其中会有几个虚拟的驱动，如cert等
+   脚本数字签名 Allsigned、Remotesigned概念、自签脚本
+   变量使用：所有变量以$开始，可以赋值为自定义值，也可以用来保存命令的执行结果，可以使用点语法
+    ${这里可以随便输入}： 这是一个自定义的变量，名字就是这么NB
+	
+	1..10 > test.txt
+
+  ------------写入控制台的程序是自动化的天敌---------------------
+ 
+ 创建了一个powershell会话 ： $sessions = new-pssession -ComputerName dc  
+   -- 创建会话后，可以利用invoke-command（icm）运行命令，并指定在某个session下运行即可：icm -session $session {这里面写session}
+   
+ 获取当前机器所拥有的的会话： get-pssession
+ 
+ e.g :
+   $servers = 'd1', 'd2'
+   $servers | foreach{start iexplore http://$_}  :  批量打开各个机器中的ie浏览器
+   多个会话保存到一个变量： $s = new-pssession -ComputerName $servers  , 之后可以遍历这些session并做同样的处理
+      ：icm -session $s {install-windowsfeature web-server}
+	  
+创建一个文件，并批量拷贝到其他机器： 
+notepad a.txt : 尝试打开a.txt，如果不存在则询问是否创建
+$servers | foreach{copy-item a.txt -Destination \\$_\c$\inetpub\wwwroot}
+
+get-help  VS  get-command 
+
+import-pssession 
+本地操作import-pssession:
+   $s = nsn   : 会连接到本地计算机，新建一个会话的alias写法
+   import-PSSession $s -CommandName get-process  -Prefix wow
+   get-wowProcess 
+ 
+----get-ciminstance 
+ 
+---脚本 与 ISE -----
+ 启动ISE后，可以在console与脚本编辑器中切换
+  快捷方式：ctrl + r ---切换脚本编辑与consoel ，ctrl + j： 打开新脚本编辑标签页  
+ 
+ 控制台测试脚本
+ 脚本参数化：
+ function get-diskinfo{
+  param(
+    $ComputerName = 'localhost'
+  )
+  get-wmiobject -computername $ComputerName -class win32_logicaldisk -filter XXX、help
+ }
+ 
+ 
+--------- powershell 模块加载机制---------------
+---------Windows domains-----domain controller-------
+Directory Service called " Active Directory Users and Computers"
+
+
