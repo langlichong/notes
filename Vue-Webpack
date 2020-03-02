@@ -1,0 +1,211 @@
+es6 中forEach与some函数，some会在满足条件时候终止，foreach不会终止（js中跳不出循环）、findindex
+list的slice方法
+字符串的 padStart padEnd 填充方法
+
+----------------------------------------------Vue 宗旨 ： 不提倡操作 DOM-------------------------------
+el: 该属性指定vue管辖的范围
+
+data: 指定该vue对象所有的数据
+
+methods: 所有的方法定义区域，与事件相关
+
+filters: Vue过滤器对象
+
+
+v-cloak: 解决闪烁问题
+{{}} :插值表达式，会将值作为普通字符串处理
+v-text: 该指令会替换当前作用的元素中的文本信息，不管该指令解析之前该元素的文本是啥
+v-html:
+v-bind:xxxx : 绑定某个元素的属性到vue的某个属性变量，该绑定的变量可以参与字符串拼接操作：
+    v-bind:title=" mytitle + ‘123’ " : mytile是vue的一个变量，123为常量, v-bind是将后面引号中的整体当做一个表达式来解析
+ v-bind: 简写方式, :title ,省略v-bind， v-bind中可以写合法的js表达式
+
+v-on:xxx : 事件绑定指令， @
+
+----
+在vue实例中，操作data中的数据或者调用methods中的方法，需要使用this，该this是指代vue实例，但要主要如果函数内部又有函数就要小心this指向问题，
+ ， 为了解决this的指向问题，可以使用es6的lambda表达式来书写函数格式。
+ （CMAScript 6 箭头语法为我们提供了一个工具，箭头函数能保存函数创建时的 this值，而不是调用时的值）
+ 
+事件修饰符：
+vue指令v-on 及事件修饰符： stop 、prevent等： @click.stop="clickHandler"
+   .stop : 阻止冒泡    .prevent: 阻止默认行为
+   .capture: 捕获事件方式   .self :只有事件的触发者是自己时才会触发处理函数（即点击时候才会，点击其他地方由于冒泡等机制则不会触发该事件）
+   .once: 事件只执行一次
+   
+v-model： 双向绑定
+
+如何给元素添加css class：
+	:class="['clazz1','clazz2']" ,直接传递一个数组，数组中可以使用三元表达式（可以使用对象来代替三元表达式）
+	但是由于直接使用三元表达式不太推荐，所以可以使用对象写法： :class="['big','italic',{'active':flag}]" ,其中flag是data中定义的变量
+内联样式定义：
+ :style = "{color:red,font-size:12}" 
+ :style="自定义的对象" ： 内联方式css
+ :style="[css对象数组]"
+ 
+v-for 指令: 遍历数组、js对象（key，val，idx）、迭代数字（v-for="num iin 10" 从1开始计数）,特别注意：在组件中使用时候一定要指定key（简写 :key="属性名"）属性，且key必须是字符串或者数字，否则可能有意外的bug
+
+   v-for="item in search(keywords)" : 注意此种用法
+   
+v-if:
+v-show:
+
+过滤器：vue中过滤器可以使用在两个地方，一个是mustache插值，另一个是v-bind表达式中，由管道符连接。
+       Vue.filter('过滤器名称',function-具体操作)
+	   
+	   全局过滤器（所有Vue实例都可以共享）、私有过滤器
+
+按键修饰符：如回车事件， e.g.  @keyup.enter="add"  ; // 回车键时候调用add，vue内置了有限的几个
+	
+自定义按键修饰符： 如定义f2键，其keycode为113 ，可以简单写为：@keyup.113="add" // 但是直接使用keycode不推荐，语义不好理解，一般通过Vue.config.keyCodes来定义，如Vue.config.keyCodes.f2=113
+
+自定义指令：Vue.directive()定义全局指令
+	Vue.directive('指令名字',{参数对象})，其实参数对象是通过Vue生命周期的钩子函数来实现
+	
+生命周期函数：
+
+  创建阶段生命周期函数：
+	beforeCreate：表示实例完全被创建出来之前，此时实例中的 data、methods中的数据还没有被初始化，如果要使用data、或者methods中方法，最早只能在created中操作
+	created: 第二个生命周期函数，在此时 ，data和methods都已经初始化好了，可以使用了
+	beforeMount：表示模板已经在内存中编译完成了，但是尚未把模板渲染到页面中
+	mounted: 内存中模板已经渲染到页面上，用户已经可以看到效果了
+
+  运行阶段生命周期函数：
+    beforeUpdate: 数据更新了就会触发
+	updated:
+	beforeDestroy: vue实例进入销毁阶段，此时所有的data，methods，及过滤器都处于可用状态，还没真正销毁
+	
+Vue-resource实现get、post，jsonp请求：
+	
+组件与模块化：
+-全局组件定义3中方式： 
+---Vue.extend 配合Vue.component
+ var login = Vue.extend({template:'<h1>登录</h1>'});  Vue.component('login',login);
+
+---直接使用Vue.component
+---将模板字符串定义到script标签中,同时使用Vue.component来定义组件
+   <script id="tmpl">
+	<div><a href="/login">登录</a></div>
+   </script>
+-------------------------
+组件中的data必须是一个返回object的function，不能直接写一个对象
+
+组件切换： <component :is="'login'"></component>
+
+Vue提供的几个标签：component , template, transition,transitionGroup
+
+父子组件传值：data与props
+
+ 默认情况下，子组件不能直接访问父组件中data中所定义的数据和methods中的方法
+ 
+ ***父组件传递值给子组件：可以通过在父组件引用子组件时候传值，
+       传值方式可以是属性绑定（v-bind:自定义属性名字，该自定义属性必须是子组件定义过的）的方式，父组件传递的值（绑定的属性）需要定义在子组件的props数组属性中
+	   
+    父组件传递方法给子组件：通过事件绑定指令绑定(@简写或者v-on)方法即可： <com1 v-on:func="show"></com1>，
+						      在子组件事件方法中调用绑定的父组件的方法： this.$emit('func',[可选的参数列表]); // func 是绑定时候的引用名字，参数从emit的第二个参数开始，后面都是参数
+					可以变相的利用绑定父组件的方法，在调用时候传递参数的方式，传递数据给父组件	
+
+ 评论功能实现： 使用父子组件，同时实现子组件发表评论，父组件列表立马更新（localStorage只能存字符串，js数组的unshift方法，JSON.parse）	
+
+Dom组件引用及Vue组件引用——ref: 在html元素或者自定义Vue组件上定义ref属性既可以通过$refs来引用该组件，引用到组件后，可以直接调用该组件的方法及数据
+			<h3 id="tips" ref="tips">呵呵呵</h3>  : this.$refs.tips.innerText ;
+			
+Vue路由：vue-router
+	路由的安装方式：一种是直接引入js，先引入vue，再引入vue-router,引入vue-router时候会自动注册router到vue中，
+					第二种是通过模块化方式引入，如webpack方式，需要import vue及vuerouter，之后还需手动注册vuerouter到vue中，Vue.use(VueRouter)
+					
+ 路由基本使用：
+	new VueRouter({routes:[//路由规则，每个规则是一个对象，每个对象有个path，component，匹配path后展示component]}) ; // 参数是一个配置对象，可以利用路由切换注册登录页面
+		创建好的路由需要与vue实例关联，通过vue的属性 router指定路由对象
+	注意：component的值是一个对象而不是对象名称字符串。		
+    <router-view>：专用于占位符，路由匹配后，组件就会展示到该占位符所在位置	，路由导航超链接href属性设置：<a href="#/login">登录</a>，必须有#
+	可以使用<router-link to="/login"> ，该标签默认渲染出来的是<a></a>标签，可以使用tag属性指定渲染成啥标签，可以用来代替<router-view>,此时可以省略# 符号
+	<router-link to="/login" tag="span"> : 渲染出的就是span标签而不是a标签
+	redirect使用: {path: '/' ,redirect:'/login'}
+	设置路由高亮：可以配置全局默认路由选中样式--linkActiveClass
+    路由切换时设置动画：<transition><router-view mode="out-in"></router-view></transition> // 用动画标签包裹路由
+	路由参数：this.$route.query可以获取查询参数对象， :id : 占位符格式 /user/:id  -- $router.params
+	路由嵌套：children属性--- {path: '/account', component:account, children:[ {path: 'login',component: login} ,{path: 'register',component: register}  ]}
+    命名视图实现经典布局--components属性：{path:'/', components:{ 'default': header,'left': leftBox,'main': mainBox }}, 
+										  指定哪个path匹配后，其对应的组件显示到哪个<router-view>(页面上有很多该标签),<router-view name="放哪个组件">
+										  
+watch监听：
+       监听data中的数据变化：
+			watch:{  firstName: function(newVal,oldVal){// 监听firstName属性的变化,注意默认的传递的参数}}
+	    监听路由变化：监听$router.path 
+computed计算属性：在computed中可以定义一些属性，这些属性叫做【计算属性】，本质是方法，使用时将方法名称当做属性来使用：可以使用v-model等绑定该属性名字（方法名字）
+                  注意：计算属性（方法）内部用到的任何一个data属性发生变化，都会引起该方法的重新执行
+			
+nrm：一般下载中心为registry.npmjs.org ,是一个国外网址，国内可能下载不了，所以一般使用nrm，nrm提供了很多仓库地址，切换地址 nrm use npm(切换到npm仓库)
+webpack: (有了webpack后可以将vue组件单独抽取到一个文件中)
+     npm init -y : 引入配置文件（一般面对webpack时候都需要该步骤，然后才引入相关的包，如jquery等）
+	 npm i jquery -s : 引入jquery， 之后页面header中使用<script src> 引入jquery吗？  不推荐这样子做，一般一个项目结构如下：
+	 ---src
+	 ---dist
+	 ---node_modules (该目录是npm init 后自动生成)
+	 ---main.js : 该文件为项目入口文件（其他的引入包操作建议都在改js中操作）
+	 ---index.html
+   import $ from 'jquery' // import 是ES6中导入模块的方式
+---webpack配置文件使用（webpack.config.js）：
+			-- 将webpack入口及出口文件配置到配置文件，方便使用(直接输入webpack 即可完成文件处理)，其实webpack做了一下动作：
+			1、发现未在命令中指定处理的文件及输出的文件，则会找webpack.config.js 配置文件
+			2、解析执行webpack.config.js (node 语法)
+	webpack不能自己自动监听文件的变化并处理文件，如css变化了，立马解析产生新的bundle，webpack自身不支持这样变化
+	webpack-dev-server: 实现自动监听、打包编译功能，安装： npm i webpack-server -D ,安装到本地依赖，本地项目安装后不能cmd运行，可以在Package.json中配置脚本：
+	    scripts部分配置："dev":"webpack-dev-server" ,然后运行：npm run dev ，默认生成的bundle.js在http://localhost:8080/bundle.js ,项目引入时可以直接引入: /bundle.js
+		webpack-dev-server生成的bundle.js并没有存储在物理磁盘上，而是直接托管到内存中，所以项目目录中是找不到哦，只要触发了`ctrl+s`保存操作就会触发打包编译。
+	webpack-dev-server参数配置：
+	   1. 自动打开浏览器: --open  2、--port:3000 : 指定在3000端口部署 
+	   3、--contentBase src : 上下文根目录配置问src 4、--hot: 热重载（不会每次完整的生成bundle，只打补丁即可），同时可以自动刷新浏览器页面（首页）
+	  注意：webpack-dev-server的参数可以直接配置到其后面，也可以将参数摘出来，配置到webpack.config.js 中（devServer名字的key即可） ：devServer:{ open: true ,port: 3000}
+	html-webpack-plugin插件：html页面内存托管		，可以配置到webpack.config.js中的plugins节点中			
+	
+css处理：
+	直接使用import导入css：import './src/css/index.css'  -- 该方式会报错，webpack处理不了.css文件, webpack默认只能处理js文件，要处理css需要第三方loader加载器	
+	 Css loader（2个）：cnpm i style-loader css-loader -D ,
+	                   在webpack.config.js 新增一个配置节点，叫module，在module上配置rules属性，该属性存放了所有第三方文件的匹配和处理规则
+						rules：[{ test: /\.css$/,use: ['css-loader','style-loader']}] : .css文件使用use指定的两个插件处理，调用规则从右到左（先style 再css）
+   默认情况下，webpack无法处理css文件中的url（不论是图片还是字体库），都无法直接处理，借助第三方loader:url-loader (该loader依赖file-loader)
+	
+Babel: 可以将高级的语法转化为低级语法
+
+render函数渲染组件：render: function(createEl){return createEl(login);} ; //createEl这个参数本质是个函数，调用该函数可以将指定的组件模板渲染为html结构
+
+如何在webpack构建的项目中使用vue进行开发：
+	普通网页中使用vue: 使用script标签引入vue包
+	webpack中： 安装vue(npm i vue -S),导入vue(import Vue from 'vue'),创建实例
+	注意：使用script导入的vue包是完整的，而使用import 导入的vue是不完整的，该方式只提供了runtime-only方式
+	// 包的查找规则
+	1、找项目根目录中有没有 node_modules的文件夹爱
+	2、在node_modules中找对应的vue文件夹
+	3、在vue文件夹中，找一个叫package.json的包配置文件
+	4、在package.json文件中，查找一个main属性（该属性指定了这个包在被加载的时候的入口文件）
+	
+	// 修改导入语句的目标目录，默认导入的Vue是来自一个叫XXX-runtimeXXX.js，可以直接修改为完整的vue.js文件
+	//或者修改webpack.config.js文件，添加resolve配置节点: resolve: {alias:{"vue$":"vue/dist/vue.js"}}
+ 
+  如何在webpack环境下渲染组件——单文件组件：单文件中可以包含三部分：<template></template><script></script><style></style>
+   //导入组件：import login from './login.vue' , 默认情况下，webpack是无法解析这类.vue文件的，需要借助第三方插件
+   //安装.vue解析loader： npm i vue-loader  vue-template-compiler -D , 同时修改配置文件，增加loader配置
+   // 使用render函数进行组件渲染 ，在webpack中想渲染vue组件，可以使用render函数
+
+ 总结;webpack中使用vue：
+ // 1、安装vue包：cnpm i vue -S 
+ // 2、由于在webpack中，推荐使用.vue 组件模板文件进行定义组件，所以需要安装.vue的loader: vue-loader ,vue-template-compiler
+ // 3、在main.js中导入vue模块： import Vue  from 'vue'
+ // 4、定义一个.vue组件文件，其中，组件有三部分组成：template，script，style
+ // 5、导入需要的组件，创建vue实例，并使用render函数渲染相关的组件
+ 
+ Vue单文件组件中如何定义组件的数据：export default{ data(){return {}},methods:{}}  // export 或 export default 是ES6中暴露数据的语法
+ //webpack中支持两种格式的导入导出，一种是node中的格式（module.exports , require），一种是ES6的语法（export import），导入和导出要配对使用统一的语法
+
+ webpack中使用vue-rouer:
+   //1、安装vue-router 
+  // 2、导入vue-router并绑定vue与vue-router： import VueRouter from 'vue-router' ,  Vue.use(VueRouter);  
+
+ 单文件组件中样式：
+      // 1、<style>中定义的样式，默认是全局的额，加上scoped属性，即可实现，该样式只对该组件生效
+	  // 2、普通的style标签只支持普通的样式，想启用scss或less，需要为style元素指定lang属性
+ 路由单独抽出一个js文件： 需要将路由定义，及路由中使用到的模块的导入语句到统一提取到一个文件中   
+      //1、 提取导入语句（除了跟导入语句）及路由定义语句
+      //2、 export default router // 暴露路由出去
