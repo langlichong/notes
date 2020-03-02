@@ -209,3 +209,29 @@ render函数渲染组件：render: function(createEl){return createEl(login);} ;
  路由单独抽出一个js文件： 需要将路由定义，及路由中使用到的模块的导入语句到统一提取到一个文件中   
       //1、 提取导入语句（除了跟导入语句）及路由定义语句
       //2、 export default router // 暴露路由出去
+VueX:
+  组件之间数据共享方式：该方式只适合小范围的数据共享
+  1、父向子传值： v-bind 属性绑定
+  2、子向父传值：v-on事件绑定
+  3、兄弟组件之间数据共享：EventBus：
+   //$on 接收数据的那个组件
+   //$emit 发送数据的组件
+   
+  Vuex是实现组件全局状态管理的机制.
+  //存储在Vuex中的数据是响应式的，能够实时保持数据与页面同步
+ 
+  Vuex使用：
+  1. 安装: npm i vuex --save 
+  2. 导包：import Vuex from 'vuex'  Vue.use(Vuex) 
+  3. 创建store对象:    const store = new Vuex.Store({ state:{count: 0}})
+  4. 将store对象挂载到vue实例中: 类似router的挂载方式，挂在后，vue中的所有组件都可以从store中获取全局数据了
+    
+  核心概念： State、Mutation、Action、Getter
+   //  组件中访问state中数据方式:
+    1、this.$store.state.数据名称
+	2、从vuex中按需导入mapState函数,通过导入的mapState函数，将当前组件需要的全局数据，映射为当前组件的computed计算属性
+  
+    --mutation：
+        vuex中推荐的修改store中的数据方式（在store的mutations块中定义函数来处理，并this.$store.commit('函数名')）
+        mutation中的方法参数传递：mutation中的每一个方法的第一个参数是store，后续参数是自定义传递给函数的
+    --action：
