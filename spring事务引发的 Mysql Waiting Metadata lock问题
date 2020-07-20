@@ -1,0 +1,74 @@
+问题描述：
+
+在MySQL（本问题是8.0版本）中，alter语句容易造成WML问题，原因常见是：由于前序的事务未提交导致的（包括读事务）。
+
+问题现象：
+    a、servie（同一个方法中，该方法标有声明事务）中前序sql语句： select * from bo_xxx   
+    b、在a之后紧接着是一个alter 语句，用于修改表中字段类型及注释
+    
+    大概形式如下：
+    ```
+    
+      @Transactional(rollbackOn = Exception.class)
+       class ServiceAImpl implements IServiceA{
+          public void doService(){        
+              this.getTableDataSize(); // 此处获取表中数据数量 表名字为：bo_xxx              
+              String alterSQL = "alter table bo_xxx modify column xxxxx  "; // 此处又使用了bo_xxx
+          }
+          
+          private Integer getTableDataSize(){          
+             return jdbcTemplate.queryForObject("select * from bo_XXX ");
+          }
+       
+       }
+    ```
+    业务表述为： 先检查该表中是否有数据，如果有数据则不能让用户做更改表结构的操作。
+    
+    以上代码执行后： 业务一直卡死，直到锁等待超时，查看mysql中所等待超时的设置：show variables like 'wait_timeout%'  --128800 时间太长，以为数据库挂了
+    
+    排查过程：
+        show processlist : 结果发现有 waiting metadata lock的信息，同时等待该lock的是alter语句
+        查看事务表：
+        select * from information_schema.INNODB_TRX;   发现两个线程，其中一个线程的sql信息是 alter 语句，而另一个线程的sql信息是空 （假设其线程id 为  3788）
+        抱着试试的态度： kill 3788  ， 之后再查询INNODB_TRX表，表中没有数据，同时业务也正常了
+       
+       虽然kill可以解决，但是，不能一直手工去kill吧？ 怎么办？
+       分析： 谁到底占用了元数据锁？ 从INNODB_TRX中可以看到线程id，但是没法定位到该线程执行了哪些sql语句，
+              看资料说有一个 events_statements_history 表可以，但是他只能存最近的10条，同时该表需要结合 metadata_locks 表。
+            想着如果能看到数据库中发送的每一条sql语句，分析下就可以知道是哪个sql语句没有提交，进而可以排查到java代码里是哪个语句造成的 ，想到了genral_log文件
+       开始看日志：
+          查看日志是否开启：show variables like 'general_log';
+          若未开启则：set global general_log = on ;  （关闭对应：set global general_log = off ， 用完记得关，该文件会增加到可怕的地步）
+          查看日志文件的位置：show variables like 'general_log_file';   -- /var/lib/mysql/localhost.log
+          
+          找到文件，过滤特殊语句alter ，发现在进入doService方法时：set autocommit=0 ，后续直到执行 select count(*) from bo_xxxx 时候，
+          也没commit（符合spring 默认事务传播），因为select语句使用了 该业务表，占用了 MDL锁，导致紧接着的alter语句无法获取到MDL锁，而这两个都在一个事务中，
+          所以就一直等待。
+          
+          至此问题明朗： 由于在一个transaction 事务方法（默认事务传播方式）中使用了同一个表（bo_xxx），前序select 占用了MDL,未提交（doService方法执行完毕才会提交）
+          ，而后续又在等MDL, 所以最好是这两个语句在不同的独立事务中执行：抽取方法getTableDataSize 并加上独立事务：
+          ```
+            @Transactional(rollbackOn = Exception.class,value = Transactional.TxType.REQUIRES_NEW)
+            public Integer getBoTableDataSize(String tableName) {...} 
+          ```
+          然后在doService中调用（this.getBoTableDataSize）,没想到结果又中招了（spring 事务是走代理的，this.XXX 调用本类的事务方法，事务会失效）？
+          解决方法：
+           1、AopContext.currentProxy()
+                springboot启动类中加入：@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true) ,然后
+                IFormTableService aopProxyService = (IFormTableService) AopContext.currentProxy(); // 获取代理的service
+                Integer dataAmount = aopProxyService.getBoTableDataSize(tableName);//调用代理后的方法
+                
+               结果： 业务恢复正常
+           2、本实现类中注入自己的代理类：
+              @Autowired
+              private IServiceA aopProxyService;
+              然后直接使用aopProxyService调用getBoTableDataSize  // 业务正常恢复
+              
+           3、可以将getBoTableDataSize方法提取到其他service中，并加入REQUIRES_NEW事务传播（同类调用转为service之间的事务方法调用）： 该方式未测试
+              
+              
+       最后：general_log 开启后一定要关闭，网上好多说需要删除或重命名之类的才可以，其实不用，只要 set off后，再去看日志文件，他的大小是不会再变化了。      
+       
+       
+       
+
