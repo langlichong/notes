@@ -1,0 +1,35 @@
+
+方案1： 自己利用数据库实现
+Only one task at a time can do a insert to the table. The other one will get a DuplicateKeyException. 
+The insert and delete logic is handeld by an aspect around the @Scheduled annotation. I'm using Spring Boot 2.0
+
+@Component
+@Aspect
+public class SchedulerLock {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerLock.class);
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;  
+
+    @Around("execution(@org.springframework.scheduling.annotation.Scheduled * *(..))")
+    public Object lockTask(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        String jobSignature = joinPoint.getSignature().toString();
+        try {
+            jdbcTemplate.update("INSERT INTO scheduler_lock (signature, date) VALUES (?, ?)", new Object[] {jobSignature, new Date()});
+
+            Object proceed = joinPoint.proceed();
+
+            jdbcTemplate.update("DELETE FROM scheduler_lock WHERE lock_signature = ?", new Object[] {jobSignature});
+            return proceed;
+
+        }catch (DuplicateKeyException e) {
+            LOGGER.warn("Job is currently locked: "+jobSignature);
+            return null;
+        }
+    }
+}
+--------------------------
+方案2：使用现成分布式锁方案——shedlock
+      https://github.com/lukas-krecan/ShedLock
