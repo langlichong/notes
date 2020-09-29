@@ -1,0 +1,70 @@
+-- zuul或者其他地方均可处理，此处选择重写spring框架默认的json序列化及反序列化类来实现，代码如下：
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+ 
+import java.io.IOException;
+ 
+@Component
+public class CustomObjectMapper extends ObjectMapper {
+    private static final long serialVersionUID = -3448961813323784217L;
+ 
+    public CustomObjectMapper() {
+        SimpleModule module = new SimpleModule("XssStringJsonSerializer");
+        //module.addSerializer(new JsonHtmlXssSerializer(String.class));
+        module.addDeserializer(String.class,new JsonHtmlXssDeserializer(String.class));
+        this.registerModule(module);
+    }
+ 
+    /**
+     * 对出参的json进行转义
+     */
+    class JsonHtmlXssSerializer extends JsonSerializer<String> {
+ 
+        public JsonHtmlXssSerializer(Class<String> string) {
+            super();
+        }
+ 
+        @Override
+        public Class<String> handledType() {
+            return String.class;
+        }
+        @Override
+        public void serialize(String value, JsonGenerator jsonGenerator,
+                              SerializerProvider serializerProvider) throws IOException{
+            if (value != null) {
+                String encodedValue = HtmlUtils.htmlEscape(value.toString());
+                jsonGenerator.writeString(encodedValue);
+            }
+        }
+    }
+ 
+    /**
+     * 对入参的json进行转义
+     */
+    class JsonHtmlXssDeserializer extends JsonDeserializer<String> {
+ 
+        public JsonHtmlXssDeserializer(Class<String> string) {
+            super();
+        }
+ 
+        @Override
+        public Class<String> handledType() {
+            return String.class;
+        }
+ 
+        @Override
+        public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            String value = jsonParser.getValueAsString();
+            if (value != null) {
+                return HtmlUtils.htmlEscape(value.toString());
+            }
+            return value;
+        }
+    }
+}
