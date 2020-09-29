@@ -1,4 +1,4 @@
--- zuul或者其他地方均可处理，此处选择重写spring框架默认的json序列化及反序列化类来实现，代码如下：
+-- 方式1: zuul或者其他地方均可处理，此处选择重写spring框架默认的json序列化及反序列化类来实现，代码如下：
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
@@ -68,3 +68,158 @@ public class CustomObjectMapper extends ObjectMapper {
         }
     }
 }
+------------------------------------------------------------
+//  利用zuul网关filter处理：
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.ceis.ui.all.utils.JsonUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
+import com.netflix.zuul.http.ServletInputStreamWrapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.util.HtmlUtils;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.*;
+
+
+@Slf4j
+//@Component
+public class NewXssFilter extends ZuulFilter {
+
+    @Override
+    public String filterType() {
+        return FilterConstants.PRE_TYPE;
+    }
+
+    @Override
+    public int filterOrder() {
+        return 1;
+    }
+
+    @Override
+    public boolean shouldFilter() {
+        return true;
+    }
+
+    @Override
+    public Object run() {
+        RequestContext requestContext = RequestContext.getCurrentContext();
+        HttpServletRequest request = requestContext.getRequest();
+        String contentType = request.getContentType();
+        if (StringUtils.isBlank(contentType)) {
+            return null;
+        } else if (StringUtils.equals(contentType, "application/x-www-form-urlencoded")
+                || StringUtils.equals(contentType, "application/x-www-form-urlencoded;charset=UTF-8")) {
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            if(parameterMap == null || parameterMap.size() == 0){
+                return null ;
+            }
+            Iterator it_d = parameterMap.entrySet().iterator();
+            while (it_d.hasNext()) {
+                Map.Entry<String, String[]> entry_d = (Map.Entry) it_d.next();
+                String key = entry_d.getKey();
+                String[] value = entry_d.getValue();
+                if (value != null) {
+                    List<String> strings = Arrays.asList(value);
+                    for (int i = 0; i < strings.size(); i++) {
+                        strings.set(i, StringEscapeUtils.escapeHtml(strings.get(i)));
+                        strings.set(i, StringEscapeUtils.escapeJavaScript(strings.get(i)));
+                    }
+                }
+                parameterMap.put(key, value);
+            }
+            String newBody = JSONObject.toJSONString(parameterMap);
+            final byte[] reqBodyBytes = newBody.getBytes();
+            requestContext.setRequest(new HttpServletRequestWrapper(request) {
+
+                @Override
+                public ServletInputStream getInputStream() {
+                    return new ServletInputStreamWrapper(reqBodyBytes);
+                }
+
+                @Override
+                public int getContentLength() {
+                    return reqBodyBytes.length;
+                }
+
+                @Override
+                public long getContentLengthLong() {
+                    return reqBodyBytes.length;
+                }
+            });
+
+        } else if (StringUtils.equals(contentType, "application/json")
+                || StringUtils.equals(contentType, "application/json;charset=UTF-8")) {
+            try {
+                InputStream in = requestContext.getRequest().getInputStream();
+                String body = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
+                //String escapeBody = HtmlUtils.htmlEscape(body);
+                //JSONObject json = JsonUtil.fromJson(body, JSONObject.class);
+
+                JSONObject json = JSONObject.parseObject(body);
+                Map<String, Object> map = json;
+                Map<String, Object> mapJson = new HashMap<>();
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    //mapJson.put(entry.getKey(), cleanXSS(entry.getValue().toString()));
+                    Object value = entry.getValue();
+                    if(value != null){
+                        mapJson.put(entry.getKey().toString(), HtmlUtils.htmlEscape(value.toString()));
+                    }
+                }
+                String newBody = JsonUtil.toJson(mapJson);
+                final byte[] reqBodyBytes = newBody.getBytes();
+                requestContext.setRequest(new HttpServletRequestWrapper(request) {
+
+                    @Override
+                    public ServletInputStream getInputStream() {
+                        return new ServletInputStreamWrapper(reqBodyBytes);
+                    }
+
+                    @Override
+                    public int getContentLength() {
+                        return reqBodyBytes.length;
+                    }
+
+                    @Override
+                    public long getContentLengthLong() {
+                        return reqBodyBytes.length;
+                    }
+                });
+            } catch (IOException e) {
+                log.error("xss过滤器读取参数异常", e);
+            }
+        }
+        /*try {
+            InputStream in = requestContext.getRequest().getInputStream();
+            String body = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
+            System.out.println(body);
+        } catch (
+                IOException e) {
+            log.error("xss过滤器读取参数异常", e);
+        }*/
+        return null;
+    }
+
+    private String cleanXSS(String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        value = StringEscapeUtils.escapeHtml(value);
+        value = StringEscapeUtils.escapeJavaScript(value);
+        value = value.replaceAll("\\\\", "");
+        return value;
+    }
+}
+
