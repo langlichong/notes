@@ -67,8 +67,26 @@
            3、可以将getBoTableDataSize方法提取到其他service中，并加入REQUIRES_NEW事务传播（同类调用转为service之间的事务方法调用）： 该方式未测试
               
               
-       最后：general_log 开启后一定要关闭，网上好多说需要删除或重命名之类的才可以，其实不用，只要 set off后，再去看日志文件，他的大小是不会再变化了。      
+       最后：general_log 开启后一定要关闭，网上好多说需要删除或重命名之类的才可以，其实不用，只要 set off后，再去看日志文件，他的大小是不会再变化了。     
        
+       -----------------------------------------------------------
+        ServiceA{
+          @Transactional
+          select_insert(){// -- start snapshot 
+            new_pk = ServiceB.trans_insert()
+            "select * from XXX "
+          }
+        }
+        ServiceB{
+          @Transactional(TxType.RQUEIRE_NEW)
+          trans_insert(){}// -- start another snapshot after ServiceA's snaphot
+        }
        
+       --析----
+        确实是mysql的隔离级别的原因；
+        rr隔离级别下，mvcc的原因，事务会通过read view来判断 数据的可见行。
+        在事务一持续的过程中，事务二提交了一条记录，由于事务二晚于事务一开启， 所以记录对于事务一是不可见的
+       
+       -------------------------------------------------------------------------------------------------------
        
 
