@@ -70,16 +70,23 @@
        最后：general_log 开启后一定要关闭，网上好多说需要删除或重命名之类的才可以，其实不用，只要 set off后，再去看日志文件，他的大小是不会再变化了。     
        
        -----------------------------------------------------------
-        ServiceA{
-          @Transactional
-          select_insert(){// -- start snapshot 
-            new_pk = ServiceB.trans_insert()
-            "select * from XXX "
-          }
-        }
-        ServiceB{
-          @Transactional(TxType.RQUEIRE_NEW)
-          trans_insert(){}// -- start another snapshot after ServiceA's snaphot
+        @Transactional
+        @Service
+        public class OtherService{
+            public void transactionA(){
+                //新事务
+               int id = transactionService.transactionB();//插入数据成功并且返回主键id
+               Object object = findById(id);//返回null ?????
+            }
+       }
+
+        @Transactional
+        @Service
+        class  TransactionService{
+            @Transactional(propagation = Propagation.REQUIRES_NEW)
+            public int transactionB(){
+              //省略
+            }
         }
        
        --析----
