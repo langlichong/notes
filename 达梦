@@ -85,6 +85,19 @@ end loop;
 
 end;
 --------------------------------------------------
+自增列处理： 在DM 应该先手动迁移该表结构，在迁移数据：
 
+create SEQUENCE seq_auto_increment_test3 INCREMENT by 1 START WITH 1 ;
+
+create table test3
+
+(
+
+ id int default seq_auto_increment_test3.nextval primary key,
+
+ str varchar(2)
+
+);
+--------------------------------------------------------------------------------
 
 
