@@ -99,5 +99,23 @@ create table test3
 
 );
 --------------------------------------------------------------------------------
+--------------存储过程----------
 
+create sequence seq_auto_increment increment by 1  start with 1 ;
+
+create table seq_test (
+ id int default seq_auto_increment.nextval primary key ,
+ name varchar(20)
+)
+
+declare 
+begin
+	for n in 1 ..10 loop
+	   insert into seq_test(name)values(n);
+	end loop;
+	commit ;
+end;
+/
+-- 注意最后面的斜杠 /
+--------------------------------------------------------------
 
