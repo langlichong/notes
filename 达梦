@@ -29,6 +29,17 @@ start with c_pid is null
 connect by prior c . c_id = c . c_pid ;
 
 ---------------------------
+
+已知表被锁：解锁
+
+SELECT ID as "TABLE_ID" from SYSOBJECTS WHERE NAME = 'CITY';-- 根据表名查TABLE_ID
+
+SELECT TRX_ID,LTYPE,LMODE,TABLE_ID FROM V$LOCK WHERE TABLE_ID 1199;-- 根据TABLE_ID 查TRX_ID
+
+SELECT * FROM V$SESSIONS WHERE TRX_ID = 50702145;-- 根据TRX_ID 查看SESS_ID
+
+SP_CLOSE_SESSION(140165318846264);-- 根据SESS_ID 解锁
+------------------------------
 要注意和字符串截断报错问题的区别 字符串截断，只是纯粹的精度不够，如varchar(400), 是可以放400 个字节的字符串，我们让它要放入401 个，就会报错字符串截断。
 字符串截断和数据溢出，是一个类型的错误，数据溢出就是非字符串类型，精度不足。
 
