@@ -35,3 +35,67 @@ select page(); -- 一条记录的长度不能超过页大小的一半
     CLOB 字段也可以直接like ，但和 CLOB_LIKE_MAX_LEN 该参数有关系，注意学习下达梦配置文件（dm.ini 参考DBA 手册 正解 2.1.1 ）：
         CLOB_LIKE_MAX_LEN    默认值为 31 静态参数
         LIKE 语句中 CLOB 类型的最大长度，单位 KB ，有效值范围（ 8~102400 ）
+        
+        
+默认情况下，达梦数据库实例的varchar 字段的精度，表示的含义是字节，而对于汉字而言，在UTF-8 编码下的字节占用，是比GB18030 编码下的字节占用，要大。
+所以反过来说，对于dexp&dimp 搬过来的表结构，都是一致的情况下，比如：都是varchar （400 ），可以存放的汉子个数，是不一样的。
+```
+ 这是一个把数据库实例中目标表中的所有varchar 字段，精度放大一倍的脚本（当成SQL 执行）：通过控制游标查出来的表即可。
+
+declare
+
+begin
+
+for rs in(
+
+select sch.name sch,tab.name tab,col.name   col,COl.length$ len from sysobjects sch,sysobjects tab ,syscolumns col
+
+where sch.id=tab.schid and   sch.name||'.'||tab.name in (
+
+'USER.TABUTKMONITOR',
+
+'USER.TABUTHORIZATIONRISKLOG',
+
+'USER.TABUSTOMER',
+
+'USER.TABARD',
+
+'USER.TABOSSREPORT',
+
+'USER.TABUDGETENTITYCARDS',
+
+'USER.TABRANSACTIONLOG',
+
+'USER.TABCCOUNT',
+
+'USER.TABSTOMERINFO',
+
+'USER.TABRANSACTIONLOG',
+
+'USER.TABUTHORIZATIONRISKLOG'
+
+)
+
+and tab.id=col.id and col.TYPE$ in   ('VARCHAR','VARCHAR2') ) loop
+
+declare
+
+begin
+
+ execute immediate 'alter table   "'||rs.sch||'"."'||rs.tab||'" modify '||rs.col||'   varchar('||rs.len*2||');';
+
+exception when others then
+
+ print(sqlerrm);
+
+end;
+
+end loop;
+
+end;
+
+
+```
+
+
+
