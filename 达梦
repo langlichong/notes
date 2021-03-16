@@ -119,3 +119,46 @@ end;
 -- 注意最后面的斜杠 /
 --------------------------------------------------------------
 
+select * from v$tablespace; -- 表空间
+select * from v$datafile; -- 数据文件
+
+杀会话：DM 数据库采用的是线程架构，所有不能向Oracle那样直接kill 进程，只能调用sp_close_session()来kill 线程杀掉会话 （从 sys.v$sessions 获取会话ID）
+      SQL> SP_CLOSE_SESSION(140615618728712);
+select para_name,para_value from v$dm_ini  -- 查看配置信息
+
+---达梦 cursor sample --------------
+create table T1 ( sex varchar2 ( 10 ), name varchar2 ( 20 ));
+
+insert into t1 values ( ' 男 ' , ' 小刘 ' );
+insert into t1 values ( ' 女 ' , ' 小陈 ' );
+insert into t1 values ( ' 女 ' , ' 晓燕 ' );
+insert into t1 values ( ' 女 ' , ' 小红 ' );
+commit ;
+
+select * from t1 ;
+
+DECLARE
+
+  CURSOR c_t1_cursor is select sex , name from t1 where sex= ' 女 ' ;
+
+ v_sex  t1 . sex %type ;
+
+ v_name t1 . name %type ;
+
+begin
+
+  open c_t1_cursor ;
+
+  loop
+
+  fetch c_t1_cursor into v_sex , v_name ;
+
+  exit when c_t1_cursor%notfound ;
+
+  print ( v_name|| ' is ' ||v_sex );
+
+  end loop ;
+--------------------------------------------------
+
+
+
