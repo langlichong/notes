@@ -1,5 +1,34 @@
+-----------------达梦递归---------------
 
+现象描述
+现在遇到应用里面有个递归查询的sql ，原来在pg 里面的写法是
 
+with t ( c_id , c_name , n_level , level ) as (
+
+select c_id , c_name , n_level , 1 as level from t_test_1 where c_pid is null
+
+union
+
+select c . c_id , c . c_name , c . n_level , level +1 from t join t_test_1 c on c . c_pid=t . c_id and t . level = level
+
+)
+
+select * from t ;
+
+可是DM7 不支持这种写法，但是Oracle 和pg 都支持。
+
+处理方法
+这种with 语句很难理解，但是dm7 有更好的写法
+
+select c . c_id , c . c_name , c . n_level , level
+
+from    t_test_1 c
+
+start with c_pid is null
+
+connect by prior c . c_id = c . c_pid ;
+
+---------------------------
 要注意和字符串截断报错问题的区别 字符串截断，只是纯粹的精度不够，如varchar(400), 是可以放400 个字节的字符串，我们让它要放入401 个，就会报错字符串截断。
 字符串截断和数据溢出，是一个类型的错误，数据溢出就是非字符串类型，精度不足。
 
@@ -173,5 +202,26 @@ begin
 
 查看所有同义词：select * from dba_synonyms;
 ----------------------------------------------------
+在使用DMINIT初始化数据库的时候，我们有以下这两个跟字符集有关的参数，UNICODE_FLAG和LENGTH_IN_CHAR。
 
+UNICODE_FALG ： 此参数表示了数据库中所有数据的字符集，包括数据字典的字符集。需要注意的是，数据库一旦初始化完成，字符集就将无法修改。
+我们可以使用select unicode来查询当前数据库的字符集种类，0代表gb18030,1代表UTF-8。
+
+LENGTH_IN_CHAR ： 此参数决定了，数据库中的VARCHAR类型对象的长度是否以字符为单位。取值为1则设置为以字符为单位，将存储长度值按照理论字符长度进行放大。
+取值为0则所有 VARCHAR 类型对象的长度以字节为单位
+------------------------------------------------
+现象描述
+一个表2GB ，数据量1kw ，导入的时候，为什么要将近2h ？
+这里只是针对一个一般疑惑，来协助大家认识达梦数据库使用下，dimp 的一个参数，能够帮助大家把2h 导入，在5min 内完成。
+处理方法
+Dimp 导入时，加上参数 FAST_LOAD=Y
+数据比对：
+
+在不加 fast_load=y 时，导入是普通模式，dmserver 的io 速度在 2-3 MBps
+
+在加上fast_load=y 时，导入为快速加载，dmserver 的io 速度在 90-120MBps
+-----------------------------
+Linux 环境下达梦数据库进程发生异常而挂掉，通常很难查找原因，但是一般Linux内核给我们提供的核心文件，记录了数据库在崩溃时候的信息。但是生成core文件需要设置开关,以下我讲述了两种处理办法。
+ulimit -a   说明：第一行core文件大小为0，没有开启
+--------------
 
