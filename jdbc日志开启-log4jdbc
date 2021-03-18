@@ -1,0 +1,63 @@
+Spring Data JPA 默认采用 Hibernate 实现。Hibernate 的 showSql 配置只打印 SQL，但并不打印 SQL 参数、执行时间等信息，
+如果需要这些信息，可以使用第三方工具 log4jdbc 来完成。log4jdbc 是在 jdbc 层的一个日志框架，可以将占位符与参数全部合并在一起显示，
+方便直接拷贝 sql 到 PLSQL Developer 等客户端直接执行，加快调试速度。
+
+-----------
+二、整合 log4jdbc
+
+2.1 添加依赖
+
+复制代码
+<!-- log4jdbc -->
+<dependency>
+    <groupId>com.googlecode.log4jdbc</groupId>
+    <artifactId>log4jdbc</artifactId>
+    <version>1.2</version>
+    <scope>runtime</scope>
+</dependency>
+复制代码
+2.2 修改数据源配置
+
+找到我们的数据源配置文件，比如 appliaction.properties，修改 driver 驱动和 url 数据源地址，如下：
+
+复制代码
+# 修改前
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/springboot?useUnicode=true&characterEncoding=UTF-8
+
+# 修改后
+spring.datasource.driver-class-name=net.sf.log4jdbc.DriverSpy
+spring.datasource.url=jdbc:log4jdbc:mysql://localhost:3306/springboot?useUnicode=true&characterEncoding=UTF-8
+复制代码
+2.3 修改日志配置文件
+
+如果日志采用的是 logback，则添加以下配置，可按照实际需要修改对应条目的日志等级 level：
+
+复制代码
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="jdbc.connection" additivity="false" level="FATAL">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+    <logger name="jdbc.resultset" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+    <logger name="jdbc.audit" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+    <logger name="jdbc.sqlonly" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+    <logger name="jdbc.sqltiming" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+</configuration>
+复制代码
+
+-----------
