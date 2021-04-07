@@ -1,0 +1,99 @@
+知识点
+Java IO:
+    BIO: blocking IO   , NIO: Non-blocking IO , AIO: Async IO 
+    本质：三者本质都是讲某个线程发起系统调用时候，该线程的IO所处的一种状态或者是处理逻辑
+    BIO: 线程发起系统调用，如read操作，内核发起请求并准备数据，当内核数据未贮备好时候，该线程就处于一种干等（死等）状态。
+    NIO: 线程发起请求后，在内核还未将数据复制到用户空间时候，线程要不断来询问数据是否准备好，类似轮训，直到数据可用。
+    多路复用IO: 有poll，epoll，select等方式，该方式下，一个线程可以处理多个网络请求IO,不同于NIO是，NIO中轮询是用户线程发起的，而多路复用是调用操作系统的select、epoll等方式。
+    AIO: 线程发起请求后即可去干其他事，等待操作系统内核准备好数据后通知应用程序。 java 1.7 才引入。
+        Java中可通过以下两种方式实现：
+            一种是基于”回调”，我们可以实现CompletionHandler接口，在调用时把回调函数传递给对应的API即可。
+            一种是返回一个Future。处理完别的事情，可以通过isDone()可查看是否已经准备好数据，通过get()方法等待返回数据。
+
+spring框架是如何跟servlet容器连接起来的：请求是如何从spring传递到tomcat，又是如何从tomcat流出来的？
+  org/apache/catalina/startup/Authenticators.properties
+
+spring事务方法嵌套：同一个表等待锁问题，表的锁的粒度-- count（*） 锁表？ select  ?  update .. where id = ?
+
+Servlet异步化:
+    （>=3.0），AsyncContext , tomcat线程池  javax.servlet.ServletRequest#startAsync()
+    DeferredResult 与 异步 CountDownLatch/Phaser ，CountDownLatch需要耦合到代码中，CompletableFuture.allOf，
+    CompletableFuture独立使用需要依赖我们自己的线程池   Fork/Join：ForkJoinTask 和 ForkJoinPool。
+    java.util.concurrent.locks.LockSupport#parkjavax.servlet.ServletRequest#startAsync()
+org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
+索引：  cluster index non-cluster-index 区别？
+并发：Executors VS ThreadPoolExecutor ， ScheduledThreadPoolExecutor 与 @Schedule 关系 @Scheduled是在容器初始化完毕之后，才开始丢给Java的框架去执行的
+web 大文件上传：断点续传 or other ?
+
+用户文件空间限制？？
+BeanPostProcessor？？
+graphql 重构？
+ReentrantLock
+AnnotationAwareAspectJAutoProxyCreator？
+针对bean的生命周期，我们究竟能做哪些工作？
+AopContext使用场景
+CopyOnWriteArrayList和CopyOnWriteArraySet
+select page(); 页大小影响？？？
+将表的【启用超长记录】打开？？？
+多线程中事务控制 ？
+    springboot 编程式事务 ？TransactionTemplate
+    PreparedStatement 下事务控制？
+    JDBCTemplate事务控制？
+    suspends and resumes transactions？？
+    TransactionCallbackWithoutResult ？
+    DefaultTransactionDefinition？
+    长事务 超时
+    异步任务与事务
+    多线程与事务： threadlocal 与事务关系 Thread local value set by one thread cannot be accessed by another thread  InheritableThreadLocal
+    TransactionInterceptor & DataSourceTransactionManager
+    TransactionSynchronizationManager 
+ServletRequestUtils、DataSourceUtils、TransactionSynchronizationManager
+
+spring可以支持Callable.class,WebAsyncTask.class,DeferredResult.class,ListenableFuture.class,CompletionStage.class这5种类型的异步，
+    当返回值解析器收到这5种类型后，就会开启request的异步，前两者直接通过我们提供的线程池去执行，不提供有一个simple的。后三种得我们自己执行业务。
+    执行完毕后都会有一个DeferredResult接受我们处理的结果，这5种方式的结果最终都会被保存在WebAsyncManager中，且WebAsyncManager是和request绑定，
+    每个request都会有一个自己的WebAsyncManager。结果保存后，就会调用asyncContext.dispatch();重新派发一次请求，将WebAsyncManager中的结果返回给浏览器。
+***WebAsyncManager****
+    org.springframework.web.context.request.AsyncWebRequestInterceptor
+    
+ConcurrentModifiedException 原因分析
+Springboot Conditional注解使用：根据数据源类型动态注入相关类（达梦与MySQL，策略模式）
+如何理解IT中的suspend(挂起)？？？
+
+请求负载形式：
+    post 请求：Requestpayload 与 form-data
+
+spring 参数绑定原理(自定义参数解析注解)
+    @RequestParam RequestParamMethodArgumentResolver
+    @RequestBody的解析器为PathVariableMethodArgumentResolver
+    WebMvcConfigurer
+    org.springframework.core.convert.ConversionService
+    HandlerAdapter配置的HttpMessageConverters来解析HttpEntity中的数据
+
+工作流：
+    Activiti Cloud、Activiti Core
+    https://bpmn.io/
+    Activiti Modeler: add-on compoment to core
+    The Activiti Modeler is an add-on component to the core Activiti framework and has to be deployed via a separate installation script
+    Multiple-task-instance
+
+    org.activiti.engine.TaskService#claim
+    候选用户candidateUser和候选组candidateGroup
+    通过claim设置办理人(签收 )
+    Activiti实现会签是基于多实例任务，将节点设置成多实例，主要通过在UserTask节点的属性上配置
+    为了更好的实现会签可以结合监听功能处理，非必选项
+
+    API:
+    TaskRuntime  ProcessRuntime 
+    TaskPayloadBuilder etc.
+    TaskRuntimeEventListener
+
+    Best Practise:  see its comment tips , org.activiti.engine.api.internal.Internal
+Arch-linux:
+    lsblk ， networkctl , ip link , 
+    systemd机制下：网络，防火墙，本地域名及其他基础配置，配置文件默认位置及语法。
+    systemd-networkd控制网络（linux下有哪些出名的网络管理器或服务组件）
+    Systemd.unit: service,socket,mount,dev
+    unit借鉴了windows的ini 配置文件语法
+    ini: 配置文件(keys, sections,comments),如，mysql配置文件
+    https://wiki.archlinux.org/index.php/Systemd-networkd#Wired_adapter_using_a_static_IP
