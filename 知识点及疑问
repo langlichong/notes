@@ -25,6 +25,8 @@ org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
 并发：Executors VS ThreadPoolExecutor ， ScheduledThreadPoolExecutor 与 @Schedule 关系 @Scheduled是在容器初始化完毕之后，才开始丢给Java的框架去执行的
 web 大文件上传：断点续传 or other ?
 
+Tomcat 与 Spring转承启合：发起http请求后tomcat转发请求到我们的DispatcherServlet的全过程？？？
+
 用户文件空间限制？？
 BeanPostProcessor？？
 graphql 重构？
