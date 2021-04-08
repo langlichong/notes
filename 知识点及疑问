@@ -26,7 +26,15 @@ org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
 web 大文件上传：断点续传 or other ?
 
 Tomcat 与 Spring转承启合：发起http请求后tomcat转发请求到我们的DispatcherServlet的全过程？？？
-
+    Tomcat Connector,NioEndpoint等
+    org.apache.catalina.core.ApplicationFilterChain#internalDoFilter
+    主要流程是
+    1、根据配置信息启动了一个ServerSocket
+    2、启动了多个Poller线程类来接受请求
+    3、接受到http请求后扔给SocketProcessorBase线程来处理
+    4、SocketProcessorBase执行后最终把请求扔到了DispatcherServlet的doService方法处理
+    5、doService基于spring mvc调用Controller请求并且返回数据给浏览器渲染
+    
 用户文件空间限制？？
 BeanPostProcessor？？
 graphql 重构？
