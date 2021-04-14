@@ -107,3 +107,15 @@ Arch-linux:
     unit借鉴了windows的ini 配置文件语法
     ini: 配置文件(keys, sections,comments),如，mysql配置文件
     https://wiki.archlinux.org/index.php/Systemd-networkd#Wired_adapter_using_a_static_IP
+-----java 并发-----------------
+--线程池--------https://segmentfault.com/a/1190000019922506?utm_source=sf-similar-article
+   核心参数：corePollSize,maxPoolSize,keepAliveTime,BlockingQueue,ThreadFactory,RejectedExecutionHandler-饱和策略
+ThreadPoolTaskExecutor 其他知识点汇总(待补充)
+线程池中的所有线程超过了空闲时间都会被销毁么？
+如果allowCoreThreadTimeOut为true，超过了空闲时间的所有线程都会被回收，不过这个值默认是false，系统会保留核心线程，其他的会被回收
+
+空闲线程是如何被销毁的？
+所有运行的工作线程会尝试从队列中获取任务去执行，超过一定时间（keepAliveTime）还没有拿到任务，自己主动退出
+
+核心线程在线程池创建的时候会初始化好么？
+默认情况下，核心线程不会进行初始化，在刚开始调用线程池执行任务的时候，传入一个任务会创建一个线程，直到达到核心线程数。不过可以在创建线程池之后，调用其prestartAllCoreThreads提前将核心线程创建好。
