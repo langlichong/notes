@@ -119,3 +119,9 @@ ThreadPoolTaskExecutor 其他知识点汇总(待补充)
 
 核心线程在线程池创建的时候会初始化好么？
 默认情况下，核心线程不会进行初始化，在刚开始调用线程池执行任务的时候，传入一个任务会创建一个线程，直到达到核心线程数。不过可以在创建线程池之后，调用其prestartAllCoreThreads提前将核心线程创建好。
+
+--------数据库-----------------
+InnoDB tables arrange your data on disk to optimize queries based on primary keys. 
+Each InnoDB table has a primary key index called the clustered index that organizes the data to minimize I/O for primary key lookups
+
+---------------------------------------------------------------------
