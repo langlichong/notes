@@ -183,5 +183,12 @@ Zuul1 设计比较简单，代码不多也比较容易读懂，它本质上就�
         前端用 Netty Server 代替 Servlet，目的是支持前端异步。后端用 Netty Client 代替 Http Client，目的是支持后端异步。
         过滤器换了一下名字，用 Inbound Filters 代替 Pre-routing Filters，用 Endpoint Filter 代替 Routing Filter，用 Outbound Filters 代替 Post-routing Filters。
 
-
+基于上述分析，我的建议是在生产环境中继续使用 Zuul1，原因如下：
+    Zuul1 同步编程模型简单，门槛低，开发运维方便，容易调试定位问题。Zuul2 门槛高，调试不方便。
+    Zuul1 监控埋点容易，比如和调用链监控工具 CAT 集成，如果你用 Zuul2 的话，CAT 不好埋点是个问题。
+    Zuul1 已经开源超过 6 年，稳定成熟，坑已经被踩平。Zuul2 刚开源很新，实际落地案例不多，难说有 bug 需要踩坑。
+    大部分公司达不到 Netflix 那个量级，Netflix 是要应对每日千亿级流量，它们才挖空心思搞异步，一般公司亿级可能都不到，Zuul1 绰绰有余。
+    Zuul1 可以集成 Hystrix 熔断组件，可以部分解决后台服务慢阻塞网关线程的问题。
+    Zuul1 可以使用 Servlet 3.0 规范支持的 AsyncServlet 进行优化，可以实现前端异步，支持更多的连接数，达到和 Zuul2 一样的效果，但是不用引入太多异步复杂性。
+     在《微服务架构实战 160 讲》视频课程中，有我关于讲解 Zuul1 如何使用 AsyncServlet 优化连接数的内容。
 
