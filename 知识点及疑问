@@ -196,4 +196,20 @@ Zuul1 设计比较简单，代码不多也比较容易读懂，它本质上就�
     同步异步各有利弊，同步多线程编程模型简单，但会有线程开销和阻塞问题，异步非阻塞模式线程少并发高，但是编程模型变得复杂。
     架构师做技术选型需要严谨务实，具备批判性思维 (Critical Thinking)，即使是对于一线大公司推出的开源产品，也要批判性看待，不可盲目追新。
     个人建议生产环境继续使用 Zuul1，同步阻塞模式的一些不足，可以使用熔断组件 Hystrix 和 AsyncServlet 等技术进行优化。
-
+---------------------
+vagrant docker Vert.x  Nutz  quarkus JFinal  GraalVM   Truffle框架
+配置管理工具：puppet ansible chef cfEngine
+zuul1.0 Stress Test Vs Spring gateway Vs zuul2.0
+分布式跟踪系统 或 全链路压测（即链路打标）
+ AsyncServlet 进行优化zuul 1.x 连接数
+zuul生产调优
+Zuul1 监控埋点
+CAT 调用链
+http://bigbully.github.io/Dapper-translation/
+B树、B+树、索引
+B树物理存储结构，只有叶子节点存储数据？
+磁盘预读机制
+AtomicStampedReference
+ThreadPoolExecutor： 线程池的各个参数的含义及配合作用
+Callable Vs Runnable
+----------------------------------------------
