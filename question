@@ -1,0 +1,42 @@
+python:
+  1、UI自动化写写自动化脚本
+  2、用mitmproxy抓包分析数据
+  3、用django和drf搭建一个测试平台
+  4、利用PyQt5画一个简单的界面
+  5、无聊时爬取过某民宿短租平台的数据进行数据分析
+  6、利用wox或Alfred提升工作效率；
+  7、钉钉机器人二次开发
+  
+ 多数据源-多类型数据库SQL兼容性：
+   使用不同类型数据库，如MySQL ,达梦，部分功能使用原生SQL实现（未面向JPA等ORM）,在合并功能代码（myql分支与国产分支通用功能同步）代码时如何更有效合并？
+   resolution: a、针对n个数据库类型，编写不同的方法，系统设置不同控制变量来调用  b、统一一个方法，动态根据不同数据源类型，反射调用
+
+Eureka与AWS的发展关系？非AWS环境不推荐使用Eureka?(why not and what else is recommend) , production环境注册中心或者服务发现组件的选择因子有哪些，实际如何决策?? 
+
+注册中心HA问题？
+
+GraalVM   ？？
+
+zuul1.0 Stress Test Vs Spring gateway Vs zuul2.0 ？ 如何使用异步servlet优化zuul 1.x的吞吐问题？？ AsyncServlet 进行优化zuul 1.x 连接数？ zuul 1.x 生成调优
+
+实际项目中分支管理的Best Practise: hot fix ,deployment branch ,tag etc.
+
+GCRoot？？ how to define
+http://bigbully.github.io/Dapper-translation/
+B树、B+树、索引
+B树物理存储结构，只有叶子节点存储数据？
+磁盘预读机制
+AtomicStampedReference
+ThreadPoolExecutor： 线程池的各个参数的含义及配合作用
+Callable Vs Runnable
+一是事件驱动机制、二是链式调用。前者被如 Vert.x 所使用，后者被 CompletableFuture、反应式编程等技术采用
+OpenID Connect
+https://github.com/kawhii/sso
+https://space.bilibili.com/50003725/video
+oauth/check_token --@EnableResourceServer
+ two-factor authentication (2FA)
+服务器、服务、第三方（应用）、用户代理、代理授权
+OAuth历史 RFC5849 、RFC6749-oauth2
+
+分布式跟踪系统 或 全链路压测（即链路打标）
+
