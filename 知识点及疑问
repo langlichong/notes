@@ -213,3 +213,21 @@ AtomicStampedReference
 ThreadPoolExecutor： 线程池的各个参数的含义及配合作用
 Callable Vs Runnable
 ----------------------------------------------
+分布式：CAP ,对于分布式而言分区容错一定是存在的，则P一定成立，而如果要求C,则在进行多节点数据同步或者写请求完成前，服务是不可用的,反之同理，所以C与A是不能同时满足的。
+
+------------------------
+systemd: 
+   systemctl --version systemctl  systemd-analyze
+   hostnamectl、localectl 、timedatectl 、loginctl
+
+$ systemctl show httpd.service 显示某个 Unit 的所有底层参数
+
+systemctl cat命令可以查看配置文件的内容
+查看当前系统的所有 Target 
+target 与 unit关系
+Systemd 统一管理所有 Unit 的启动日志。带来的好处就是，可以只用journalctl一个命令
+systemd 的 timer 单元
+
+用户的实践去打磨设计（产品）
+
+------------------------------
