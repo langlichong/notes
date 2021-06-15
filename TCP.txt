@@ -1,0 +1,21 @@
+
+为什么握手是三次，挥手要四次，挥手变成三次可以吗
+为什么 SYN/FIN 不包含数据却要消耗一个序列号
+如何用脚本复现同时关闭
+TCP 的十一种状态如何模拟以及如何互相转换
+半连接、全连接队列是什么，backlog 参数有什么作用
+快速打开的原理是什么
+TCP SYN Flood 攻击背后的原理
+TCP 最不好理解的 TIME_WAIT 状态是什么
+SO_REUSEADDR、SO_LINGER 选项对网络编程有什么影响
+TCP 有 7 个定时器是哪些，分别在什么条件下起作用
+发送窗口、接收窗口、拥塞窗口的区别是什么
+流量控制、滑动窗口、拥塞控制、快重传、慢启动等概念
+keepalive 机制
+Nagle 算法、延迟确认的相爱相杀
+网络学习相关的工具介绍：telnet、nc、tcpdump、wireshark、lsof、iptables、scapy 等
+协议栈测试工具 packetdrill 的使用
+RST 复位攻击是什么，如何杀掉一条 TCP 连接
+什么是 TCP 的自连接
+TCP 临时端口号的分配算法是什么
+TCP 自连接
