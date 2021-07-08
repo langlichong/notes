@@ -1,0 +1,9 @@
+Unsafe是用于在实质上扩展Java语言表达能力、便于在更高层（Java层）代码里实现原本要在更低层（C层）实现的核心库功能用的。
+这些功能包括裸内存的申请/释放/访问，低层硬件的atomic/volatile支持，创建未初始化对象等。它原本的设计就只应该被标准库使用.
+Unsafe是位于sun.misc下的一个类，在Java底层用的比较多，它让Java拥有了类似C语言一样直接操作内存空间的能力.
+
+Docker：容器=镜像+读写层  分层镜像，采用联合挂载在最上层添加一个read/write层，其他层只读.
+Springboot: 开启Gzip后，chrome端可以看到content-download时间明显下降。
+dataV： 大屏展示
+
+
