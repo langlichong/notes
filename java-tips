@@ -6,4 +6,8 @@ Docker：容器=镜像+读写层  分层镜像，采用联合挂载在最上层�
 Springboot: 开启Gzip后，chrome端可以看到content-download时间明显下降。
 dataV： 大屏展示
 
-
+如何将一个Bean塞进Spring容器中：？？
+  需要通过代理的方式给接口生成对应的实现类。接下来再通过把代理类放到 Spring 的 FactoryBean 的实现中，最后再把这个 FactoryBean 实现类注册到 Spring 容器。
+  那么现在你的代理类就已经被注册到 Spring 容器了，接下来就可以通过注解的方式注入到属性中。
+  注册FactoryBean（为啥不直接注册代理类呢？？，注册时候使用哪些类？？）
+  关键类：Proxy,InvocationHandler,FactoryBean,GenericBeanDefinition,BeanDefinitionHolder ,BeanDefinitionReaderUtils.
