@@ -11,3 +11,6 @@ dataV： 大屏展示
   那么现在你的代理类就已经被注册到 Spring 容器了，接下来就可以通过注解的方式注入到属性中。
   注册FactoryBean（为啥不直接注册代理类呢？？，注册时候使用哪些类？？）
   关键类：Proxy,InvocationHandler,FactoryBean,GenericBeanDefinition,BeanDefinitionHolder ,BeanDefinitionReaderUtils.
+  
+使用Spring Event优化某些场景的通知问题：注意spring event本身是同步的（分发事件，然后接着就开始执行事件监听函数的逻辑，最后从事件分发函数结束，监听函数是同步执行，@Async）
+  主要的类：ApplicationEvent,@Async , @EventListener(RefreshRoleResourceCacheEvent.class),@EnableAsync
