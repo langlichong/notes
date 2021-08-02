@@ -1,0 +1,20 @@
+指针：is a variable that its value is a memory address of another variable.
+1、声明： Type *variable-name 
+2、demo：
+	int *ip ;  // point to integer number 
+	float *fp ; // point to float number 
+3、使用步骤：
+	a、define a pointer variable 
+	b、assign the address of a variable to a pointer 
+	c、access the value at the address:  *pointer-variable-name （使用*单目运算符号）
+4、NULL pointer:
+	In most of the operating systems, programs are not permitted to access memory at address 0 because that memory is reserved by the operating system. However, the memory address 0 has special significance; it signals that the pointer is not intended to point to an accessible memory location. But by convention, if a pointer contains the null (zero) value, it is assumed to point to nothing.
+	
+5、指针其他
+	a、指针运算：++ ， --，+ ，- 
+	b、Array of pointers: define arrays to hold a number of pointers 
+	c、Pointer to pointer: 
+	d、Pass pointers to a function in C : 
+		Passing an argument by reference or by address enable the passed argument 
+		to be changed in the calling function by the called function.
+	e、return pointer from function in C .
