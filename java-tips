@@ -14,3 +14,15 @@ dataV： 大屏展示
   
 使用Spring Event优化某些场景的通知问题：注意spring event本身是同步的（分发事件，然后接着就开始执行事件监听函数的逻辑，最后从事件分发函数结束，监听函数是同步执行，@Async）
   主要的类：ApplicationEvent,@Async , @EventListener(RefreshRoleResourceCacheEvent.class),@EnableAsync
+
+SmartLifecycle：
+  通常会用@PostConstruct和@PreDestroy在Bean初始化或销毁时执行一些操作，这些操作属于Bean声明周期级别的，
+  存在一些遗漏的场景，比如我们想在容器本身的生命周期（比如容器启动、停止）的事件上做一些工作，很典型的就是Spring Boot中启动内嵌的Web容器。该怎么办？
+  Lifecycle是一个接口，它的作用是让开发者可以在所有的bean都创建完成(getBean)之后执行自己的初始化工作，或者在退出时执行资源销毁工作。
+  在SpringBoot或Spring应用中如果没有调用AbstractApplicationContext#start方法，只是实现了Lifecycle接口，
+  是不会执行Lifecycle接口中的启动方法和isRunning方法的。但在应用退出时会执行Lifecycle#isRunning方法判断该Lifecycle是否已经启动，如果返回true则调用Lifecycle#stop()停止方法。
+  而在一般的项目中，我们很少这样显式的去调用，所以就需要一个更“聪明”的类来处理，这就是SmartLifecycle。
+
+Redis Keyspace Notifications： key通知实现定时任务，Redis的延迟队列基于有序集合，score为执行时间戳，value为任务实体或任务实体引用
+
+javax.validation.groups  &  Validation 参数校验
