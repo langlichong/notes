@@ -25,4 +25,6 @@ SmartLifecycle：
 
 Redis Keyspace Notifications： key通知实现定时任务，Redis的延迟队列基于有序集合，score为执行时间戳，value为任务实体或任务实体引用
 
+Spring Security默认过滤器链： org.springframework.security.config.annotation.web.builders.FilterComparator，参考https://www.felord.cn/spring-security-filters.html
+
 javax.validation.groups  &  Validation 参数校验
