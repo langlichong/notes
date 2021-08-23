@@ -30,3 +30,8 @@ Redis Keyspace Notifications： key通知实现定时任务，Redis的延迟队�
 Spring Security默认过滤器链： org.springframework.security.config.annotation.web.builders.FilterComparator，参考https://www.felord.cn/spring-security-filters.html
 
 javax.validation.groups  &  Validation 参数校验
+
+事件驱动，这种方法的优点是比较容易理解，可以绑定多个事件，每个事件可以指定多个回调函数，而且可以“去耦合”（decoupling），有利于实现模块化。
+缺点是整个程序都要变成事件驱动型，运行流程会变得很不清晰。阅读代码的时候，很难看出主流程。
+
+
