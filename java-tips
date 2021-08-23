@@ -43,6 +43,7 @@ spring中编程式事务管理：TransactionTemplate（提供了回调方法exec
   ...
   connection.rollback(savePoint);
   ** spring中的事务传播中的嵌套事务就是savepoints的利用。
+  transaction management simply means: How does Spring start, commit or rollback JDBC transactions。？？？？
 --------------------------------------------
 
 https://www.testcontainers.org/：  数据库集成测试
