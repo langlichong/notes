@@ -24,6 +24,7 @@ SmartLifecycle：
   而在一般的项目中，我们很少这样显式的去调用，所以就需要一个更“聪明”的类来处理，这就是SmartLifecycle。
   
 spring中编程式事务管理：TransactionTemplate（提供了回调方法execute , 需注入PlatformTransactionManager--springboot已自动注入）
+  https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch10s06.html
 
 https://www.testcontainers.org/：  数据库集成测试
 
