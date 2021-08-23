@@ -23,7 +23,9 @@ SmartLifecycle：
   是不会执行Lifecycle接口中的启动方法和isRunning方法的。但在应用退出时会执行Lifecycle#isRunning方法判断该Lifecycle是否已经启动，如果返回true则调用Lifecycle#stop()停止方法。
   而在一般的项目中，我们很少这样显式的去调用，所以就需要一个更“聪明”的类来处理，这就是SmartLifecycle。
   
-spring中编程式事务管理：TransactionTemplate（提供了回调方式）
+spring中编程式事务管理：TransactionTemplate（提供了回调方法execute , 需注入PlatformTransactionManager--springboot已自动注入）
+
+https://www.testcontainers.org/：  数据库集成测试
 
 Redis Keyspace Notifications： key通知实现定时任务，Redis的延迟队列基于有序集合，score为执行时间戳，value为任务实体或任务实体引用
 
