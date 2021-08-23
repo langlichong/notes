@@ -61,6 +61,17 @@ spring中编程式事务管理：TransactionTemplate（提供了回调方法exec
         session.close();
     }
 }
+
+@Service
+public class UserService {
+    @Autowired
+    private SessionFactory sessionFactory; // (1)
+    @Transactional
+    public void registerUser(User user) {
+        sessionFactory.getCurrentSession().save(user); // (2)
+    }
+}
+DataSourcePlatformTransactionManager ，HibernateTransactionManager ，JpaTransactionManager
 --------------------------------------------
 
 https://www.testcontainers.org/：  数据库集成测试
