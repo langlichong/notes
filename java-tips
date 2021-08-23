@@ -25,6 +25,25 @@ SmartLifecycle：
   
 spring中编程式事务管理：TransactionTemplate（提供了回调方法execute , 需注入PlatformTransactionManager--springboot已自动注入）
   https://docs.spring.io/spring-framework/docs/3.0.0.M4/reference/html/ch10s06.html
+  import java.sql.Connection;
+  Connection connection = dataSource.getConnection(); // (1)
+  try (connection) {
+      connection.setAutoCommit(false); // (2)
+      // execute some SQL statements...
+      connection.commit(); // (3)
+  } catch (SQLException e) {
+      connection.rollback(); // (4)
+  }
+  
+  import java.sql.Connection;
+  // isolation=TransactionDefinition.ISOLATION_READ_UNCOMMITTED
+  connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED); // (1)
+  // propagation=TransactionDefinition.NESTED
+  Savepoint savePoint = connection.setSavepoint(); // (2)
+  ...
+  connection.rollback(savePoint);
+  ** spring中的事务传播中的嵌套事务就是savepoints的利用。
+--------------------------------------------
 
 https://www.testcontainers.org/：  数据库集成测试
 
