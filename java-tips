@@ -82,6 +82,9 @@ How to configure Spring Security: WebSecurityConfigurerAdapter??
 1. Is annotated with @EnableWebSecurity.
 2. Extends WebSecurityConfigurer, which basically offers you a configuration DSL/methods. With those methods, 
     you can specify what URIs in your application to protect or what exploit protections to enable/disable.
+    
+?????How to use Spring Security’s configure DSL????
+    https://www.marcobehler.com/guides/spring-security#security-examples
 ----------------------------------------
 
 https://www.testcontainers.org/：  数据库集成测试
