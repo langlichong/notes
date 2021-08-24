@@ -73,6 +73,16 @@ public class UserService {
 }
 DataSourcePlatformTransactionManager ，HibernateTransactionManager ，JpaTransactionManager
 --------------------------------------------
+Spring Security
+FilterChain: servlet容器提供，里面有一个list存储一堆filter
+SecurityFilterChain： 其默认实现是一个DefaultSecurityFilterChain（其里面默认有15个Filter，执行顺序按list顺序）
+how to add a customer filter before securityfilter or add a filter to security's filterchain???
+-- HttpSecurity.addFilterBefore(...)
+How to configure Spring Security: WebSecurityConfigurerAdapter??
+1. Is annotated with @EnableWebSecurity.
+2. Extends WebSecurityConfigurer, which basically offers you a configuration DSL/methods. With those methods, 
+    you can specify what URIs in your application to protect or what exploit protections to enable/disable.
+----------------------------------------
 
 https://www.testcontainers.org/：  数据库集成测试
 
