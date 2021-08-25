@@ -1,0 +1,11 @@
+---------------Git 找回丢失代码----------------------------------------
+A： 提交了 feature1 到 feature6 六个commit
+B：	git reset --hard feature1
+B:  git commit -m'feature7'
+
+Q: 如何恢复feature1...feature6同时保存feature7 
+Answer: git reflog  ,git cherry-pick 
+git reflog 会看到之前提交的feature1...feature7 所有记录，记录好feature6 与feature7 commit-id ，
+git reset  --hard  feature6-commit-id  -- 找回前六次所有代码，此时feature7丢失
+git cherry-pick feature7-commit-id  -- 找回feature7 代码
+-------------------------------------------------------------------------------------------
