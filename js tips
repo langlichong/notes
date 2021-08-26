@@ -2,3 +2,18 @@
 Js中存在三种数据结构：call stack , message queue（用户触发的点击、键盘事件或setTimeout等触发的任务） , ES6 Job Queue（处理Promise回调）
 
 优先级：先call stack , call stack为空时候执行message queue中
+
+优先级：先call stack , call stack为空时候执行message queue中
+
+Calling setTimeout(() => {}, 0) will execute the function at the end of next tick, 
+much later than when using nextTick() which prioritizes the call and executes it just before the beginning of the next tick.
+
+？？setImmediate() 与 setTimeout(() => {}, 0) (passing a 0ms timeout)与 process.nextTick() 区别？？
+A function passed to process.nextTick() is going to be executed on the current iteration of the event loop, 
+after the current operation ends. This means it will always execute before setTimeout and setImmediate.
+A setTimeout() callback with a 0ms delay is very similar to setImmediate(). The execution order will depend on various factors, 
+but they will be both run in the next iteration of the event loop.
+
+--Zero delay---
+If you specify the timeout delay to 0, the callback function will be executed as soon as possible, but after the current function execution。
+
