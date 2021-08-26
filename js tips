@@ -66,3 +66,45 @@ fetch('/todos.json')
   
 --------Promise.all([fun1,fun2,fun3...])  Promise.race-------------
 -------------------------------------------------------------------------------
+----async/await-------
+Async functions are a combination of promises and generators
+Promises were introduced to solve the famous callback hell problem, but they introduced complexity on their own, and syntax complexity.
+They make the code look like it's synchronous, but it's asynchronous and non-blocking behind the scenes.
+hen you want to call this function you prepend await, and the calling code will stop until the promise is resolved or rejected. 
+One caveat: the client function must be defined as async. 
+
+const doSomethingAsync = () => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve('I did something'), 3000)
+  })
+}
+
+const doSomething = async () => {
+  console.log(await doSomethingAsync())
+}
+--------任何函数前面添加async都会使得该函数返回一个Promise----------
+const aFunction = async () => {
+  return 'test'
+}
+aFunction().then(alert) // This will alert 'test'
+等同如下代码：
+const aFunction = () => {
+  return Promise.resolve('test')
+}
+aFunction().then(alert) // This will alert 'test'
+-------------------------------------------------------------------------------
+----EventEmitter -------
+const EventEmitter = require('events')
+const eventEmitter = new EventEmitter()
+eventEmitter.on('start', () => {
+  console.log('started')
+})
+eventEmitter.emit('start')
+-------------------------------------------
+---node module-------
+fs , path , os,events,http，buffer
+buffer: It represents a fixed-size chunk of memory (can't be resized) allocated outside of the V8 JavaScript engine.
+		You can think of a buffer like an array of integers, which each represent a byte of data
+------------------------module----------------
+module.exports 对象
+------------------------------------------------------
