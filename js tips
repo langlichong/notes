@@ -1,0 +1,4 @@
+----------------------事件循环-------------------
+Js中存在三种数据结构：call stack , message queue（用户触发的点击、键盘事件或setTimeout等触发的任务） , ES6 Job Queue（处理Promise回调）
+
+优先级：先call stack , call stack为空时候执行message queue中
