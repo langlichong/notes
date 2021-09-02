@@ -39,5 +39,9 @@ updateAfterMisfire方法：
     获取和调整misfireInstruction
     根据misfireInstruction进行相应的处理，主要是设置nextFireTime，以便让该miss的任务立即执行或者后面执行。
 
+misfire产生需要有2个前置条件，一个是job到达触发时间时没有被执行，二是被执行的延迟时间超过了Quartz配置的misfireThreshold阀值。
+如果延迟执行的时间小于阀值，则Quartz不认为发生了misfire，立即执行job；如果延迟执行的时间大于或者等于阀值，则被判断为misfire，然后会按照指定的策略来执行。
+这里从SimpleTrigger和CronTrigger两个维度来说明。注意：在不指定misfire策略的情况下，Quartz会使用默认的MISFIRE_INSTRUCTION_SMART_POLICY策略。
+————————————————
 
 ------------------------------------------------------------------------------
