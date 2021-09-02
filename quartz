@@ -6,3 +6,24 @@ Trigger – Instructs the scheduler about the time that the associated job shoul
 JobStore – An interface to be implemented by the classes that provide a storage mechanism for Jobs and Triggers.
 ThreadPool – A job to be executed is transferred to the pool of threads, represented by the ThreadPool.
 Worker Threads - Individual threads that build up the ThreadPool and execute jobs.
+
+Misfire策略：
+quartz.properties配置文件中含有一个属性是misfireThreshold（单位毫秒），用来指定调度引擎设置触发器超时的“临界值”。
+也就是说Quartz对于任务的超时是有容忍度的。只有超过这个容忍度才会判定为misfire。
+----------------------------------------------------Demo-----------------------
+#设置容忍度为12s
+org.quartz.jobStore.misfireThreshold = 12000
+Corn=[*/2 * * * * ?] 即每两秒循环一次
+jobDetail每次执行需要7s
+任务编号	预定运行时刻	实际运行时刻	延迟量（秒）
+1	17:54:00	17:54:00	0
+2	17:54:02	17:54:07	5
+3	17:54:04	17:54:14	10
+4	17:54:06	17:54:21	misfire
+
+从表中可以看到，每一次任务的延迟都是5s作用，该延迟量不断累积，并且与misfireThreshold比较，
+直到在17:54:21时发生了misfire，那么17:54:21第4次任务会不会执行呢，答案是不一定的，取决于配置(Misfire Instruction).
+
+不同类型Trigger misfire处理不同（该处理指的是在立即发现一次misfire后，是否要处理）。
+
+------------------------------------------------------------------------------
