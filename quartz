@@ -42,6 +42,11 @@ updateAfterMisfire方法：
 misfire产生需要有2个前置条件，一个是job到达触发时间时没有被执行，二是被执行的延迟时间超过了Quartz配置的misfireThreshold阀值。
 如果延迟执行的时间小于阀值，则Quartz不认为发生了misfire，立即执行job；如果延迟执行的时间大于或者等于阀值，则被判断为misfire，然后会按照指定的策略来执行。
 这里从SimpleTrigger和CronTrigger两个维度来说明。注意：在不指定misfire策略的情况下，Quartz会使用默认的MISFIRE_INSTRUCTION_SMART_POLICY策略。
-————————————————
+
+根据JavaDoc介绍和官网文档分析，其对应执行策略如下：
+MISFIRE_INSTRUCTION_FIRE_ONCE_NOW：立即执行一次，然后按照Cron定义时间点执行
+MISFIRE_INSTRUCTION_DO_NOTHING：什么都不做，等待Cron定义下次任务执行的时间点
+MISFIRE_INSTRUCTION_SMART_POLICY：智能的策略，针对不同的Trigger执行不同，CronTrigger时为MISFIRE_INSTRUCTION_FIRE_ONCE_NOW
+MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY：将所有错过的执行时间点全都补上，例如，任务15s执行一次，执行的任务错过了4分钟，则执行MisFire时，一次性执行4*(60/15)= 16次任务
 
 ------------------------------------------------------------------------------
