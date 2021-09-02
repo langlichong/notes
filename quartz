@@ -24,6 +24,12 @@ jobDetail每次执行需要7s
 从表中可以看到，每一次任务的延迟都是5s作用，该延迟量不断累积，并且与misfireThreshold比较，
 直到在17:54:21时发生了misfire，那么17:54:21第4次任务会不会执行呢，答案是不一定的，取决于配置(Misfire Instruction).
 
+misfired判断依据：status=waiting,next_fire_time < current_time-misfirethreshold(可配置，默认1分钟)
 不同类型Trigger misfire处理不同（该处理指的是在立即发现一次misfire后，是否要处理）。
+
+了处理 misfired job，Quartz 中为 trigger 定义了处理策略，主要有下面两种：
+MISFIRE_INSTRUCTION_FIRE_ONCE_NOW：针对 misfired job 马上执行一次；
+MISFIRE_INSTRUCTION_DO_NOTHING：忽略 misfired job，等待下次触发；默认
+
 
 ------------------------------------------------------------------------------
