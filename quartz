@@ -31,5 +31,13 @@ misfired判断依据：status=waiting,next_fire_time < current_time-misfirethres
 MISFIRE_INSTRUCTION_FIRE_ONCE_NOW：针对 misfired job 马上执行一次；
 MISFIRE_INSTRUCTION_DO_NOTHING：忽略 misfired job，等待下次触发；默认
 
+以jdbcjobstore为例，Quartz是有一个线程专门扫描和处理misfired的任务，可以看到其实Quartz起了一个单独的MisfireHandler线程来处理这些misfired job。
+它的逻辑很简单，就是找出misfired的trigger，然后尝试恢复他们:doUpdateOfMisfiredTrigger的逻辑其实蛮简单的，就是一个切面，前后通知triggerListener，
+主要委托给trigger本事的updateAfterMisfire方法。这是一个抽象方法，所有的trigger实现类都要实现这个方法。
+发现其实做的事情很简单，就是两件事情：
+updateAfterMisfire方法：
+    获取和调整misfireInstruction
+    根据misfireInstruction进行相应的处理，主要是设置nextFireTime，以便让该miss的任务立即执行或者后面执行。
+
 
 ------------------------------------------------------------------------------
