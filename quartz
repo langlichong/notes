@@ -1,0 +1,8 @@
+Scheduler Factory – The factory bean that is responsible for building the Scheduler model and wiring in all the dependent components, based on the contents of the quartz properties file.
+Scheduler – Maintains the JobDetail/Trigger registry. It is also responsible for executing the associated jobs when a trigger fires.
+Scheduler Thread – The thread responsible for performing the work of firing the triggers. It contacts the JobStore to get the next set of triggers to be fired.
+Job – An interface that must be implemented by the task to be executed.
+Trigger – Instructs the scheduler about the time that the associated job should be fired.
+JobStore – An interface to be implemented by the classes that provide a storage mechanism for Jobs and Triggers.
+ThreadPool – A job to be executed is transferred to the pool of threads, represented by the ThreadPool.
+Worker Threads - Individual threads that build up the ThreadPool and execute jobs.
