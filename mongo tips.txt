@@ -1,13 +1,13 @@
-1¡¢Çó×Ü¼ÇÂ¼Êı£¬°´SymmetrixId¡¢StorageGroupId ·Ö×é
+1ã€æ±‚æ€»è®°å½•æ•°ï¼ŒæŒ‰SymmetrixIdã€StorageGroupId åˆ†ç»„
 db.test.aggregate([{$unwind:"$PerfData"},{$group:{_id:["$SymmetrixId","$StorageGroupId"],total:{$sum:1}}}])
 
-2¡¢unwind¼Ó°´×ÓÎÄµµÅÅĞò
+2ã€unwindåŠ æŒ‰å­æ–‡æ¡£æ’åº
 db.test.aggregate([{$unwind:"$PerfData"},{$sort:{"PerfData.RESPONSE_TIME":1}}])
 
-3¡¢ÇóPerfDataÖĞRESPONSE_TIMEµÄ×î´óÖµ£º
+3ã€æ±‚PerfDataä¸­RESPONSE_TIMEçš„æœ€å¤§å€¼ï¼š
 db.test.aggregate([{$unwind:"$PerfData"},{$group:{_id:["$SymmetrixId","$StorageGroupId"],max:{$max:"$PerfData.RESPONSE_TIME"}}}])
 
-	java´úÂë£¨¶à¸ö·Ö×éÌõ¼ş£©£º
+	javaä»£ç ï¼ˆå¤šä¸ªåˆ†ç»„æ¡ä»¶ï¼‰ï¼š
 	BasicDBObject groupCond = new BasicDBObject().append("sn", "$sn").append("port", "$portNum");
 		portCol.aggregate(Arrays.asList(
 					Aggregates.group(groupCond, Arrays.asList(
@@ -25,14 +25,14 @@ db.test.aggregate([{$unwind:"$PerfData"},{$group:{_id:["$SymmetrixId","$StorageG
 				});
 
 
-4¡¢ÕıÔòÄ£ºı²éÑ¯
+4ã€æ­£åˆ™æ¨¡ç³ŠæŸ¥è¯¢
 	db.port_perf_col.find({"PortId":{$regex:/^0:0/}})
 
-5¡¢²éÑ¯°üº¬Ä³¸ökeyµÄdoc  £º db.port_perf_col.find({"PortId":{$exists:true}})
+5ã€æŸ¥è¯¢åŒ…å«æŸä¸ªkeyçš„doc  ï¼š db.port_perf_col.find({"PortId":{$exists:true}})
 
-6¡¢²éÑ¯keyÖµÎªnullµÄdoc :   db.port_perf_col.find({"ArraySn":{$type:"null"}})  // null ÀàĞÍµÄ±ğÃûÎª"null" ,¶ÔÓ¦µÄÊı×ÖÖµÎª 10
+6ã€æŸ¥è¯¢keyå€¼ä¸ºnullçš„doc :   db.port_perf_col.find({"ArraySn":{$type:"null"}})  // null ç±»å‹çš„åˆ«åä¸º"null" ,å¯¹åº”çš„æ•°å­—å€¼ä¸º 10
 
-7¡¢¶ÔÎÄµµÄÚ²¿µÄÊı×éÀàĞÍ²Ù×÷
+7ã€å¯¹æ–‡æ¡£å†…éƒ¨çš„æ•°ç»„ç±»å‹æ“ä½œ
     e.g.  
 	{
 		 _id: 1,
@@ -43,15 +43,15 @@ db.test.aggregate([{$unwind:"$PerfData"},{$group:{_id:["$SymmetrixId","$StorageG
 					  { name: "jeff", school: 108, age: 15 }
 				   ]
 	}
-	¶ÔstudentsÊı×é½øĞĞ²Ù×÷£º
+	å¯¹studentsæ•°ç»„è¿›è¡Œæ“ä½œï¼š
 	
-	·½Ê½a¡¢db.doc.find({zipcode:"63109",students.age:{$gte:11}})
-	·½Ê½b¡¢db.doc.find({zipcode:"63109"},{$element:{school: 102}})
+	æ–¹å¼aã€db.doc.find({zipcode:"63109",students.age:{$gte:11}})
+	æ–¹å¼bã€db.doc.find({zipcode:"63109"},{$element:{school: 102}})
 
-7¡¢$or
+7ã€$or
    db.getCollection('front_port_perf_col').find({$or:[{"PerfData.UTILIZATION":{$eq:13.5351}},{"PerfData.PercentBusy":{$eq:0.003036448}}]})
 
-8¡¢java mongo $or ²Ù×÷
+8ã€java mongo $or æ“ä½œ
 public void testOrMultiFields(){  
     DBObject queryCondition = new BasicDBObject();        
     //agender=female OR age<=23  
@@ -66,7 +66,7 @@ public void testOrMultiFields(){
     assertEquals("Jim", dbCursor.next().get("username"));  
 }  
 
-9¡¢$push ²úÉúÊı×é£¨ĞĞ×ªÁĞ£¬¾ÛºÏportidÎªÊı×éports£©£¨²âÊÔÎÄµµÈç 10ËùÁĞ£©
+9ã€$push äº§ç”Ÿæ•°ç»„ï¼ˆè¡Œè½¬åˆ—ï¼Œèšåˆportidä¸ºæ•°ç»„portsï¼‰ï¼ˆæµ‹è¯•æ–‡æ¡£å¦‚ 10æ‰€åˆ—ï¼‰
 
 	db.port_perf_col.aggregate([
 		{$sort:{"ArraySn":1,"PortId":1}},
@@ -75,9 +75,9 @@ public void testOrMultiFields(){
 	])
 
 
-10¡¢mapReduce 3parÊı¾İ
+10ã€mapReduce 3paræ•°æ®
 
-²âÊÔµ¥¸öÎÄµµÈçÏÂ£¨¶àÌõ£©£º
+æµ‹è¯•å•ä¸ªæ–‡æ¡£å¦‚ä¸‹ï¼ˆå¤šæ¡ï¼‰ï¼š
 {
     "_id" : ObjectId("57452af8189d5a94901544b9"),
     "IOPSRead" : "819",
@@ -107,7 +107,7 @@ var reduce = function(key,values){
     
 db.port_perf_col.mapReduce(map,reduce,{out:'res'})
 
-11¡¢¸üĞÂÎÄµµ£¨²éÕÒTimeStamp×Ö¶ÎÀàĞÍÎª×Ö·û´®µÄÎÄµµ£¬¶ÔÃ¿¸öÎÄµµTimeStamp+86400000 £¬ÔÚ´æ»ØÈ¥£©
+11ã€æ›´æ–°æ–‡æ¡£ï¼ˆæŸ¥æ‰¾TimeStampå­—æ®µç±»å‹ä¸ºå­—ç¬¦ä¸²çš„æ–‡æ¡£ï¼Œå¯¹æ¯ä¸ªæ–‡æ¡£TimeStamp+86400000 ï¼Œåœ¨å­˜å›å»ï¼‰
  db.port_perf_col.find({"TimeStamp":{$type:2}}).forEach(
     function(doc){
         doc.TimeStamp = (parseInt(doc.TimeStamp)+86400000)+"";
@@ -129,15 +129,15 @@ db.port_perf_col.mapReduce(map,reduce,{out:'res'})
     }
  );
 
-12¡¢mongoÊı¾İÀàĞÍ×¢ÒâÊÂÏî£º
+12ã€mongoæ•°æ®ç±»å‹æ³¨æ„äº‹é¡¹ï¼š
 
- Ò»°ãÔÚmongo shellÖĞ²åÈë£¨¸üĞÂµÈ£©ÊäÈëµÄÊÇjson¸ñÊ½µÄ£¬´ËÊ±ÈôÄ³¸ökeyµÄÖµÎªÊı×Ö(time:1234)£¬Ôò1234½øÈëmongoºóÊı¾İÀàĞÍÄ¬ÈÏÎªdouble£¬
- ÕâÊÇÒòÎªshellÖĞÊäÈëµÄjson£¬¶øjsonÖ»ÓĞnumberÀàĞÍ£¬²¢Ã»ÓĞÏ¸·Öint¡¢double¡¢longÖ®Àà£¬ËùÒÔÔÚ¸üĞÂ¡¢²åÈëÊ±ĞèÒªÖÆ¶¨ÀàĞÍ£¬·ñÔò¿ÉÄÜ¸ü¸ÄÔ­À´µÄÊı¾İÀàĞÍ£º
- // ½«time×Ö¶Î¼õÉÙ86400£¨inc¡ª¡ª¼õ·¨¿ÉÒÔÊ¹ÓÃ¼Ó·¨±äÍ¨£©
+ ä¸€èˆ¬åœ¨mongo shellä¸­æ’å…¥ï¼ˆæ›´æ–°ç­‰ï¼‰è¾“å…¥çš„æ˜¯jsonæ ¼å¼çš„ï¼Œæ­¤æ—¶è‹¥æŸä¸ªkeyçš„å€¼ä¸ºæ•°å­—(time:1234)ï¼Œåˆ™1234è¿›å…¥mongoåæ•°æ®ç±»å‹é»˜è®¤ä¸ºdoubleï¼Œ
+ è¿™æ˜¯å› ä¸ºshellä¸­è¾“å…¥çš„jsonï¼Œè€Œjsonåªæœ‰numberç±»å‹ï¼Œå¹¶æ²¡æœ‰ç»†åˆ†intã€doubleã€longä¹‹ç±»ï¼Œæ‰€ä»¥åœ¨æ›´æ–°ã€æ’å…¥æ—¶éœ€è¦åˆ¶å®šç±»å‹ï¼Œå¦åˆ™å¯èƒ½æ›´æ”¹åŸæ¥çš„æ•°æ®ç±»å‹ï¼š
+ // å°†timeå­—æ®µå‡å°‘86400ï¼ˆincâ€”â€”å‡æ³•å¯ä»¥ä½¿ç”¨åŠ æ³•å˜é€šï¼‰
  db.cluster_perf.update({},{$inc:{"time":NumberLong(-86400)}},false,true)
  
  
-13¡¢mongo java Çı¶¯ distinct
+13ã€mongo java é©±åŠ¨ distinct
 sgCol.distinct(StorageGroupId,new BasicDBObject(SYMMETRIX_ID, arraySn),String.class).forEach(new Block<String>() {
 
 			@Override
@@ -148,15 +148,15 @@ sgCol.distinct(StorageGroupId,new BasicDBObject(SYMMETRIX_ID, arraySn),String.cl
 				
 			}
 		})
-14¡¢mongo Çı¶¯³£ÓÃµÄÒ»Ğ©Àà
-    Filters¡¢
-	Aggregates¡¢
+14ã€mongo é©±åŠ¨å¸¸ç”¨çš„ä¸€äº›ç±»
+    Filtersã€
+	Aggregatesã€
 	Accumulators
 	
-15¡¢²é¿´ java jvmËùÓĞ²ÎÊıµÄ³õÉèÖµ
+15ã€æŸ¥çœ‹ java jvmæ‰€æœ‰å‚æ•°çš„åˆè®¾å€¼
 	java -XX:+PrintFlagsInitial | findstr "HeapDumpOnOutOfMemoryError"
 	
- ======================²âÊÔÎÄµµ============================
+ ======================æµ‹è¯•æ–‡æ¡£============================
 {
     "StorageGroupId" : "sg_cccms02",
     "SymmetrixId" : "000498700485",
@@ -182,7 +182,7 @@ sgCol.distinct(StorageGroupId,new BasicDBObject(SYMMETRIX_ID, arraySn),String.cl
     ]
 }
 
-==============¸üĞÂÊ±¼ä----±¾µØ²âÊÔ------==============================================
+==============æ›´æ–°æ—¶é—´----æœ¬åœ°æµ‹è¯•------==============================================
 db.back_port_perf_col.update(
     {"StartTime" : { "$gte" : "1464623999999"} , "EndTime" : { "$lte" : "1464710399999"}},
     {$set:{"StartTime":"1464710399999","EndTime":"1464796799999"}},false,true
@@ -201,36 +201,114 @@ db.back_port_perf_col.update(
 
 ])
 
+---------------------------æ•°ç»„åµŒå¥—å­æ–‡æ¡£è¿‡æ»¤åŠæ˜ å°„--------------------------------------------------------
+-------------test json document ---------------------
+db.test.insert(
+{
+  "className" : "test_1",
+  "studentNumber" : 5,
+  "students" : [{
+      "name" : "xiaoming",
+      "sex" : true,
+      "age" : 19
+    }, {
+      "name" : "xiaohua",
+      "sex" : false,
+      "age" : 17
+    }, {
+      "name" : "daming",
+      "sex" : true,
+      "age" : 17
+    }, {
+      "name" : "dahua",
+      "sex" : false,
+      "age" : 18
+    }, {
+      "name" : "tom",
+      "sex" : true,
+      "age" : 18
+    }]
+}
+)
+--------------------------------
+// åµŒå¥—å­æ–‡æ¡£ä¸­æ€§åˆ«ä¸ºç”·ç”Ÿçš„æ•°æ®, studentsæ•°ç»„ä¸­åªåŒ…å«æ»¡è¶³æ¡ä»¶çš„å­æ–‡æ¡£
+db.test.aggregate({
+    $project: {
+        className: 1,
+        studentNumber: 1,
+        students:{
+             $filter: {
+              input: "$students",
+              as: "item",
+              cond: { 
+                $eq: ["$$item.sex",true]
+              }
+            }
+        }
+    }
+})
 
+// å°†ç”·ç”Ÿã€å¥³ç”Ÿåˆ†åœ¨ä¸åŒçš„ä¸¤ç»„
+db.test.aggregate({
+    $project: {
+        className: 1,
+        studentNumber: 1,
+        boys:{
+             $filter: {
+              input: "$students",
+              as: "item",
+              cond: { 
+                $eq: ["$$item.sex",true]
+              }
+            }
+        },
+        girs:{
+             $filter: {
+              input: "$students",
+              as: "item",
+              cond: { 
+                $eq: ["$$item.sex",false]
+              }
+            }
+        }
+    }
+})
 
-jvm Ñ¡Ïî £º
-Hotspot JVMÌá¹©ÒÔÏÂÈı´óÀàÑ¡Ïî£º 
-1. ±ê×¼Ñ¡Ïî£ºÕâÀàÑ¡ÏîµÄ¹¦ÄÜÊÇºÜÎÈ¶¨µÄ£¬ÔÚºóĞø°æ±¾ÖĞÒ²²»Ì«»á·¢Éú±ä»¯¡£ÔËĞĞJava»òÕßjava -help¿ÉÒÔ¿´µ½ËùÓĞµÄ±ê×¼Ñ¡Ïî¡£ËùÓĞµÄ±ê×¼Ñ¡Ïî¶¼ÊÇÒÔ-¿ªÍ·£¬±ÈÈç-version£¬ -serverµÈ¡£
-2. XÑ¡Ïî£º±ÈÈç-Xms¡£ÕâÀàÑ¡Ïî¶¼ÊÇÒÔ-X¿ªÍ·£¬¿ÉÄÜÓÉÓÚÕâ¸öÔ­ÒòËüÃÇ±»³ÆÎªXÑ¡Ïî¡£ÔËĞĞjava -XÃüÁî¿ÉÒÔ¿´µ½ËùÓĞµÄXÑ¡Ïî¡£ÕâÀàÑ¡ÏîµÄ¹¦ÄÜ»¹ÊÇºÜÎÈ¶¨£¬µ«¹Ù·½µÄËµ·¨ÊÇËüÃÇµÄĞĞÎª¿ÉÄÜ»áÔÚºóĞø°æ±¾ÖĞ¸Ä±ä£¬Ò²ÓĞ¿ÉÄÜ²»ÔÚºóĞø°æ±¾ÖĞÌá¹©ÁË¡£
-3. XXÑ¡Ïî£ºÕâÀàÑ¡ÏîÊÇÊôÓÚÊµÑéĞÔ£¬Ö÷ÒªÊÇ¸øJVM¿ª·¢ÕßÓÃÓÚ¿ª·¢ºÍµ÷ÊÔJVMµÄ£¬ÔÚºóĞøµÄ°æ±¾ÖĞĞĞÎªÓĞ¿ÉÄÜ»á±ä»¯¡£
+---------------------------------------------------------------------------------
+jvm é€‰é¡¹ ï¼š
+Hotspot JVMæä¾›ä»¥ä¸‹ä¸‰å¤§ç±»é€‰é¡¹ï¼š 
+1. æ ‡å‡†é€‰é¡¹ï¼šè¿™ç±»é€‰é¡¹çš„åŠŸèƒ½æ˜¯å¾ˆç¨³å®šçš„ï¼Œåœ¨åç»­ç‰ˆæœ¬ä¸­ä¹Ÿä¸å¤ªä¼šå‘ç”Ÿå˜åŒ–ã€‚è¿è¡ŒJavaæˆ–è€…java -helpå¯ä»¥çœ‹åˆ°æ‰€æœ‰çš„æ ‡å‡†é€‰é¡¹ã€‚æ‰€æœ‰çš„æ ‡å‡†é€‰é¡¹éƒ½æ˜¯ä»¥-å¼€å¤´ï¼Œæ¯”å¦‚-versionï¼Œ -serverç­‰ã€‚
+2. Xé€‰é¡¹ï¼šæ¯”å¦‚-Xmsã€‚è¿™ç±»é€‰é¡¹éƒ½æ˜¯ä»¥-Xå¼€å¤´ï¼Œå¯èƒ½ç”±äºè¿™ä¸ªåŸå› å®ƒä»¬è¢«ç§°ä¸ºXé€‰é¡¹ã€‚è¿è¡Œjava -Xå‘½ä»¤å¯ä»¥çœ‹åˆ°æ‰€æœ‰çš„Xé€‰é¡¹ã€‚è¿™ç±»é€‰é¡¹çš„åŠŸèƒ½è¿˜æ˜¯å¾ˆç¨³å®šï¼Œä½†å®˜æ–¹çš„è¯´æ³•æ˜¯å®ƒä»¬çš„è¡Œä¸ºå¯èƒ½ä¼šåœ¨åç»­ç‰ˆæœ¬ä¸­æ”¹å˜ï¼Œä¹Ÿæœ‰å¯èƒ½ä¸åœ¨åç»­ç‰ˆæœ¬ä¸­æä¾›äº†ã€‚
+3. XXé€‰é¡¹ï¼šè¿™ç±»é€‰é¡¹æ˜¯å±äºå®éªŒæ€§ï¼Œä¸»è¦æ˜¯ç»™JVMå¼€å‘è€…ç”¨äºå¼€å‘å’Œè°ƒè¯•JVMçš„ï¼Œåœ¨åç»­çš„ç‰ˆæœ¬ä¸­è¡Œä¸ºæœ‰å¯èƒ½ä¼šå˜åŒ–ã€‚
 
-XXÑ¡ÏîµÄÓï·¨
-Èç¹ûÊÇ²¼¶ûÀàĞÍµÄÑ¡Ïî£¬ËüµÄ¸ñÊ½Îª-XX:+flag»òÕß-XX:-flag£¬·Ö±ğ±íÊ¾¿ªÆôºÍ¹Ø±Õ¸ÃÑ¡Ïî¡£
-Õë¶Ô·Ç²¼¶ûÀàĞÍµÄÑ¡Ïî£¬ËüµÄ¸ñÊ½Îª-XX:flag=value
-ÔÚÁË½âÕâĞ©Ô¼¶¨µÄ¹æ·¶ºó£¬ÎÒÃÇ¾Í¿ÉÒÔÀ´¿´¿´Ò»Ğ©±È½Ï³£ÓÃµÄÑ¡ÏîÁË¡£
+XXé€‰é¡¹çš„è¯­æ³•
+å¦‚æœæ˜¯å¸ƒå°”ç±»å‹çš„é€‰é¡¹ï¼Œå®ƒçš„æ ¼å¼ä¸º-XX:+flagæˆ–è€…-XX:-flagï¼Œåˆ†åˆ«è¡¨ç¤ºå¼€å¯å’Œå…³é—­è¯¥é€‰é¡¹ã€‚
+é’ˆå¯¹éå¸ƒå°”ç±»å‹çš„é€‰é¡¹ï¼Œå®ƒçš„æ ¼å¼ä¸º-XX:flag=value
+åœ¨äº†è§£è¿™äº›çº¦å®šçš„è§„èŒƒåï¼Œæˆ‘ä»¬å°±å¯ä»¥æ¥çœ‹çœ‹ä¸€äº›æ¯”è¾ƒå¸¸ç”¨çš„é€‰é¡¹äº†ã€‚
 
   
- ²é¿´XXÑ¡ÏîµÄÖµ£º -XX:+PrintCommandLineFlags£¬ -XX:+PrintFlagsInitialºÍ-XX:+PrintFlagsFinal 
+ æŸ¥çœ‹XXé€‰é¡¹çš„å€¼ï¼š -XX:+PrintCommandLineFlagsï¼Œ -XX:+PrintFlagsInitialå’Œ-XX:+PrintFlagsFinal 
   
   java -XX:+PrintCommandLineFlags -version
   
-  Ïà¹ØÁíÍâÁ½¸öÑ¡Ïî£º-XX:+PrintFlagsInitial±íÊ¾´òÓ¡³öËùÓĞXXÑ¡ÏîµÄÄ¬ÈÏÖµ£¬-XX:+PrintFlagsFinal±íÊ¾´òÓ¡³öXXÑ¡ÏîÔÚÔËĞĞ³ÌĞòÊ±ÉúĞ§µÄÖµ¡£
+  ç›¸å…³å¦å¤–ä¸¤ä¸ªé€‰é¡¹ï¼š-XX:+PrintFlagsInitialè¡¨ç¤ºæ‰“å°å‡ºæ‰€æœ‰XXé€‰é¡¹çš„é»˜è®¤å€¼ï¼Œ-XX:+PrintFlagsFinalè¡¨ç¤ºæ‰“å°å‡ºXXé€‰é¡¹åœ¨è¿è¡Œç¨‹åºæ—¶ç”Ÿæ•ˆçš„å€¼ã€‚
 
-ÄÚ´æ´óĞ¡Ïà¹ØµÄÑ¡Ïî
+å†…å­˜å¤§å°ç›¸å…³çš„é€‰é¡¹
 
-OutofMemory£¨OOM£©Ïà¹ØµÄÑ¡Ïî
-Èç¹û³ÌĞò·¢ÉúÁËOOMºó£¬JVM¿ÉÒÔÅäÖÃÒ»Ğ©Ñ¡ÏîÀ´×öĞ©ÉÆºó¹¤×÷£¬±ÈÈç°ÑÄÚ´æ¸ødumpÏÂÀ´£¬»òÕß×Ô¶¯²ÉÈ¡Ò»Ğ©±ğµÄ¶¯×÷¡£
+OutofMemoryï¼ˆOOMï¼‰ç›¸å…³çš„é€‰é¡¹
+å¦‚æœç¨‹åºå‘ç”Ÿäº†OOMåï¼ŒJVMå¯ä»¥é…ç½®ä¸€äº›é€‰é¡¹æ¥åšäº›å–„åå·¥ä½œï¼Œæ¯”å¦‚æŠŠå†…å­˜ç»™dumpä¸‹æ¥ï¼Œæˆ–è€…è‡ªåŠ¨é‡‡å–ä¸€äº›åˆ«çš„åŠ¨ä½œã€‚
 
--XX:+HeapDumpOnOutOfMemoryError ±íÊ¾ÔÚÄÚ´æ³öÏÖOOMµÄÊ±ºò£¬°ÑHeap×ª´æ(Dump)µ½ÎÄ¼şÒÔ±ãºóĞø·ÖÎö£¬ÎÄ¼şÃûÍ¨³£ÊÇjava_pid<pid>.hprof£¬ÆäÖĞpidÎª¸Ã³ÌĞòµÄ½ø³ÌºÅ¡£
--XX:HeapDumpPath=<path>: ÓÃÀ´Ö¸¶¨heap×ª´æÎÄ¼şµÄ´æ´¢Â·¾¶£¬ĞèÒªÖ¸¶¨µÄÂ·¾¶ÏÂÓĞ×ã¹»µÄ¿Õ¼äÀ´±£´æ×ª´æÎÄ¼ş¡£
--XX:OnOutOfMemoryError ÓÃÀ´Ö¸¶¨Ò»¸ö¿ÉĞĞĞÔ³ÌĞò»òÕß½Å±¾µÄÂ·¾¶£¬µ±·¢ÉúOOMµÄÊ±ºò£¬È¥Ö´ĞĞÕâ¸ö½Å±¾¡£
+-XX:+HeapDumpOnOutOfMemoryError è¡¨ç¤ºåœ¨å†…å­˜å‡ºç°OOMçš„æ—¶å€™ï¼ŒæŠŠHeapè½¬å­˜(Dump)åˆ°æ–‡ä»¶ä»¥ä¾¿åç»­åˆ†æï¼Œæ–‡ä»¶åé€šå¸¸æ˜¯java_pid<pid>.hprofï¼Œå…¶ä¸­pidä¸ºè¯¥ç¨‹åºçš„è¿›ç¨‹å·ã€‚
+-XX:HeapDumpPath=<path>: ç”¨æ¥æŒ‡å®šheapè½¬å­˜æ–‡ä»¶çš„å­˜å‚¨è·¯å¾„ï¼Œéœ€è¦æŒ‡å®šçš„è·¯å¾„ä¸‹æœ‰è¶³å¤Ÿçš„ç©ºé—´æ¥ä¿å­˜è½¬å­˜æ–‡ä»¶ã€‚
+-XX:OnOutOfMemoryError ç”¨æ¥æŒ‡å®šä¸€ä¸ªå¯è¡Œæ€§ç¨‹åºæˆ–è€…è„šæœ¬çš„è·¯å¾„ï¼Œå½“å‘ç”ŸOOMçš„æ—¶å€™ï¼Œå»æ‰§è¡Œè¿™ä¸ªè„šæœ¬ã€‚
 
-±ÈÈç£¬ÏÂÃæµÄÃüÁî¿ÉÒÔÊ¹µÃÔÚ·¢ÉúOOMµÄÊ±ºò£¬Heap±»×ª´æµ½ÎÄ¼ş/tmp/heapdump.hprof£¬Í¬Ê±Ö´ĞĞHomeÄ¿Â¼ÖĞµÄcleanup.shÎÄ¼ş¡£
+æ¯”å¦‚ï¼Œä¸‹é¢çš„å‘½ä»¤å¯ä»¥ä½¿å¾—åœ¨å‘ç”ŸOOMçš„æ—¶å€™ï¼ŒHeapè¢«è½¬å­˜åˆ°æ–‡ä»¶/tmp/heapdump.hprofï¼ŒåŒæ—¶æ‰§è¡ŒHomeç›®å½•ä¸­çš„cleanup.shæ–‡ä»¶ã€‚
 
 $ java -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:OnOutOfMemoryError ="sh ~/cleanup.sh" MyApp
-¸öÈË¾õµÃ¼¸¸öÑ¡Ïî»¹ÊÇ·Ç³£ÓĞÓÃµÄ£¬Ëü¿ÉÒÔÊ¹µÃÄãÓĞÏà¹ØµÄĞÅÏ¢À´·ÖÎöOOMµÄ¸ùÔ´
+ä¸ªäººè§‰å¾—å‡ ä¸ªé€‰é¡¹è¿˜æ˜¯éå¸¸æœ‰ç”¨çš„ï¼Œå®ƒå¯ä»¥ä½¿å¾—ä½ æœ‰ç›¸å…³çš„ä¿¡æ¯æ¥åˆ†æOOMçš„æ ¹æº
+
+------------------------------------------------------------
+
+
+
+
