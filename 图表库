@@ -5,3 +5,5 @@ Chart.js 基于 HTML5 的 简单易用的 JavaScript 图表库
 metrics-graphics 建立在D3之上的可视化库, 针对可视化和布置时间序列数据进行了优化
 C3.js 通过包装构造整个图表所需的代码，使生成基于D3的图表变得容易
 three js 等
+
+-- 都是基于浏览器图形渲染技术实现的： Canvas 和 SVG 
