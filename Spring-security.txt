@@ -1,24 +1,177 @@
 SpringSecurity
-1.      ºËĞÄ¹¦ÄÜ£º 	ÈÏÖ¤¡¢ÊÚÈ¨¡¢¹¥»÷·À»¤(·ÀÖ¹Î±ÔìÉí·İ)   
-  1.1 Ô­Àí£º Ò»×é¹ıÂËÆ÷Á´£¬ËùÓĞµÄÇëÇó½ø³ö¶¼Òª¾­¹ıÕâĞ©¹ıÂËÆ÷£¬Í¨³£Ò»ÖÖ¹ıÂËÆ÷´¦ÀíÒ»ÖÖÈÏÖ¤·½Ê½£¬³£¼ûµÄºËĞÄ¹ıÂËÆ÷£º
-  		UsernamePasswordAuthenticationFilter,BasicAuthenticationFilter£¬ExceptionTranslationFilter£¬FilterSecurityInterceptor(ÇëÇó×îºóÒ»Õ¾£¬ÊØÃÅÈË£¬´Ë´¦»á¾ö¶¨ÇëÇóÊÇ·ñÄÜ·ÃÎÊµ½RestAPI)
-2. Ä¬ÈÏÊµÏÖ -- ÁãÅäÖÃ£º
-	 µ±spring-security jar±»¼ÓÈëÏîÄ¿ºó£¬Ä¬ÈÏ¾Í»á¿ªÆôbasicÈÏÖ¤£¨ËùÓĞ·şÎñ¶¼ĞèÒªbasicÈÏÖ¤£¬ÓÃ»§ÃûÄ¬ÈÏÎªuser£¬ÃÜÂë»á´òÓ¡µ½¿ØÖÆÌ¨ÉÏ£©74682e70-1462-44d3-8b28-286196fc1a80
+1.      æ ¸å¿ƒåŠŸèƒ½ï¼š 	è®¤è¯ã€æˆæƒã€æ”»å‡»é˜²æŠ¤(é˜²æ­¢ä¼ªé€ èº«ä»½)   
+  1.1 åŸç†ï¼š ä¸€ç»„è¿‡æ»¤å™¨é“¾ï¼Œæ‰€æœ‰çš„è¯·æ±‚è¿›å‡ºéƒ½è¦ç»è¿‡è¿™äº›è¿‡æ»¤å™¨ï¼Œé€šå¸¸ä¸€ç§è¿‡æ»¤å™¨å¤„ç†ä¸€ç§è®¤è¯æ–¹å¼ï¼Œå¸¸è§çš„æ ¸å¿ƒè¿‡æ»¤å™¨ï¼š
+  		UsernamePasswordAuthenticationFilter,BasicAuthenticationFilterï¼ŒExceptionTranslationFilterï¼ŒFilterSecurityInterceptor(è¯·æ±‚æœ€åä¸€ç«™ï¼Œå®ˆé—¨äººï¼Œæ­¤å¤„ä¼šå†³å®šè¯·æ±‚æ˜¯å¦èƒ½è®¿é—®åˆ°RestAPI)
+2. é»˜è®¤å®ç° -- é›¶é…ç½®ï¼š
+	 å½“spring-security jarè¢«åŠ å…¥é¡¹ç›®åï¼Œé»˜è®¤å°±ä¼šå¼€å¯basicè®¤è¯ï¼ˆæ‰€æœ‰æœåŠ¡éƒ½éœ€è¦basicè®¤è¯ï¼Œç”¨æˆ·åé»˜è®¤ä¸ºuserï¼Œå¯†ç ä¼šæ‰“å°åˆ°æ§åˆ¶å°ä¸Šï¼‰74682e70-1462-44d3-8b28-286196fc1a80
 	
-3. ±íµ¥µÇÂ¼
-	3.1 ÅäÖÃ£ºjavaconfig ¸²¸ÇWebSecurityConfigurerAdapter#configure(HttpSecurity http),×¢ÒâÊÇHttpSecurity²ÎÊı
-	       http.formLogin().and().authorizeRequests().anyRequest().authenticated();£¨Èô½«formLogin»»³ÉhttpBasicÔòÊ¹ÓÃbasicÈÏÖ¤£©
-4. ×Ô¶¨ÒåÈÏÖ¤Âß¼­
-	4.1 ÓÃ»§ĞÅÏ¢»ñÈ¡Âß¼­
-		ÔÚspring-securityÖĞ¸Ã²¿·ÖÂß¼­±»·â×°ÔÚÒ»¸ö½Ó¿ÚÖĞ£ºUserDetailService#loadUserByUsername ,¶øÓÃ»§ĞÅÏ¢»á±»·â×°ÔÚÒ»¸ö½ĞUserDetailsµÄÀàÖĞ¡£
-	4.2 ÓÃ»§Ğ£ÑéÂß¼­ : Ö÷ÒªÊÇÑéÖ¤ÃÜÂëÊÇ·ñÆ¥Åä£¬Õâ¸öÂß¼­ÊÇÓÉ¿ò¼ÜÍê³ÉµÄ£¬¼°ÆäËûĞ£ÑéÈçÊÇ·ñ¶³½á£¬ÃÜÂëÊÇ·ñ¹ıÆÚµÈ¡£Ö÷ÒªÍ¨¹ı¸²¸ÇUserDetailsÀàÖĞµÄ·½·¨À´ÊµÏÖ
-	4.3 ÃÜÂëµÄ¼ÓÃÜ½âÃÜ  £º ÓÉÁíÒ»¸ö½Ó¿ÚÊµÏÖ£ºPasswordEncoder×¢Òâ¸ÃÀàÓĞ¶à¸ö°æ±¾£¬µ±Ç°ĞèÒªÊ¹ÓÃcrypto°üÖĞµÄ
-	   ×¢Òâ£º¸ÃÀàÖĞµÄencode·½·¨Ìá¹©¸øÓÃ»§×Ô¼ºµ÷ÓÃµÄ£¨ÔÚ²åÈëÊı¾İ¿âÖ®Ç°£©£¬¶ømatches·½·¨ÊÇÓÉ¿ò¼ÜÀ´µ÷ÓÃµÄ¡£
-5. ¸öĞÔ»¯ÓÃ»§ÈÏÖ¤Á÷³Ì
-	5.1 ×Ô¶¨ÒåµÇÂ¼Ò³Ãæhttp.formLogin().loginPage("×Ô¶¨ÒåµÄµÇÂ¼Ò³Ãæ")
-	5.2 ×Ô¶¨ÒåµÇÂ¼³É¹¦´¦Àí
-		Ä¬ÈÏ´¦Àí£ºµÇÂ¼³É¹¦»áÌø×ªµ½Òı·¢µÇÂ¼²Ù×÷µÄÒ»¸öÄÇ¸öÇëÇóÈ¥¡£
-		×Ô¶¨Òå³É¹¦´¦Àí£ºÊµÏÖÒ»¸ö½Ó¿ÚAuthenticationSuccessHandler, Ìí¼Óhttp.formLogin().successHandler(×Ô¶¨Òåhandler)
-	5.3×Ô¶¨ÒåµÇÂ¼Ê§°Ü´¦Àí£º Àà±È³É¹¦´¦Àí£¬ÊµÏÖ½Ó¿Ú£ºAuthenticatonFailureHandler
-6. Í¼ĞÎÑéÖ¤Âë £¬¼Ç×¡ÎÒ¹¦ÄÜ
-7. ¶ÌĞÅÑéÖ¤
+3. è¡¨å•ç™»å½•
+	3.1 é…ç½®ï¼šjavaconfig è¦†ç›–WebSecurityConfigurerAdapter#configure(HttpSecurity http),æ³¨æ„æ˜¯HttpSecurityå‚æ•°
+	       http.formLogin().and().authorizeRequests().anyRequest().authenticated();ï¼ˆè‹¥å°†formLoginæ¢æˆhttpBasicåˆ™ä½¿ç”¨basicè®¤è¯ï¼‰
+4. è‡ªå®šä¹‰è®¤è¯é€»è¾‘
+	4.1 ç”¨æˆ·ä¿¡æ¯è·å–é€»è¾‘
+		åœ¨spring-securityä¸­è¯¥éƒ¨åˆ†é€»è¾‘è¢«å°è£…åœ¨ä¸€ä¸ªæ¥å£ä¸­ï¼šUserDetailService#loadUserByUsername ,è€Œç”¨æˆ·ä¿¡æ¯ä¼šè¢«å°è£…åœ¨ä¸€ä¸ªå«UserDetailsçš„ç±»ä¸­ã€‚
+	4.2 ç”¨æˆ·æ ¡éªŒé€»è¾‘ : ä¸»è¦æ˜¯éªŒè¯å¯†ç æ˜¯å¦åŒ¹é…ï¼Œè¿™ä¸ªé€»è¾‘æ˜¯ç”±æ¡†æ¶å®Œæˆçš„ï¼ŒåŠå…¶ä»–æ ¡éªŒå¦‚æ˜¯å¦å†»ç»“ï¼Œå¯†ç æ˜¯å¦è¿‡æœŸç­‰ã€‚ä¸»è¦é€šè¿‡è¦†ç›–UserDetailsç±»ä¸­çš„æ–¹æ³•æ¥å®ç°
+	4.3 å¯†ç çš„åŠ å¯†è§£å¯†  ï¼š ç”±å¦ä¸€ä¸ªæ¥å£å®ç°ï¼šPasswordEncoderæ³¨æ„è¯¥ç±»æœ‰å¤šä¸ªç‰ˆæœ¬ï¼Œå½“å‰éœ€è¦ä½¿ç”¨cryptoåŒ…ä¸­çš„
+	   æ³¨æ„ï¼šè¯¥ç±»ä¸­çš„encodeæ–¹æ³•æä¾›ç»™ç”¨æˆ·è‡ªå·±è°ƒç”¨çš„ï¼ˆåœ¨æ’å…¥æ•°æ®åº“ä¹‹å‰ï¼‰ï¼Œè€Œmatchesæ–¹æ³•æ˜¯ç”±æ¡†æ¶æ¥è°ƒç”¨çš„ã€‚
+5. ä¸ªæ€§åŒ–ç”¨æˆ·è®¤è¯æµç¨‹
+	5.1 è‡ªå®šä¹‰ç™»å½•é¡µé¢http.formLogin().loginPage("è‡ªå®šä¹‰çš„ç™»å½•é¡µé¢")
+	5.2 è‡ªå®šä¹‰ç™»å½•æˆåŠŸå¤„ç†
+		é»˜è®¤å¤„ç†ï¼šç™»å½•æˆåŠŸä¼šè·³è½¬åˆ°å¼•å‘ç™»å½•æ“ä½œçš„ä¸€ä¸ªé‚£ä¸ªè¯·æ±‚å»ã€‚
+		è‡ªå®šä¹‰æˆåŠŸå¤„ç†ï¼šå®ç°ä¸€ä¸ªæ¥å£AuthenticationSuccessHandler, æ·»åŠ http.formLogin().successHandler(è‡ªå®šä¹‰handler)
+	5.3è‡ªå®šä¹‰ç™»å½•å¤±è´¥å¤„ç†ï¼š ç±»æ¯”æˆåŠŸå¤„ç†ï¼Œå®ç°æ¥å£ï¼šAuthenticatonFailureHandler
+6. å›¾å½¢éªŒè¯ç  ï¼Œè®°ä½æˆ‘åŠŸèƒ½
+7. çŸ­ä¿¡éªŒè¯
+
+------------XSS è¿‡æ»¤ --------------------
+1ã€å¯¹äºGET åŠ post x-www-form-urlencode æˆ– post mutipart/form-data  å¯ä»¥é€šè¿‡é‡å†™HttpServletRequestWrapperä¸­ç›¸å…³getParamç³»åˆ—æ–¹æ³•ï¼Œå¯¹@RequestBodyæ–¹å¼ï¼ˆrequest payloadï¼‰åˆ™æ˜¯é€šè¿‡getInputStreamæ–¹æ³•è¯»å–ã€‚
+To remove XSS characters you just override AbstractJackson2HttpMessageConverter - this converter has responsibility to read request.inputStream to RequestBody object
+public class XssRequestWrapper extends HttpServletRequestWrapper {
+    private String body;
+
+    public XssRequestWrapper(HttpServletRequest request) throws IOException {
+        super(request);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = request.getReader();
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        body = stringBuilder.toString();
+
+        String method = request.getMethod();
+        String contentType = request.getContentType();
+        if (StringUtils.isNotEmpty(contentType)) {
+            contentType = contentType.toLowerCase();
+        }
+        // å¤„ç†POSTè¯·æ±‚å¹¶ä¸”contentTypeä¸ºapplication/jsonæ ¼å¼çš„
+        if (HttpMethod.POST.matches(method) && StringUtils.isNotEmpty(contentType) && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
+            body = this.stripXss(body);
+        }
+    }
+
+    /**
+     * é¢„ç¼–è¯‘æ­£åˆ™è¡¨è¾¾å¼
+     */
+    static final List<Pattern> ROLES = new ArrayList<Pattern>(){{
+        add(Pattern.compile("<script>(.*?)</script>", 2));
+        add(Pattern.compile("src[\r\n]*=[\r\n]*\\'(.*?)\\'", 42));
+        add(Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", 42));
+        add(Pattern.compile("</script>", 2));
+        add(Pattern.compile("<script(.*?)>", 42));
+        add(Pattern.compile("eval\\((.*?)\\)", 42));
+        add(Pattern.compile("e\u00adxpression\\((.*?)\\)", 42));
+        add(Pattern.compile("javascript:", 2));
+        add(Pattern.compile("vbscript:", 2));
+        add(Pattern.compile("onload(.*?)=", 42));
+    }};
+
+    @Override
+    public String[] getParameterValues(String parameter) {
+        String[] values = super.getParameterValues(parameter);
+        if (values == null) {
+            return null;
+        } else {
+            int count = values.length;
+            String[] encodedValues = new String[count];
+
+            for(int i = 0; i < count; ++i) {
+                encodedValues[i] = this.stripXss(values[i]);
+            }
+
+            return encodedValues;
+        }
+    }
+
+    @Override
+    public String getParameter(String parameter) {
+        String value = super.getParameter(parameter);
+        return this.stripXss(value);
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return super.getHeader(name);
+    }
+
+    @Override
+    public String getQueryString() {
+        String value = super.getQueryString();
+        if (value != null) {
+            value = this.stripXss(value);
+        }
+
+        return value;
+    }
+
+
+    /**
+     * é‡å†™ getInputStream()æ–¹æ³•
+     * åœ¨ä½¿ç”¨@RequestBodyæ³¨è§£çš„æ—¶å€™ï¼Œå…¶å®æ¡†æ¶æ˜¯è°ƒç”¨äº†getInputStream()æ–¹æ³•
+     */
+    @Override
+     public ServletInputStream getInputStream() throws IOException {
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
+        return new ServletInputStream() {
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setReadListener(ReadListener readListener) {
+
+            }
+
+            @Override
+            public int read() throws IOException {
+                return byteArrayInputStream.read();
+            }
+        };
+    }
+
+    private String stripXss(String value) {
+        if (value != null) {
+            for (Pattern role : ROLES) {
+                value = role.matcher(value).replaceAll("");
+            }
+
+            // ç‰¹æ®Šç¬¦å·è½¬ä¹‰
+            value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        }
+
+        return value;
+    }
+}
+----------é‡å¤è¯»å–requestBody------------
+Spring provides a ContentCachingRequestWrapper class. This class provides a method, getContentAsByteArray() to read the body multiple times.
+This class has a limitation, though:  We can't read the body multiple times using the getInputStream() and getReader() methods.
+This class caches the request body by consuming the InputStream. If we read the InputStream in one of the filters, then other subsequent filters in the filter chain can't read it anymore. Because of this limitation, this class is not suitable in all situations.
+
+create a new class â€“ CachedBodyHttpServletRequest â€“ which extends HttpServletRequestWrapper. This way, we don't need to override all the abstract methods of the HttpServletRequest interface.
+HttpServletRequestWrapper class has two abstract methods getInputStream() and getReader(). We'll override both of these methods and create a new constructor.
+public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
+
+    private byte[] cachedBody;
+
+    public CachedBodyHttpServletRequest(HttpServletRequest request) throws IOException {
+        super(request);
+        InputStream requestInputStream = request.getInputStream();
+        this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
+    }
+}
+@Override
+public ServletInputStream getInputStream() throws IOException {
+    return new CachedBodyServletInputStream(this.cachedBody);
+}
+@Override
+public BufferedReader getReader() throws IOException {
+    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.cachedBody);
+    return new BufferedReader(new InputStreamReader(byteArrayInputStream));
+}
