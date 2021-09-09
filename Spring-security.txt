@@ -26,6 +26,26 @@ SpringSecurity
 ------------XSS 过滤 --------------------
 1、对于GET 及 post x-www-form-urlencode 或 post mutipart/form-data  可以通过重写HttpServletRequestWrapper中相关getParam系列方法，对@RequestBody方式（request payload）则是通过getInputStream方法读取。
 To remove XSS characters you just override AbstractJackson2HttpMessageConverter - this converter has responsibility to read request.inputStream to RequestBody object
+@Component
+public class XSSRequestBodyConverter extends AbstractJackson2HttpMessageConverter {
+    public XSSRequestBodyConverter(ObjectMapper objectMapper) {
+        super(objectMapper, MediaType.APPLICATION_JSON, new MediaType("application", "*+json"));
+    }
+
+@Override
+public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
+        throws IOException, HttpMessageNotReadableException {
+
+    Object requestBody = super.read(type, contextClass, inputMessage);
+    //Remove xss from requestBody here
+    String requestInStr = objectMapper.writeValueAsString(requestBody);
+    return objectMapper.readValue(replaceXSSCharacters(requestInStr), Object.class);
+}
+
+
+}
+
+---demo ---------
 public class XssRequestWrapper extends HttpServletRequestWrapper {
     private String body;
 
