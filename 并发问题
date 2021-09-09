@@ -1,0 +1,9 @@
+----tomcat----------
+当队列(acceptCount)已满时,任何的连接请求都将被拒绝。acceptCount的默认值为100。简而言之，
+当调用HTTP请求数达到Tomcat的最大连接数时,还有新的HTTP请求到来,这时Tomcat会将该请求放在等待队列中,这个acceptCount就是指能够接受的最大等待数，默认100。
+如果等待队列也被放满了，这个时候再来新的请求就会被Tomcat拒绝(connection refused).
+
+accept-count：最大等待数  
+maxThreads：最大线程数
+maxConnections：最大连接数
+maxConnection: 其实才是最大并发数，maxThread不一定会影响maxConnection,在NIO模式下一个Thread会处理多个请求。
