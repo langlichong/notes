@@ -1,0 +1,24 @@
+---solution  to POC --------------
+I would use bytebuddy in order to generate the new classes dynamically and they would have the @Entity annotation, 
+the generated classes are written into a temporary jar file ( e.g. /tmp/myjar.jar )
+
+Using a BeanPostProcessor.postProcessAfterInitialization I would replace the LocalContainerEntityManagerFactoryBean with a proxy class.
+
+Also I used the LocalContainerEntityManagerFactoryBean .setPersistenceUnitPostProcessors to add an extra processor 
+that would process the classes from the newly created jar
+
+So now after creating the new class with bytebuddy I would manually call the 
+LocalContainerEntityManagerFactoryBeanProxy.afterProperties that does all the job of bootstrapping the JPA and hibernate layer , 
+I do also set the "hibernate.hbm2ddl.auto" property to "update" so that the schema would be created ( I know that this is risky to be done in a production environment ).
+
+Hibernate maps entities to tables, and the metadata is built during bootstrap. So, you can't modify it on the fly while the application is running.
+
+However, as long as you keep on adding new tables without modifying the existing structure, you can address this issue at the architecture level:
+
+You make the class changes you need.
+You build the project artifacts.
+You deploy the new project artifacts to a new server.
+You switch traffic from the old server instance to the new one from the load balancer without any downtime.
+Or, just use a NoSQL database like MongoDB with Hibernate OGM since your requirements do not fit very well into a relational database anyway.
+
+---- Re-bootstrap the EntityManagerFactory-------------------------
