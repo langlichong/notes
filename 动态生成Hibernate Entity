@@ -21,4 +21,13 @@ You deploy the new project artifacts to a new server.
 You switch traffic from the old server instance to the new one from the load balancer without any downtime.
 Or, just use a NoSQL database like MongoDB with Hibernate OGM since your requirements do not fit very well into a relational database anyway.
 
----- Re-bootstrap the EntityManagerFactory-------------------------
+---- Re-bootstrap the EntityManagerFactory----------------------PersistenceUnitPostProcessor ---
+
+Firstly, the problem is how to add entity class in hot-deploy. 
+We could do it by some tools of swapping (spring-boot-devtools, or maven copy resource). 
+Secondly, to architect the different models of an entity, could use JPA Inheritance(https://en.wikibooks.org/wiki/Java_Persistence/Inheritance) or JPA row mapper.
+
+If the JPA provider is Hibernate, since Hibernate 4.0,
+it's possible to pass directly entities to this JPA provider without declaring them in the persistence.xml file. 
+Hibernate will handle the entities on the fly.
+
