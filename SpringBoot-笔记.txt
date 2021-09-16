@@ -1,4 +1,9 @@
+---spring生命周期-------------------------
+DefaultListableBeanFactory 类是 Spring Bean 的灵魂，而核心就是其中的 doCreateBean 方法，
+它掌控了 Bean 实例的创建、Bean 对象依赖的注入、定制类初始化方法的回调以及 Disposable 方法的注册等全部关键节点。
+后置处理器是 Spring 中最优雅的设计之一，对于很多功能注解的处理都是借助于后置处理器来完成的。
 
+-------------------------------------
 Spring中几乎对所有的Annotation的处理都是使用一组实现了 bean post processor 接口的处理类。
 Spring context understand annotation by set of classes which implements bean post processor interface. 
 so to handle different type of annotation we need to add different annotation bean post processors.
