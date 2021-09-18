@@ -1,0 +1,111 @@
+
+1、常规方式：通过@Autowired @Component @Service等注解方式
+
+2、通过javaconfig方式：定义一个类，打上@Configuration注解，该类内容使用@Bean注解来生成类实例
+
+3、动态导入：比如使用Condition接口 及 @Conditional注解，通过按需方式加载不同类。 如下实例：
+
+public class GbaseServiceCondition implements Condition {
+
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+
+        String dataSourceUrl = context.getEnvironment().getProperty("spring.datasource.druid.url");
+
+        return StringUtils.containsIgnoreCase(dataSourceUrl,"informix");
+    }
+}
+
+@Configuration
+public class ServiceImportOnDbTypeConfig {
+
+    @Configuration
+    @Conditional(DmServiceCondition.class)
+    protected static class DmServiceImportConfig{
+
+        @Bean
+        public com.ceis.workflow.service.impl.dm.VueFormJsonResolverServicePlus jsonResolverService(){
+            return new com.ceis.workflow.service.impl.dm.VueFormJsonResolverServicePlus();
+        }
+
+        @Bean
+        public com.ceis.workflow.service.impl.dm.FormGeneratorServiceImpl formGeneratorService(){
+            return new com.ceis.workflow.service.impl.dm.FormGeneratorServiceImpl();
+        }
+
+        @Bean
+        public com.ceis.workflow.service.impl.dm.AppCityAreaServiceImpl cityAreaService(){
+            return new com.ceis.workflow.service.impl.dm.AppCityAreaServiceImpl();
+        }
+     }
+    }
+    ---------------------------------------------------
+    4、通过@Import注解方式
+      @Import注解提供了@Bean注解的功能（所以一般要配合@Configuration注解来使用），同时还具有xml配置文件里<import>标签组织多个分散的xml文件的功能，当然在这里是组织多个分散的@Configuration。
+      Import可以配合 Configuration , ImportSelector, ImportBeanDefinitionRegistrar 来使用。
+      *******@Import只允许放到类上面，不能放到方法上****
+      A、最简单的导入类的方式，这是最简单的一种将类加入到Spring IOC容器的方式，直接将类的class加到Import的value里，Config的代码如下：
+      @Configuration
+      @Import(value={UserServiceImpl.class})
+      public class Config {
+      }
+      这样将类注入的方式有个问题就是没法注入参数。也就是说UserServiceImpl提供的应该是无参的构造方法。
+      B、通过ImportBeanDefinitionRegistrar将类注入到Spring IOC容器
+      
+      public class UserServiceBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
+        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
+                                            BeanDefinitionRegistry registry) {
+            BeanDefinitionBuilder userService = BeanDefinitionBuilder.rootBeanDefinition(UserServiceImpl.class);
+            //通过registry就可以注入到容器里啦
+            registry.registerBeanDefinition("userService", userService.getBeanDefinition());
+          }
+      }
+      
+      @Configuration(value="ivan_test")
+      @Import(value={UserServiceBeanDefinitionRegistrar.class})
+      public class Config {
+      }
+      
+      通过ImportBeanDefinitionRegistrar的方式我们可以对类进行个性化的定制，比如对需要传入的参数进行修改，也可以通过ImportBeanDefinitionRegistrar注入一批相似的类。
+      有BeanDefinitionRegistry对象也有可以控制Spring IOC容器里Bean的定义，想做些什么也就方便很多了。
+      
+      C、通过ImportSelector方式注入Bean
+      通过ImportBeanDefinitionRegistrar的方式注入的实例需要我们操作BeanDefinitionRegistry 对象，而通过ImportSelector方式我们可以不操作BeanDefinitionRegistry 对象，
+      只需要告诉容器我们需要注入类的完整类名就好。 常见的各种@EnableXXXX 大部分都是这种实现方式。
+      @Retention(RetentionPolicy.RUNTIME)
+      @Documented
+      @Target(ElementType.TYPE)
+      @Import(UserServiceImportSelect.class)
+      public @interface EnableUserService {
+          String name ();
+      }
+      EnableUserService 是个注解，里面通过@Import引入了UserServiceImportSelect，具体注入的逻辑在UserServiceImportSelect这个类里面，
+      我们的注解同时定义了一个name属性，这里只是为了测试，在实际中你可以定义你需要的属性，然后在具体的ImportSelect里根据属性的值进行不同的配置。
+      UserServiceImportSelect属性的代码如下：
+      
+      public class UserServiceImportSelect implements ImportSelector{
+      public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+
+         Map<String , Object> map = importingClassMetadata.getAnnotationAttributes(EnableUserService.class.getName(), true);
+         for(Entry<String, Object> entry : map.entrySet()){
+             System.out.println("key is : " + entry.getKey() + " value is : " + entry.getValue());
+         }
+         return new String[]{UserServiceImpl.class.getName()};
+       }
+      }
+     可以通过importingClassMetadata这个属性得到用了EnableUserService注解的元信息。同时返回了一个我们需要注入的类的名称，这样就可以注入到容器里啦
+
+     使用：
+      @Configuration()
+      @EnableUserService(name="ivan_test")
+      public class Config {
+      }
+      通过上面三步我们就可以完成自定义enable注解并完成相应Bean的注入。
+      
+ --------tips: Spring IOC内部类的源码。读源码如何找到源码的入口是关键，这里有个小技巧，通过IDE的Call Hierarchy调用链我们可以找到关键的代码，
+ 我们知道@Import这个注解无论它多么神，一定会调用到ImportSelector类里的selectImports方法的。我们通过这个方法就能找到调用关系------------
+
+
+      
+
+      
