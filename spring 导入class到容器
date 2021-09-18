@@ -104,6 +104,8 @@ public class ServiceImportOnDbTypeConfig {
       
  --------tips: Spring IOC内部类的源码。读源码如何找到源码的入口是关键，这里有个小技巧，通过IDE的Call Hierarchy调用链我们可以找到关键的代码，
  我们知道@Import这个注解无论它多么神，一定会调用到ImportSelector类里的selectImports方法的。我们通过这个方法就能找到调用关系------------
+ 
+ 在Spring IOC容器加载过程中会调用BeanFactoryPostProcessor方法，以处理如对BeanDefinition进行修改等操作.
 
 
       
