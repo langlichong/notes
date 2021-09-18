@@ -1,3 +1,6 @@
+
+ref-doc 阮一峰： https://wangdoc.com/clang/intro.html
+
 指针：is a variable that its value is a memory address of another variable.
 1、声明： Type *variable-name 
 2、demo：
