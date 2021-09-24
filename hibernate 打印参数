@@ -1,3 +1,29 @@
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+The first configuration line will enable the hibernate log. The second configuration line will show the hibernate query in user friendly format.
+The sample output of the jpa configuration.
+
+Hibernate: select next_val as id_val from hibernate_sequence for update
+Hibernate: update hibernate_sequence set next_val= ? where next_val=?
+Hibernate: insert into employee (name, id) values (?, ?)
+
+Hibernate SQL query with Parameter values
+If the log is configured using the hibernate logger, the hibernate class will print the log with parameter values.
+
+The hibernate query will be printed using the first configuration. The second configuration will show all values of the parameters in the same order. 
+These configurations will be used in the development and debug mode. These configurations are not recommended for use 
+in the production environment or in applications dealing with sensitive data.
+
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+
+
+
+
+-----------------------------------------
+
+
 # SQL statements and parameters
 log4j.logger.org.hibernate.SQL=debug
 log4j.logger.org.hibernate.type.descriptor.sql=trace
