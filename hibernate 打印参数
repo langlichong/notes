@@ -1,0 +1,12 @@
+# SQL statements and parameters
+log4j.logger.org.hibernate.SQL=debug
+log4j.logger.org.hibernate.type.descriptor.sql=trace
+
+----------or  logback xml--------
+
+<logger name="org.hibernate.SQL">
+      <level value="debug"/>
+</logger>
+<logger name="org.hibernate.type">
+    <level value="trace"/>
+</logger>
