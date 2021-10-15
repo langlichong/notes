@@ -1,0 +1,15 @@
+安装linux开发手册文档：manpages
+
+man intro: 介绍linux系统及其下命令
+
+man 2 syscalls 
+
+man socketcall
+
+man select 
+man poll 
+man epoll
+
+man libc  、glibc 
+
+...
