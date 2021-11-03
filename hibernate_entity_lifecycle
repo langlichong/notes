@@ -1,0 +1,156 @@
+---------- transient, managed, detached or deleted state ------------------------------
+transient — this instance is not, and never was, attached to a Session; 
+			this instance has no corresponding rows in the database; 
+			it's usually just a new object that you have created to save to the database;
+persistent — this instance is associated with a unique Session object; 
+             upon flushing the Session to the database, 
+			 this entity is guaranteed to have a corresponding consistent record in the database;
+detached — this instance was once attached to a Session (in a persistent state), 
+             but now it’s not; an instance enters this state if you evict it from the context,
+			 clear or close the Session, or put the instance through serialization/deserialization process
+When the entity instance is in the persistent state, all changes that you make to the mapped fields of this instance will be applied to the corresponding database records and fields upon flushing the Session. The persistent instance can be thought of as “online”, whereas the detached instance has gone “offline” and is not monitored for changes.
+
+This means that when you change fields of a persistent object, 
+you don't have to call save, update or any of those methods to get these changes to 
+the database: all you need is to commit the transaction, or flush or close the session, when you're done with it.
+
+second level cache regions
+lifecycle of a Session 
+It is not intended that implementors be threadsafe. Instead each thread/transaction should obtain its own instance from a SessionFactory
+------------------------------
+
+--------hibernate help methods ----------------------
+HibernateLifecycleUtil.getManagedEntities(session) – we'll use it to get all managed entities from a Session's internal store .
+DirtyDataInspector.getDirtyEntities() – we're going to use this method to get a list of all entities that were marked as ‘dirty' .
+HibernateLifecycleUtil.queryCount(query) – a convenient method to do count(*) query against the embedded database.
+--------------------------------------------------
+
+-----how to get session from jpa in spring boot app-----------------------
+Session session = sessionFactory.openSession();
+Session session = entityManager.unwrap(Session.class);
+Session session = (Session) entityManager.getDelegate();
+
+Get JPA EntityManager in Spring Boot using @PersistenceContext:
+  @PersistenceContext  private EntityManager entityManager;
+  
+EntityManager is not thread-safe : 获取EntityManager时候不应该使用@Autowired（spring只会生成一个，多线程时候可能会报错） ,应该使用 @PersistenceContext(会保证每个线程一个) .
+  
+EntityManager’s unwrap() method returns an object of the specified type to allow access to the provider-specific API. 
+The unwrap() method (overridden in SessionImpl.java) first checks the session is closed or not. If Session is closed, it throws java.lang.IllegalStateException.
+If Session is closed and then we call getDelegate() method, it will not throw any exception.
+
+----------------hibernate session VS  jdbc connection-------------------
+A Hibernate Session is just a transactional write-behind cache that translates entity state transitions into DML statements.
+The Hibernate Session can be connected or disconnected from the database. When it is disconnected, 
+it cannot flush current pending entity state changes to the underlying database.
+
+------------------SessionFactory----------------------------
+SessionFactory In Hibernate.
+SessionFactory is an interface available in org.hibernate package which extends Referenceable and Serializable interface and provides factory methods to get session object. Let’s see some points about SessionFactory.
+
+SessionFactory is thread safe so multiple threads can access the SessionFactory at the same time.
+SessionFactory is Immutable. Once we create SessionFactory we can not modify it(If you look SessionFactory methods we don’t have any setter kind of method)
+SessionFactory is created at the time of application startup, it reads all information from the configuration file(hibernate.cfg.xml file). We will see later in details.
+We should have one SessionFactory for one database configuration.
+We can create a SessionFactory object using the Configuration class as below:
+    SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+
+---
+Can we create multiple SessionFactory in one application?
+
+Yes, we can. But we should have two databases. There should be one SessionFactory per database.
+Suppose we are using two databases and we have two hibernate.cfg.xml files which contain two database configuration details.
+    
+-----------------session in hibernate-----------------------------------
+Session In Hibernate.
+Session is an interface available in org.hibernate package which provides different API to communicate java application to hibernate. Let’s see some points related to Session.
+
+The session is not thread-safe.
+The main use of the Session object to perform create, get, and delete operations for java classes(entity).
+The first level cache belongs to the session object. See an example of the first-level cache in detail.
+We can have multiple sessions for a SessionFactory.
+We can get Session object using SessionFactory reference as below.
+Session session = sessionFactory.openSession();
+--------------------------------------------------------
+-------------------full jpa customizer -----------------
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@EnableJpaRepositories(basePackages = "com.netsurfingzone.repository", transactionManagerRef = "jpaTransactionManager")
+@PropertySource(value = { "classpath:config.properties" })
+@EnableTransactionManagement
+public class JpaConfig {
+
+	private static final String[] ENTITYMANAGER_PACKAGES_TO_SCAN = { "com.netsurfingzone.entity" };
+
+	@Autowired
+	private Environment env;
+
+	@Bean
+	public DataSource dataSource() {
+
+		String username = env.getProperty("spring.datasource.username");
+		String password = env.getProperty("spring.datasource.password");
+		String driverClass = env.getProperty("spring.datasource.driver-class-name");
+		String url = env.getProperty("spring.datasource.url");
+
+		return DataSourceBuilder.create().username(username).password(password).url(url).driverClassName(driverClass)
+				.build();
+	}
+
+	@Bean
+	public JpaTransactionManager jpaTransactionManager() {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		return transactionManager;
+	}
+	
+    //adding for future use
+	private HibernateJpaVendorAdapter vendorAdaptor() {
+		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		return vendorAdapter;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+
+		LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+		entityManagerFactoryBean.setJpaVendorAdapter(vendorAdaptor());
+		entityManagerFactoryBean.setDataSource(dataSource());
+		entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+		entityManagerFactoryBean.setPackagesToScan(ENTITYMANAGER_PACKAGES_TO_SCAN);
+		entityManagerFactoryBean.setJpaProperties(addProperties());
+
+		return entityManagerFactoryBean;
+	}
+
+	private Properties addProperties() {
+		Properties properties = new Properties();
+		properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
+		properties.setProperty("hibernate.dialect", env.getProperty("spring.jpa.properties.hibernate.dialect"));
+		properties.setProperty("hibernate.show_sql", env.getProperty("spring.jpa.show-sql"));
+		properties.setProperty("hibernate.format_sql", env.getProperty("spring.jpa.properties.hibernate.format_sql"));
+		// we can add 
+		return properties;
+	}
+
+}
+--------------------------------------------------
+
+
+
