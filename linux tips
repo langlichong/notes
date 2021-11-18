@@ -22,3 +22,4 @@ man 1 intro  -- 1 section说明
 man 2 intro  --查看section 2 的说明 
 .....
 --------------------------------------------
+Blog: https://www.brendangregg.com/index.html#Misc
