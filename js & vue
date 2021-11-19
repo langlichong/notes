@@ -3,3 +3,6 @@
 
 vue hook: 
     this.$once('hook:生命周期'，callback),就可以监听到生命周期的变化了
+    
+vue-super-flow: https://github.com/caohuatao/vue-super-flow
+
