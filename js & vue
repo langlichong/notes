@@ -2,4 +2,4 @@
     currentTarget.cloneNode（）  // 克隆一个html节点，比如常见的拖动，移动实现
 
 vue hook: 
-    $once('hook:生命周期'，callback),就可以监听到生命周期的变化了
+    this.$once('hook:生命周期'，callback),就可以监听到生命周期的变化了
