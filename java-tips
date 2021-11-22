@@ -103,3 +103,24 @@ javax.validation.groups  &  Validation 参数校验
 缺点是整个程序都要变成事件驱动型，运行流程会变得很不清晰。阅读代码的时候，很难看出主流程。
 
 
+
+------------common mistakes--------------------------
+java Timer & TimerTask VS Quartz 
+JodaTime
+Netty or Akka
+logback and Log4j
+Google Guava: HtmlEscapers
+FindBugs and PMD 代码静态分析
+--------------------
+造轮子 VS 使用比较成熟的lib ：使用Google Guava: HtmlEscapers 转义html输入，而不是自己写。
+swith 忘记break VS 使用： 使用多态重构代码
+忘记释放资源：try-with-resources 
+Memory Leaks（内存泄漏）：全局的静态对象类集合，对象相互引用，循环依赖
+垃圾回收过于频繁：大量创建短生命周期的对象（如不可变的string，考虑使用stringbuffer等）
+尽量返回空集合而不是Null(防止潜在的NPE)： Optional.ofNullable(nullableString)  optionalString.ifPresent(System.out%3A%3Aprintln)%3B
+ConcurrentModificationException： 尽量使用iterator 或  ListIterator 提供的方法做结构变更 （尽量避免在同一个遍历中做变更结构操作）或使用stream相关方法变相达到目的
+stream API过滤时，若有大量的元素满足条件，则可能产生一个新的(Collection::new)集合，所以应注意，如list，可使用removeIf
+CopyOnWriteArrayList, ConcurrentHashMap
+---------------------------------------------------------
+
+
