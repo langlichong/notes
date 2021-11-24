@@ -1,0 +1,19 @@
+------------------tips--------------
+Spring PropertyEditor 
+漫谈Framework   大涅槃经.第二十
+SpringBoot类加载机制：Fat Jar 
+Maven Scope 与 多release 问题 
+海量Libarary的快速Release 
+Spring SmartlifeCycle 
+Springboot事件监听原理
+Spring-data-jpa 是如何启动的
+Spring Bean生命周期
+Micrometer监控线程池指标
+JDK注解底层原理
+Spring钩子方法与钩子接口的使用
+Idea中多线程调试问题
+Java动态编译: 易变的业务可以考虑脚本语言(运行期变更代码非常容易，而且不用停止应用)，如groovy , JSR223规范使得java支持符合规范的所有脚本（默认支持javascript）
+debugger调试原理   JPDA(Java Platform Debugger Architecture)
+
+Jetbrain Idea中 "Evaluate Expression"实现原理（可以临时执行java代码片段）
+----------------------------------
