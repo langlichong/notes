@@ -1,0 +1,11 @@
+请求跟踪方案：httptrace
+1、spring boot actuator ,并开启httptrace endpoint 
+2、CommonsRequestLoggingFilter的debug日志：Spring Web模块还提供了一个过滤器CommonsRequestLoggingFilter，它可以对请求的细节进行日志输出
+3、ResponseBodyAdvice 可以借鉴CommonsRequestLoggingFilter请求解析
+4、logstash-logback-encoder：logstash 和logback 集成的好工具， 可以将logback日志输出成json格式，进行传到logstash ，进而输出到zabbix监控系统
+
+
+双缓冲：
+    要解决闪烁的问题，首先要知道为什么会闪烁。要进行一次渲染，首先要清空一次画布（有兴趣的话，可以试试不清空会有什么结果），然后画上其他的内容。
+	如果不做任何处理，用户是可以看到，这么一个过程：一片白=>内容=>一片白=>内容。当这个过程执行得足够快的时候，就出现了闪烁的现象。这个时候，引入双缓冲就非常自然了。
+	先后台的一张画布上画好，把后台的画布换到前台显示，这时候前台的画布就到后台去了。我们再在这张画布上作画，清空的过程就不会被看到。
