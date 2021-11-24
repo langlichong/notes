@@ -1,0 +1,158 @@
+-----------------------------------------------------------
+A： 提交了 feature1 到 feature6 六个commit
+B：	git reset --hard feature1
+B:  git commit -m'feature7'
+
+Q: 如何恢复feature1...feature6同时保存feature7 
+Answer: git reflog  ,git cherry-pick 
+git reflog 会看到之前提交的feature1...feature7 所有记录，记录好feature6 与feature7 commit-id ，
+git reset  --hard  feature6-commit-id  -- 找回前六次所有代码，此时feature7丢失
+git cherry-pick feature7-commit-id  -- 找回feature7 代码
+
+--------------------------------------------
+Event Loop:
+Message Queue:
+Job Queue:
+Call Stack:
+
+--------------------------------------------
+----------------------事件循环-------------------
+Js中存在三种数据结构：call stack , message queue（点击、键盘事件或setTimeout等触发的任务） , ES6 Job Queue（处理Promise回调）
+
+优先级：先call stack , call stack为空时候执行message queue中
+
+Calling setTimeout(() => {}, 0) will execute the function at the end of next tick, 
+much later than when using nextTick() which prioritizes the call and executes it just before the beginning of the next tick.
+？？setImmediate() 与 setTimeout(() => {}, 0) (passing a 0ms timeout)与 process.nextTick() 区别？？
+A function passed to process.nextTick() is going to be executed on the current iteration of the event loop, 
+after the current operation ends. This means it will always execute before setTimeout and setImmediate.
+A setTimeout() callback with a 0ms delay is very similar to setImmediate(). The execution order will depend on various factors, but they will be both run in the next iteration of the event loop.
+
+----------------Async------------
+Asynchronous means that things can happen independently of the main program flow.
+error-first callbacks: the first parameter in any callback function is the error object: 
+
+--------------promise-----------------------------
+Alternatives to callbacks（callback hell代方案）: Promises (ES6) and Async/Await (ES2017).
+Promise: resolved state or rejected state or pending state
+使用Promise: 利用Promise构造函数 new Promise
+const fs = require('fs')
+
+const getFile = (fileName) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(fileName, (err, data) => {
+      if (err) {
+        reject(err)  // calling `reject` will cause the promise to fail with or without the error passed as an argument
+        return        // and we don't want to go any further
+      }
+      resolve(data)
+    })
+  })
+}
+
+getFile('/etc/passwd')
+.then(data => console.log(data))
+.catch(err => console.error(err))
+----------------------------------------------
+-------------promis chain-----------------
+A promise can be returned to another promise, creating a chain of promises
+const status = response => {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  }
+  return Promise.reject(new Error(response.statusText))
+}
+
+const json = response => response.json()
+
+fetch('/todos.json')
+  .then(status)    // note that the `status` function is actually **called** here, and that it **returns a promise***
+  .then(json)      // likewise, the only difference here is that the `json` function here returns a promise that resolves with `data`
+  .then(data => {  // ... which is why `data` shows up here as the first parameter to the anonymous function
+    console.log('Request succeeded with JSON response', data)
+  })
+  .catch(error => {
+    console.log('Request failed', error)
+  })
+  
+--------Promise.all([fun1,fun2,fun3...])  Promise.race-------------
+----async/await-------
+Async functions are a combination of promises and generators
+Promises were introduced to solve the famous callback hell problem, but they introduced complexity on their own, and syntax complexity.
+They make the code look like it's synchronous, but it's asynchronous and non-blocking behind the scenes.
+hen you want to call this function you prepend await, and the calling code will stop until the promise is resolved or rejected. 
+One caveat: the client function must be defined as async. 
+
+const doSomethingAsync = () => {
+  return new Promise(resolve => {
+    setTimeout(() => resolve('I did something'), 3000)
+  })
+}
+
+const doSomething = async () => {
+  console.log(await doSomethingAsync())
+}
+--------任何函数前面添加async都会使得该函数返回一个Promise----------
+const aFunction = async () => {
+  return 'test'
+}
+aFunction().then(alert) // This will alert 'test'
+等同如下代码：
+const aFunction = () => {
+  return Promise.resolve('test')
+}
+aFunction().then(alert) // This will alert 'test'
+-------------------------------------------------------------------------------
+----EventEmitter -------
+const EventEmitter = require('events')
+const eventEmitter = new EventEmitter()
+eventEmitter.on('start', () => {
+  console.log('started')
+})
+eventEmitter.emit('start')
+-------------------------------------------
+---node module-------
+fs , path , os,events,http，buffer
+buffer: It represents a fixed-size chunk of memory (can't be resized) allocated outside of the V8 JavaScript engine.
+		You can think of a buffer like an array of integers, which each represent a byte of data
+
+
+
+Scheduler  Trigger JobDetail 
+Scheduler Factory : 根据property 文件构建Scheduler
+Scheduler: Maintains the JobDetail/Trigger registry. It is also responsible for executing the associated jobs when a trigger fires.
+
+Sring-data-jpa: 命名规则
+文件上传时：ServletRequestWrapper#getInputStream VS getReader 
+Spel表达式：https://www.jianshu.com/p/e0b50053b5d3
+spring.profiles.include Spring yml中数组定义
+org.springframework.util：包下的工具类，如StreamUtils 等
+java中Unsafe
+
+@RequestBody @RequestParam workflow
+HandlerInterceptor参数校验----
+重复读request body：org.springframework.web.util.ContentCachingRequestWrapper  or 自定义类继承ServletRequestWrapper 缓存requestBody
+
+spring HandlerAdapter 与 DispatcherServlet 关系及配合流程
+how to understand spring handler ??
+spring中有哪些设计上预留的扩展点？？
+RestTemplate.postForLocation: 文件上传
+
+CMDB 与图数据库  Neo4j还是GraphSQL
+---------------------------------------------------------------------
+Pyhon 和相关的机器学习库，例如，scikit-learn，tensorflow，pytorch 等；
+传统机器学习算法和实践，包括但不限于逻辑回归，FM，GBDT，XGBoost
+
+预测，定价，促销，定向广告
+CNN、RNN、LSTM、BERT等算法
+Solidity 智能合约
+RocketMQ  or  RabbitMQ
+---------------------------------------------------------------------
+-----
+iwconfig  iwlist
+ iwlist scan, 来扫描附近可以找到的无限信号
+ bsdgame
+-------------
+PCI是Peripheral Component Interconnect（外围设备互联）的简称
+lspci , lsusb , dmesg | grep usbcore , ip link,
+/proc/iomem描述了系统中所有的设备I/O在内存地址空间上的映射
