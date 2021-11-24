@@ -58,6 +58,10 @@ SQL 优化：
 
 	还能使用between优化分页。
 	select id,name,age from user where id between 1000000 and 1000020; 需要注意的是between要在唯一索引上分页，不然会出现每页大小不一致的问题
+Join注意：
+    join的表不宜过多，若过多，至少的mysql中会导致索引的选择非常复杂，有时候，引擎会选错索引，但join的多少，看实际情况（业务设计及复杂度），不能一概而论
+    如果两张表使用inner join关联，mysql会自动选择两张表中的小表，去驱动大表，所以性能上不会有太大的问题。
+    如果两张表使用left join关联，mysql会默认用left join关键字左边的表，去驱动它右边的表。如果左边的表数据很多时，就会出现性能问题。
 
 
 
