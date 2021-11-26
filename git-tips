@@ -20,6 +20,9 @@ git cherry-pick feature7-commit-id  -- 找回feature7 代码
 不用担心, 这个检出的分支仍然是git托管的, 你可以正常的commit/push/pull/merge/rebase, 并且这个分支的stash是显示在git主库里的
 
 ---git worktree 命令可在不同文件夹中打开同一个 git 仓库的不同分支，很好的解决不同分支 node_modules 依赖冲突的问题--
-
+由于 node_modules 文件夹是在 .gitignore 之中的，git 不会对其有任何记录或操作，因此不同分支不会有自己独立的 node_modules，使用 git checkout 命令切换时，项目里还是同一个 node_modules 文件夹。
+此时在各分支直接执行 npm install 的话，各分支 package.json 中对应的依赖都会被放到同一个 node_modules 文件夹。如果同一个依赖不同分支的版本不一致，则会冲突覆盖，发生问题。
+以上问题，究其原因是 git checkout 命令是在同一个文件夹中切换不同分支。
+怎么解决呢，一个思路是不同的分支 clone 到不同的文件夹，但这样就是相互完全独立的仓库了，不能merge
 
 -------------------------------------------------------------------------------------------
