@@ -8,4 +8,17 @@ Answer: git reflog  ,git cherry-pick
 git reflog 会看到之前提交的feature1...feature7 所有记录，记录好feature6 与feature7 commit-id ，
 git reset  --hard  feature6-commit-id  -- 找回前六次所有代码，此时feature7丢失
 git cherry-pick feature7-commit-id  -- 找回feature7 代码
+
+
+---------git worktree checkout多个分支----------
+比如featureA在开发中, featureB开发完成在测试中. 你正在featureA上开发, 测试忽然提了一个bug, 你需要checkout到featureB去修复. 
+修复后checkout回featureA, 但是你发现gradle需要同步, java需要重新编译, 你需要10分钟甚至更久才能恢复到你原来的代码状态. 
+这样的bug来几次, 你就要疯了, 然后觉得git clone代码, 放在不同的文件夹下是个挺好的主意. 需要checkout时, 就去不同的文件夹checkout, 相互不影响挺好.
+
+使用 git worktree add …/locat_dir brach_name检出分支到指定文件夹.
+这样在local_dir里的修改, 在主git库里是没有反应的, 也就不用担心一个分支的修改影响另外一个分支. 
+不用担心, 这个检出的分支仍然是git托管的, 你可以正常的commit/push/pull/merge/rebase, 并且这个分支的stash是显示在git主库里的
+
+
+
 -------------------------------------------------------------------------------------------
