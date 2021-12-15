@@ -1,0 +1,125 @@
+
+1、目标： 拦截spring MVC 中@Controller 及 @RestController 类中的 @Get/@Put/@PostMaping 标注的方法后打印其参数及执行时间
+
+  实现方式：byte-buddy + javaagent(premain)
+   A、随便定义一个controller 
+      @RestController
+      public class Hello {
+
+          @GetMapping("/hello")
+          public String hello() {
+              return "hello";
+          }
+
+          @PostMapping("/say")
+          public String say(@RequestParam("word") String word) {
+              return "say: " + word;
+          }
+      }
+      
+     B、pom文件加入依赖及插件
+        dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <!--<version>1.12.2</version>-->
+            <version>1.11.20</version>
+        </dependency>
+
+        plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifestEntries>
+                           <!-- 此处指明代理的入口类 -->
+                            <Premain-Class>com.huhu.agent.AgentMain</Premain-Class>
+                        
+                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                            <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+    C、写一个agent入口类： 包含一个premain方法：
+    public class AgentMain {
+
+
+              public static void premain(String agentArgs, Instrumentation instrumentation){
+
+                  // 拦截controller
+
+                  // 拦截spring controller
+                  AgentBuilder.Identified.Extendable builder1 = new AgentBuilder.Default()
+                          // 拦截@Controller 和 @RestController的类
+                          .type(
+                                  ElementMatchers.isAnnotatedWith(
+                                          ElementMatchers.named("org.springframework.stereotype.Controller")
+                                          .or(
+                                                  ElementMatchers.named("org.springframework.web.bind.annotation.RestController")
+                                          )
+                                  )
+                          ).transform((builder, typeDescription, classLoader, javaModule) ->
+                                  // 拦截 @Get/Post/Put/DeleteMapping
+                                  builder.method(
+                                          ElementMatchers.isPublic().and(
+                                                  ElementMatchers.isAnnotatedWith(
+                                                      ElementMatchers.nameStartsWith("org.springframework.web.bind.annotation")
+                                                      .and(ElementMatchers.nameEndsWith("Mapping"))
+                                                  )
+                                          )
+                                  )// 拦截后交给 ControllerInterceptor 处理
+                                  .intercept(MethodDelegation.to(ControllerInterceptor.class))
+                          );
+
+                  // 装载到 instrumentation 上
+                  builder1.installOn(instrumentation);
+
+              }
+          }
+          
+    D、编写代理的片段代码：AgentMain中配置的ControllerInterceptor类：
+          @Slf4j
+          public class ControllerInterceptor {
+
+              @RuntimeType
+              public static Object intercept(@Origin Method method,
+                                             @AllArguments Object[] args,
+                                             @SuperCall Callable<?> callable) {
+
+                  log.info("before controller: {}", method.getName());
+                  log.info("args: {}", Arrays.toString(args));
+
+                  long start = System.currentTimeMillis();
+                  try {
+                      Object res = callable.call();
+                      log.info("result: {}", res);
+                      return res;
+                  } catch(Exception e) {
+                      log.error("controller error: ", e);
+                  } finally {
+                      long end = System.currentTimeMillis();
+                      log.info("after controller execute in {} ms", end - start);
+                  }
+                  return null;
+              }
+          }
+          
+    E、打包代理为jar:  mvn assembly:single ， 加入打包后的jar为  agent.jar  位置在E盘
+    F、配置spring-boot项目的vm启动参数：-javaagent:E:\\agent.jar ，启动项目
+    G、访问接口：验证是否有日志输出
+        
