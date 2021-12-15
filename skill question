@@ -16,5 +16,8 @@ Java动态编译: 易变的业务可以考虑脚本语言(运行期变更代码�
 debugger调试原理   JPDA(Java Platform Debugger Architecture)
 
 Jetbrain Idea中 "Evaluate Expression"实现原理（可以临时执行java代码片段）
-Java Agent 
+Java Agent: 静态agent，动态agent
+byte buddy
+contextClassLoader解决啥问题？
+volatile: 从字节码结果看实现原理
 ----------------------------------
