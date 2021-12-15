@@ -24,4 +24,5 @@ java延迟队列 ， Delayed接口
 AtomicStampedReference 与 CAS ABA问题
 AQS 是 AbustactQueuedSynchronizer
 Future , FutureTask等
+ConcurrentHashMap 的并发度就是 segment 的大小，默认为 16？？
 ----------------------------------
