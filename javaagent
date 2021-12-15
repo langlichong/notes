@@ -1,5 +1,9 @@
+从 JVM 类加载流程来看，字节码转换器的执行方式有两种：一种是在 main 方法执行之前，通过 premain 来实现，另一种是在程序运行中，通过 Attach Api 来实现。
 
-1、目标： 拦截spring MVC 中@Controller 及 @RestController 类中的 @Get/@Put/@PostMaping 标注的方法后打印其参数及执行时间
+对于 JVM 内部的 Attach 实现，是通过 tools.jar 这个包中的 com.sun.tools.attach.VirtualMachine 以及  VirtualMachine.attach(pid) 这种方式来实现的。
+底层则是通过 JVMTI 在运行前或者运行时，将自定义的 Agent 加载并和 VM 进行通信.
+
+1、premain目标： 拦截spring MVC 中@Controller 及 @RestController 类中的 @Get/@Put/@PostMaping 标注的方法后打印其参数及执行时间
 
   实现方式：byte-buddy + javaagent(premain)
    A、随便定义一个controller 
@@ -122,4 +126,56 @@
     E、打包代理为jar:  mvn assembly:single ， 加入打包后的jar为  agent.jar  位置在E盘
     F、配置spring-boot项目的vm启动参数：-javaagent:E:\\agent.jar ，启动项目
     G、访问接口：验证是否有日志输出
-        
+ 
+ 
+---------------------------------------attach API---------------------
+2、byte-buddy attach方式
+   定义模板代码
+    class ConstructionTemplate {
+
+        @Advice.OnMethodExit
+        static void exit(@Advice.This Object self) {
+            new RuntimeException("Created: " + self).printStackTrace();
+        }
+
+    }
+
+    class CloseTemplate {
+
+        @Advice.OnMethodEnter
+        static void enter(@Advice.This Object self) {
+            new RuntimeException("Closed: " + self).printStackTrace();
+        }
+
+    }
+
+  // 匹配方法和代理
+  public class TracingAgent {
+
+      public static void agentmain(String arg, Instrumentation inst) {
+          new AgentBuilder.Default()
+                  // by default, JVM classes are not instrumented
+                  .ignore(none())
+                  .disableClassFormatChanges()
+                  .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
+                  .type(isSubTypeOf(Closable.class))
+                  .transform((builder, type, loader) -> builder
+                          .visit(Advice
+                                  .to(ConstructionTemplate.class)
+                                  .on(isConstructor()))
+                          .visit(Advice
+                                  .to(CloseTemplate.class)
+                                  .on(named("close").and(takesArguments(0)))
+                          ))
+                  .installOn(inst);
+      }
+
+  }
+
+  Byte Buddy 还提供了在运行时附加一个代理的便利方法。为了应对 tools.jar 位置和虚拟机类型的差异, 
+  Byte Buddy 给附件添加了一个抽象层，在这一层可以自动检测到正确的设置。在将上述的代理打包到一个 JAR 文件中之后，
+  就可以通过调用如下代码来附加到发生资源泄漏的进程：
+    File jarFile = getAgent();
+    String processId = getProcessId();
+    ByteBuddyAgent.install(jarFile, processId);
+
