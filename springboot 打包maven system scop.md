@@ -6,6 +6,8 @@
 
 ```
   网上一大堆要配置 resource 的操作，其实那种更容易引发资源其他引入问题，spring boot 中正确做法是只需要加入<includeSystemScope>true</includeSystemScope>即可
+  可以参考官方文档：https://docs.spring.io/spring-boot/docs/2.6.2/maven-plugin/reference/htmlsingle/#goals-repackage-parameters-details-includeSystemScope
+  
    <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
