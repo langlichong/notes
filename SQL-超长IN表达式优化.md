@@ -1,3 +1,5 @@
+
+原文地址：https://eco.dameng.com/community/article/680973d0070a3de493851338a9d11b84
 最近一个项目中很典型的查询优化问题，跟大家分享一下，SQL 如下，SQL 文本有1.8MB
 ```
  select
