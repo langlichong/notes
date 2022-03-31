@@ -1,4 +1,6 @@
 -------------------------------------------------------
+https://frugalisminds.com/  教程
+
 V2EX
 https://coolshell.cn/
 
