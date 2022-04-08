@@ -1,6 +1,11 @@
 -------------------------------------------------------
 https://frugalisminds.com/  教程
+
+
 https://roytuts.com/
+
+
+https://www.jifeng6.com/?s=security  视频站
 
 V2EX
 https://coolshell.cn/
