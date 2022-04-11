@@ -1,0 +1,205 @@
+SpringBoot 下动态切换数据源（非hibernate多租户方式）：
+1、排除springboot中的数据源的自动配置类（DataSourceAutoConfiguration）
+2、自定义一个数据源类并继承AbstractRoutingDataSource，然后覆盖determineCurrentLookupKey()即可
+3、注册自定义数据源：使用@Configuration 创建数据源的配置类
+
+hibernate环境本身提供的多租户相关API:
+  hibernate多租户： CurrentTenantIdentifierResolver、MultiTenantConnectionProvider
+
+## mybatis 与  hibernate 共存：正常配置就行
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/hybird?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: root
+  jpa:
+    database: mysql
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+mybatis:
+  type-aliases-package: com.huhu.bybird.model
+  mapper-locations: classpath:mapper/*.xml
+server:
+  port: 10900
+  
+ -----------------------------Hibernate 实现多租户  ----------------
+https://medium.com/swlh/multi-tenancy-implementation-using-spring-boot-hibernate-6a8e3ecb251a
+https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/Hibernate_User_Guide.html#multitenacy
+https://medium.com/innomizetech/dynamic-multi-database-application-with-spring-boot-7c61a743e914
+https://www.baeldung.com/spring-abstract-routing-data-source
+ ----------------------------------
+ 多租户(Multi-tenancy)是一种软件架构，一个服务实例可以服务多个客户，每个客户叫一个租户。而这其中最关键的一部分就是各个租户的数据的分离。
+
+针对这种情形，主要有三种策略，数据的隔离级别从高到低依次是：Database per Tenant, Shared Database, Separate Schema, Shared Database, Shared Schema:
+
+Database per Tenant: 每一个tenant有它自己的数据库实例，并且是和其他tenant的数据库隔离的。
+
+Shared Database, Separate Schema: 所有的tenant共享一个数据库，但是每个tenant被schema隔离，有自己的专属schema。因为在Mysql中database等同于schema，
+ 所以即为一个数据库实例不同的数据库。
+
+Shared Database, Shared Schema: 所有的tennat共享数据库和表，但是每个表以一个列区分不同tenant的数据，比如company_id, origanization_id等
+
+请求流程
+通常情况下，实现多租户，连接当前租户的数据库由以下几个步骤组成：
+
+拦截请求，检查用户是否登录，如果没有重定向用户到登录页。
+根据请求中的信息识别用户属于哪个tenant。识别用户所属tenant是基于默认的database或schema的，它有需要使用到的数据， 比如说当前用户的company_id对应的database或schema的数据或信息。
+和请求用户所属的tenant的数据库或schema建立连接。
+
+找到用户所属tenant：
+识别用户所属tenant可以通过Spring的拦截器来实现，根据请求头所带的信息来得到所属的tenant，然后存在一个ThreadLocal变量中。
+这样在接下来的其他处理中可以拿到当前的tenant。在请求结束后把ThreadLocal中的内容清除。
+
+连接到tenant所属数据库：
+   为了使Hibernate支持多租户，需要实现两个接口，一个是CurrentTenantIdentifierResolver 用来得到tennat identifier，
+   被下一个接口使用得到数据库连接，另一个是MultiTenantConnectionProvider用来得到数据库连接。
+   首先是实现接口CurrentTenantIdentifierResolver, 根据company id得到数据库(database/schema)的名称
+   ```
+      public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver {
+
+  private final DatabaseManager databaseManager;
+
+  @Autowired
+  public TenantIdentifierResolver(@Lazy final DatabaseManager databaseManager) {
+    this.databaseManager = databaseManager;
+  }
+
+  @Override
+  public String resolveCurrentTenantIdentifier() {
+
+    if (StringUtils.isBlank(TenantContext.getCurrentTenant())) {
+      return databaseManager.getDefaultSchemaName();
+    }
+
+    return databaseManager.getSchemaNameByCompanyId(TenantContext.getCurrentTenant());
+  }
+
+  @Override
+  public boolean validateExistingCurrentSessions() {
+    return true;
+  }
+}
+   ```
+然后实现另一个接口MultiTenantConnectionProvider来获取与释放数据库连接:
+```
+@Component
+public class TenantConnectionProvider implements MultiTenantConnectionProvider {
+
+  private static final long serialVersionUID = -1166976596388409766L;
+
+  private final transient DatabaseManager databaseManager;
+
+  private final transient DataSource defaultDataSource;
+
+  @Autowired
+  public TenantConnectionProvider(@Lazy final DatabaseManager databaseManager,
+      final DataSource pactsafeDataSource) {
+    this.databaseManager = databaseManager;
+    defaultDataSource = pactsafeDataSource;
+  }
+
+  @Override
+  public Connection getAnyConnection() throws SQLException {
+    return defaultDataSource.getConnection();
+  }
+
+  @Override
+  public void releaseAnyConnection(final Connection connection) throws SQLException {
+    connection.close();
+  }
+
+  @Override
+  public Connection getConnection(final String tenantIdentifier) throws SQLException {
+    final Connection connection = getAnyConnection();
+    connection.setCatalog(tenantIdentifier);
+    connection.setSchema(tenantIdentifier);
+    return connection;
+  }
+
+  @Override
+  public void releaseConnection(final String tenantIdentifier, final Connection connection)
+      throws SQLException {
+    connection.setSchema(tenantIdentifier);
+    connection.setCatalog(tenantIdentifier);
+    releaseAnyConnection(connection);
+  }
+
+  @Override
+  public boolean supportsAggressiveRelease() {
+    return false;
+  }
+
+  @Override
+  public boolean isUnwrappableAs(final Class unwrapType) {
+    return false;
+  }
+
+  @Override
+  public <T> T unwrap(final Class<T> unwrapType) {
+    return null;
+  }
+}
+```
+最后需要加上Hibernate配置文件：
+```
+@Configuration
+public class HibernateConfiguration {
+
+  private final JpaProperties jpaProperties;
+
+  @Autowired
+  public HibernateConfiguration(final JpaProperties jpaProperties) {
+    this.jpaProperties = jpaProperties;
+  }
+
+  @Bean
+  JpaVendorAdapter jpaVendorAdapter() {
+    return new HibernateJpaVendorAdapter();
+  }
+
+  @Bean
+  LocalContainerEntityManagerFactoryBean entityManagerFactory(
+      final DataSource dataSource,
+      final MultiTenantConnectionProvider multiTenantConnectionProvider,
+      final CurrentTenantIdentifierResolver currentTenantIdentifierResolver) {
+    final Map<String, Object> newJpaProperties = new HashMap<>(jpaProperties.getProperties());
+    newJpaProperties.put(MULTI_TENANT, MultiTenancyStrategy.SCHEMA);
+    newJpaProperties.put(
+        MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
+    newJpaProperties.put(
+        MULTI_TENANT_IDENTIFIER_RESOLVER, currentTenantIdentifierResolver);
+    newJpaProperties.put(
+        IMPLICIT_NAMING_STRATEGY, SpringImplicitNamingStrategy.class.getName());
+    newJpaProperties.put(
+        PHYSICAL_NAMING_STRATEGY, SpringPhysicalNamingStrategy.class.getName());
+    newJpaProperties.put(DIALECT, MySQL57Dialect.class.getName());
+
+    final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
+        new LocalContainerEntityManagerFactoryBean();
+    entityManagerFactoryBean.setDataSource(dataSource);
+    entityManagerFactoryBean.setJpaPropertyMap(newJpaProperties);
+    entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
+    entityManagerFactoryBean.setPackagesToScan("your_package_here");
+    entityManagerFactoryBean.setPersistenceUnitName("default");
+    return entityManagerFactoryBean;
+  }
+}
+```
+通过EntityManager来连接指定数据库
+另外如果想连接指定的数据库，而不是当前的tenant的数据库，可以通过EntityManagerFactory提供的功能来实现，代码示例如下：
+```
+  final Session session = entityManagerFactory.unwrap(SessionFactory.class)
+              .withOptions()
+              .tenantIdentifier(schemaName)
+              .openSession();
+      final Transaction transaction = session.getTransaction();
+      transaction.begin();
+      session.save(entity);
+      transaction.commit();
+      session.close();
+      return entity;
+```
