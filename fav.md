@@ -4,6 +4,8 @@ https://frugalisminds.com/  教程
 
 https://roytuts.com/
 
+SpringSecurity 系列blog:  https://mp.weixin.qq.com/s?__biz=MzI1NDY0MTkzNQ==&mid=2247488812&idx=1&sn=4db81eb24508743076d93207046d1572&chksm=e9c3474cdeb4ce5af49e487e3a06634cb4b3aee33284337d3e804952bb07f039ea65bedcd59c&scene=178&cur_album_id=1319828555819286528#rd
+
 
 https://www.jifeng6.com/?s=security  视频站
 
