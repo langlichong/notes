@@ -1,0 +1,15 @@
+stages:
+  - deploy
+job1:
+  stage: deploy
+  variables:
+    dhSourcePath: D:\codeHouse\dh\dh
+    deployPath: /home/genew/dh/dist
+  script: 
+    - echo  update dh source-code from gitlab 
+    - git config --global --add safe.directory E:/gitlab_runners/dh/dh
+    - set-location  E:\gitlab_runners\dh\dh 
+    - git pull
+    - echo y | pscp -r -pw Aa123456 E:\gitlab_runners\dh\dh\*  genew@10.8.103.15:/home/genew/dh/dist
+  tags: 
+    - deploy
