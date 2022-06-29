@@ -10,6 +10,6 @@ job1:
     - git config --global --add safe.directory E:/gitlab_runners/dh/dh
     - set-location  E:\gitlab_runners\dh\dh 
     - git pull
-    - echo y | pscp -r -pw Aa123456 E:\gitlab_runners\dh\dh\*  genew@10.8.103.15:/home/genew/dh/dist
+    - echo y | pscp -r -pw xxxxx E:\gitlab_runners\dh\dh\*  genew@10.8.103.15:/home/genew/dh/dist
   tags: 
     - deploy
