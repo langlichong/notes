@@ -33,25 +33,44 @@ public class MiloTest {
         // create a subscription @ 1000ms
         UaSubscription subscription = client.getSubscriptionManager().createSubscription(5000.0).get();
 
-        String nodeId = "ns=2;s=channel_001.device_001.cw"; // 持续变化的值
-        String nodeIdConstant = "ns=2;s=channel_001.device_001.age"; // 模拟的是一个常量值 一直不变化
-        ReadValueId readValueId = new ReadValueId(
-                NodeId.parse(nodeIdConstant),
+        String nodeId1 = "ns=2;s=channel_001.device_001.cw"; // 持续变化的值
+        String nodeId2 = "ns=2;s=channel_001.device_001.age"; // 模拟的是一个常量值 一直不变化
+
+        ReadValueId readValueId1 = new ReadValueId(
+                NodeId.parse(nodeId1),
                 AttributeId.Value.uid(), null,
                 QualifiedName.NULL_VALUE
         );
 
-        UInteger clientHandle = subscription.nextClientHandle();
+        ReadValueId readValueId2 = new ReadValueId(
+                NodeId.parse(nodeId2),
+                AttributeId.Value.uid(), null,
+                QualifiedName.NULL_VALUE
+        );
 
-        MonitoringParameters parameters = new MonitoringParameters(
-                clientHandle,
+
+        UInteger clientHandle1 = subscription.nextClientHandle();
+        UInteger clientHandle2 = subscription.nextClientHandle();
+
+        MonitoringParameters parameters1 = new MonitoringParameters(
+                clientHandle1,
                 0.0, // sampling interval
                 null,
                 uint(10),
                 true
         );
 
-        MonitoredItemCreateRequest request = new MonitoredItemCreateRequest(readValueId, MonitoringMode.Reporting, parameters);
+        MonitoringParameters parameters2 = new MonitoringParameters(
+                clientHandle2,
+                0.0, // sampling interval
+                null,
+                uint(10),
+                true
+        );
+
+
+        MonitoredItemCreateRequest request1 = new MonitoredItemCreateRequest(readValueId1, MonitoringMode.Reporting, parameters1);
+        MonitoredItemCreateRequest request2 = new MonitoredItemCreateRequest(readValueId2, MonitoringMode.Reporting, parameters2);
 
 
         UaSubscription.ItemCreationCallback onItemCreated = (monitoredItem,id) -> monitoredItem.setValueConsumer((item,value) -> {
@@ -63,7 +82,7 @@ public class MiloTest {
 
         List<UaMonitoredItem> items = subscription.createMonitoredItems(
                 TimestampsToReturn.Both,
-                newArrayList(request),
+                newArrayList(request1,request2),
                 onItemCreated
         ).get();
 
