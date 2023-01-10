@@ -1,0 +1,85 @@
+import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
+import org.eclipse.milo.opcua.stack.core.AttributeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateRequest;
+import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
+import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
+
+public class MiloTest {
+
+    public static void main(String[] args) throws Exception {
+
+        String endpoint = "opc.tcp://192.168.16.48:49320";
+        OpcUaClient client = OpcUaClient.create(endpoint);
+
+        // synchronous connect
+         client.connect().get();
+
+        //client.setPublishingMode(true,null);
+
+        // create a subscription @ 1000ms
+        UaSubscription subscription = client.getSubscriptionManager().createSubscription(5000.0).get();
+
+        String nodeId = "ns=2;s=channel_001.device_001.cw"; // 持续变化的值
+        String nodeIdConstant = "ns=2;s=channel_001.device_001.age"; // 模拟的是一个常量值 一直不变化
+        ReadValueId readValueId = new ReadValueId(
+                NodeId.parse(nodeIdConstant),
+                AttributeId.Value.uid(), null,
+                QualifiedName.NULL_VALUE
+        );
+
+        UInteger clientHandle = subscription.nextClientHandle();
+
+        MonitoringParameters parameters = new MonitoringParameters(
+                clientHandle,
+                0.0, // sampling interval
+                null,
+                uint(10),
+                true
+        );
+
+        MonitoredItemCreateRequest request = new MonitoredItemCreateRequest(readValueId, MonitoringMode.Reporting, parameters);
+
+
+        UaSubscription.ItemCreationCallback onItemCreated = (monitoredItem,id) -> monitoredItem.setValueConsumer((item,value) -> {
+            NodeId nid = item.getReadValueId().getNodeId();
+            Variant val = value.getValue();
+            String subRsp = String.format("-- NodeId = %s , NodeValue = %s", nid.toParseableString(), val.getValue().toString());
+            System.out.println(subRsp);
+        });
+
+        List<UaMonitoredItem> items = subscription.createMonitoredItems(
+                TimestampsToReturn.Both,
+                newArrayList(request),
+                onItemCreated
+        ).get();
+
+        for (UaMonitoredItem item : items) {
+            if (item.getStatusCode().isGood()) {
+                System.out.println(String.format("-- item created for nodeId=%s", item.getReadValueId().getNodeId()));
+            } else {
+                System.out.println(String.format("-- failed to create item for nodeId=%s (status=%s)",item.getReadValueId().getNodeId(), item.getStatusCode()));
+            }
+        }
+
+        TimeUnit.MINUTES.sleep(5);
+
+        //client.disconnect().get();
+
+    }
+
+
+}
