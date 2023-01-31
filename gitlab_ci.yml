@@ -1,15 +1,36 @@
-stages:
-  - deploy
-job1:
-  stage: deploy
-  variables:
-    dhSourcePath: D:\codeHouse\dh\dh
-    deployPath: /home/genew/dh/dist
-  script: 
-    - echo  update dh source-code from gitlab 
-    - git config --global --add safe.directory E:/gitlab_runners/dh/dh
-    - set-location  E:\gitlab_runners\dh\dh 
-    - git pull
-    - echo y | pscp -r -pw xxxxx E:\gitlab_runners\dh\dh\*  user@10.8.103.15:/home/genew/dh/dist
-  tags: 
-    - deploy
+image: maven:3.3.9-jdk-8
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "dev"'
+
+variables:
+  MAVEN_CLI_OPTS: "-s /etc/maven/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  TAG_NAME: "tg-base-api-runner"
+  DEPLOY_BASE_DIR: "/home/genew/tg-base-service/bin/latest"
+
+cache:
+  paths:
+    - .m2/repository/
+    - target/
+    - main/target/
+
+build:
+  stage: build
+  tags:
+    - $TAG_NAME
+  before_script:
+    - echo "清理 target"
+    - echo "当前目录："
+    - echo `pwd`
+    - mvn clean
+  script:
+    - mvn $MAVEN_CLI_OPTS package -DskipTests -P dev
+    - echo "当前目录:"
+    - echo `pwd`
+  after_script:
+    - echo " tg-base-api 构建成功 ！ 拷贝到发布目录"
+    - sudo mv -f $DEPLOY_BASE_DIR/main.jar  $DEPLOY_BASE_DIR/bak/
+    - sudo cp -f ./main/target/main.jar $DEPLOY_BASE_DIR/
+    - sudo systemctl restart tg-base-api.service
