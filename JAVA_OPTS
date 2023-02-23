@@ -1,0 +1,5 @@
+AVAOPTS is an environment variable that can be used to pass Java runtime options to the Java command. 
+It is commonly used to specify memory settings, debugging options, and other Java-specific settings. 
+It is generally recommended to use JAVAOPTS instead of the older JAVATOOLOPTIONS when running Java applications.
+It is generally recommended to use JAVAOPTS in most cases as it works with all Java applications, 
+while JAVATOOL_OPTIONS only works with certain Java applications.
