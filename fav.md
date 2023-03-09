@@ -2,6 +2,7 @@
 https://frugalisminds.com/  教程
 
 https://medium.com/  有很多不错文章
+https://bigdata.djbook.top/ 大数据导航
 
 https://roytuts.com/
 
