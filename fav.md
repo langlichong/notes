@@ -1,4 +1,8 @@
 -------------------------------------------------------
+https://www.guru99.com/
+
+https://andreasbm.github.io/web-skills/
+
 https://frugalisminds.com/  教程
 
 https://medium.com/  有很多不错文章
