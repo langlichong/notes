@@ -1,4 +1,7 @@
 -------------------------------------------------------
+
+https://www.webrcade.com/: 浏览器版老旧游戏（任天堂等）
+
 https://www.guru99.com/
 
 https://ghe.clickhouse.tech/
