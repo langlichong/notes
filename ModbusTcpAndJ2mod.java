@@ -7,6 +7,7 @@ import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
 import com.ghgande.j2mod.modbus.util.BitVector;
 
 /**
+ * Modbus Slave只能仿真4个存储区中的1个存储区,要使用不同存储区需要切换到对应的功能码。
  * ModbusRTU报文格式：
  * Tx：  从站(或server)地址 + 功能码 + 起始地址（起始地址高位，起始地址低位） + 寄存器个数 + 校验码
  * Rx:   从站地址 + 功能码 + 字节个数 + 数据 + 校验码
