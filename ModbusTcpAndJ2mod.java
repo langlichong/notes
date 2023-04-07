@@ -7,6 +7,10 @@ import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
 import com.ghgande.j2mod.modbus.util.BitVector;
 
 /**
+ * ModbusRTU报文格式：
+ * Tx：  从站(或server)地址 + 功能码 + 起始地址（起始地址高位，起始地址低位） + 寄存器个数 + 校验码
+ * Rx:   从站地址 + 功能码 + 字节个数 + 数据 + 校验码
+ *
  * ModbusTcp读写（ j2mod 解析库, Modbus Salve模拟软件）
  * TCP报文 = MBAP报文头（长度 7 字节） + PDU(protocol data unit)
  * MBAP报文= 2字节事务标识 + 2字节协议标识(modbustcp标识 00 00) + 2字节的数据长度标识（长度指PDU部分字节数） + 1字节的单元标识（即modbus slave或 modbus server的站地址）
