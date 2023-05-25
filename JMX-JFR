@@ -1,0 +1,7 @@
+```
+Java Flight Recorder（JFR）是JVM的诊断和性能分析工具。它可以收集有关JVM以及在其上运行的Java应用程序的数据。
+JFR是集成到JVM中的，所以JFR对JVM的性能影响非常小，我们可以放心的使用它。
+一般来说，在使用默认配置的时候，性能影响要小于1%。
+```
+- jfr 本质上还是jmx的一种 MBean， jfr在jdk11之前的版本中属于商业特性（阿里在jdk8u中好像合并了jfr，如果使用jdk8u ，则也可以免费使用该功能 ）
+- jmc: java mission control  适用于分析jfr产生的数据文件的 
