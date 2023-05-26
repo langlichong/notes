@@ -1,0 +1,69 @@
+```
+        <dependency>
+            <groupId>org.apache.plc4x</groupId>
+            <artifactId>plc4j-api</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+
+      <dependency>
+          <groupId>org.apache.plc4x</groupId>
+          <artifactId>plc4j-driver-modbus</artifactId>
+          <version>0.10.0</version>
+      </dependency>
+```
+
+```
+public static void main(String[] args) throws Exception {
+        String connectionString = "modbus-tcp:tcp://192.168.16.58:506";
+
+        try (PlcConnection plcConnection = new PlcDriverManager().getConnection(connectionString)) {
+            if (!plcConnection.getMetadata().canRead()) {
+                log.error("This connection doesn't support reading.");
+            }
+
+            // {memory-Area}{start-address}:{data-type}[{array-size}]
+            String address = "holding-register:2:REAL[2]";
+            String addr2 = "holding-register:1";
+            final PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
+            builder.addItem("电流浮点", addr2);
+
+            final PlcReadRequest plcReadRequest = builder.build();
+            final PlcReadResponse response = plcReadRequest.execute().get();
+            for (String fieldName : response.getFieldNames()) {
+                int numValues = response.getNumberOfValues(fieldName);
+                // If it's just one element, output just one single line.
+                if(numValues == 1) {
+                    log.info("Value[" + fieldName + "]: " + response.getObject(fieldName));
+                }
+                // If it's more than one element, output each in a single row.
+                else {
+                    log.info("Value[" + fieldName + "]:");
+                    for(int i = 0; i < numValues; i++) {
+                        log.info(" - " + response.getObject(fieldName, i));
+                    }
+                }
+            }
+
+           /* final CompletableFuture<? extends PlcReadResponse> completableFuture = plcReadRequest.execute();
+
+            completableFuture.whenComplete(((response, throwable) -> {
+
+                for (String fieldName : response.getFieldNames()) {
+                    int numValues = response.getNumberOfValues(fieldName);
+                    // If it's just one element, output just one single line.
+                    if(numValues == 1) {
+                        log.info("Value[" + fieldName + "]: " + response.getObject(fieldName));
+                    }
+                    // If it's more than one element, output each in a single row.
+                    else {
+                        log.info("Value[" + fieldName + "]:");
+                        for(int i = 0; i < numValues; i++) {
+                            log.info(" - " + response.getObject(fieldName, i));
+                        }
+                    }
+                }
+            }));*/
+        }
+    }
+}
+```
