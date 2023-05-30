@@ -5,7 +5,7 @@ jcmd <pid> ManagementAgent.status
 jcmd <pid> ManagementAgent.start_local
 
 -- 开启远程JMX
-jcmd <pid> ManagementAgent.start jmxremote.port=15555 jmxremote.authenticate=false jmxremote.ssl=false
+jcmd <pid> ManagementAgent.start jmxremote.host=10.8.103.15  jmxremote.port=15555 jmxremote.authenticate=false jmxremote.ssl=false
  
 -- 停止JMX
  jcmd <pid> ManagementAgent.stop
