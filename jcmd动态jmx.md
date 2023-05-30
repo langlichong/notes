@@ -31,3 +31,12 @@ jcmd <pid> ManagementAgent.start jmxremote.host=10.8.103.15  jmxremote.port=1555
   
   -- 有时候运行 jps、jcmd、jstat等提示 java.io.IOException: Operation not permitted , 这个可能是你启动java 程序时候，权限较高，看下是不是用root权限启动的，
   加个 sudo 试试看
+ 
+ -- 开启JMX后连接远程可能会报错连接不上，JMX开启后，除了手工指定的端口如上面的 15555 外及服务自身的端口8000，程序还会监听两个随机端口,需要确认是否端口未开放到防火墙
+ ```
+ sudo netstat -tupln | grep 2341150
+ tcp6       0      0 :::41801                :::*                    LISTEN      2341150/java
+ tcp6       0      0 10.8.103.15:10001       :::*                    LISTEN      2341150/java
+ tcp6       0      0 10.8.103.15:37459       :::*                    LISTEN      2341150/java
+ tcp6       0      0 :::8000                 :::*                    LISTEN      2341150/java
+ ```
