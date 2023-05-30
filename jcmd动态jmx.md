@@ -33,7 +33,11 @@ jcmd <pid> ManagementAgent.start jmxremote.host=10.8.103.15  jmxremote.port=1555
   加个 sudo 试试看
  
  -- 开启JMX后连接远程可能会报错连接不上，JMX开启后，除了手工指定的端口如上面的 15555 外及服务自身的端口8000，程序还会监听两个随机端口,需要确认是否端口未开放到防火墙
- -- JMX会绑定一个接口，RMI也会绑定一个接口
+ ```
+   在Java启动时，JMX会绑定一个接口，RMI也会绑定一个接口，在复杂网络环境下，有可能你通过打开防火墙允许了JMX端口的通过，但是由于没有放行RMI，远程连接也是会失败的。
+这是因为JMX在远程连接时，会随机开启一个RMI端口作为连接的数据端口，这个端口会被防火墙给阻止，以至于连接超时失败。
+ 在Java7u25版本后，可以使用 -Dcom.sun.management.jmxremote.rmi.port参数来指定这个端口；好消息是，你可以将这个端口和jmx.port的端口设置成一个端口，这样防火墙就只需要放行一个端口就可以了
+ ```
  ```
  sudo netstat -tupln | grep 2341150
  tcp6       0      0 :::41801                :::*                    LISTEN      2341150/java
