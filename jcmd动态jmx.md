@@ -25,3 +25,6 @@ jcmd <pid> ManagementAgent.start jmxremote.port=15555 jmxremote.authenticate=fal
   
   -- 有时候 jps 之类的命令无法找到pid ，java服务启动时候会在 /tmp/ 目录下生成很多目录，其名字为/tmp/hsperfdata_实际用户名，如/tmp/hsperfdata_root
   该目录下就是对应的pid文件，找到pid就可以使用 jcmd动态开启一些功能，如jmx远程连接，或者 jfr等
+  
+  -- 有时候运行 jps、jcmd、jstat等提示 java.io.IOException: Operation not permitted , 这个可能是你启动java 程序时候，权限较高，看下是不是用root权限启动的，
+  加个 sudo 试试看
