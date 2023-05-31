@@ -48,6 +48,22 @@ jcmd <pid> ManagementAgent.start jmxremote.host=10.8.103.15  jmxremote.port=1555
    在Java启动时，JMX会绑定一个接口，RMI也会绑定一个接口，在复杂网络环境下，有可能你通过打开防火墙允许了JMX端口的通过，但是由于没有放行RMI，远程连接也是会失败的。
 这是因为JMX在远程连接时，会随机开启一个RMI端口作为连接的数据端口，这个端口会被防火墙给阻止，以至于连接超时失败。
  在Java7u25版本后，可以使用 -Dcom.sun.management.jmxremote.rmi.port参数来指定这个端口；好消息是，你可以将这个端口和jmx.port的端口设置成一个端口，这样防火墙就只需要放行一个端口就可以了
+ 
+ 
+ - demo: 从windows主机 192.168.16.58 去远程连接 ubuntu20.04 server上的jmx，老是失败
+ ```
+    在linux server上开启远程jmx，使用了 management.properties , 其中配置内容如下：
+     com.sun.management.jmxremote.port=10001
+     com.sun.management.jmxremote.ssl=false
+     com.sun.management.jmxremote.authenticate=false
+     com.sun.management.jmxremote.host=192.168.54.3
+   然后启动程序：sudo nohup java -Dcom.sun.management.config.file=/usr/local/tg-base-api/config/management.properties  -jar main.jar &
+   接着在windows上使用jconsole连接：192.168.54.3:10001 , 发现没反应，老是提示连接失败，从本地telnet 192.168.54.3 10001 都是通的。。
+   抱着试试态度，问了you.com ChatGPT， 他提示说如果确认端口、ip配置正常则可以使用java.rmi.server.hostname，该属性能让rmi server绑定到正确的ip上，
+    接着执行如下命令，带上java.rmi.server.hostname属性启动：
+    sudo nohup java -Dcom.sun.management.config.file=/usr/local/tg-base-api/config/management.properties -Djava.rmi.server.hostname=192.168.54.3 -jar main.jar &
+    启动完毕后，使用jconsole连接，果然连接成功了。 怀疑com.sun.management.jmxremote.host属性是否没有用？
+ ```
  jmxremote.rmi.port=xxx
  ```
  ```
