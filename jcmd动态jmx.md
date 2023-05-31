@@ -62,7 +62,8 @@ jcmd <pid> ManagementAgent.start jmxremote.host=10.8.103.15  jmxremote.port=1555
    抱着试试态度，问了you.com ChatGPT， 他提示说如果确认端口、ip配置正常则可以使用java.rmi.server.hostname，该属性能让rmi server绑定到正确的ip上，
     接着执行如下命令，带上java.rmi.server.hostname属性启动：
     sudo nohup java -Dcom.sun.management.config.file=/usr/local/tg-base-api/config/management.properties -Djava.rmi.server.hostname=192.168.54.3 -jar main.jar &
-    启动完毕后，使用jconsole连接，果然连接成功了。 怀疑com.sun.management.jmxremote.host属性是否没有用？
+    启动完毕后，使用jconsole连接，果然连接成功了。 看来com.sun.management.jmxremote.host属性是否没有用？？（经验证删除management.properties中的com.sun.management.jmxremote.host后
+    依然可以使用jconsole连接成功）
  ```
  jmxremote.rmi.port=xxx
  ```
