@@ -1,3 +1,5 @@
+- https://docs.oracle.com/en/java/javase/17/management/monitoring-and-management-using-jmx-technology.html#GUID-805517EC-2D33-4D61-81D8-4D0FA770D1B8
+- https://docs.oracle.com/javadb/10.10.1.2/adminguide/radminjmxenabledisable.html
 -- 查看某个jvm进程支持的jcmd 子命令命令
 jcmd <pid> help
  
