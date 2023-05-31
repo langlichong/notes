@@ -50,8 +50,9 @@ jcmd <pid> ManagementAgent.start jmxremote.host=10.8.103.15  jmxremote.port=1555
  在Java7u25版本后，可以使用 -Dcom.sun.management.jmxremote.rmi.port参数来指定这个端口；好消息是，你可以将这个端口和jmx.port的端口设置成一个端口，这样防火墙就只需要放行一个端口就可以了
  
  
- - demo: 从windows主机 192.168.16.58 去远程连接 ubuntu20.04 server上的jmx，老是失败
+ 
  ```
+ - 正确配置端口后仍然连接不了的情况: 从windows主机 192.168.16.58 去远程连接 ubuntu20.04 server上的jmx，老是失败
     在linux server上开启远程jmx，使用了 management.properties , 其中配置内容如下：
      com.sun.management.jmxremote.port=10001
      com.sun.management.jmxremote.ssl=false
