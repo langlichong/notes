@@ -1,3 +1,9 @@
+-- 查看某个jvm进程支持的jcmd 子命令命令
+jcmd <pid> help
+ 
+ -- jcmd 0 help : 进程号为0，则该命令会被发送到所有的jvm进程中，如果有很多进程，则返回每一个进程支持的子命令列表
+ 
+
 --查看开启的JMX（local ,remote）
 jcmd <pid> ManagementAgent.status  
 
