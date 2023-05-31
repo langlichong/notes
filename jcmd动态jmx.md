@@ -1,5 +1,6 @@
 - https://docs.oracle.com/en/java/javase/17/management/monitoring-and-management-using-jmx-technology.html#GUID-805517EC-2D33-4D61-81D8-4D0FA770D1B8
 - https://docs.oracle.com/javadb/10.10.1.2/adminguide/radminjmxenabledisable.html
+- 在 $JRE/conf/management/management.properties 文件中可以指定jmx相关参数，该文件头部说明了什么时候会读该文件及如何手工指定该文件
 -- 查看某个jvm进程支持的jcmd 子命令命令
 jcmd <pid> help
  
