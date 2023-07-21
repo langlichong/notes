@@ -1,0 +1,35 @@
+-- demo : 生成input为cpu ，输出为postgresql的配置文件模板
+telegraf --input-filter=cpu --output-filter=postgresql config > telegraf.conf
+
+-- 查看插件生成的数据(metric) ，如果配置错误，也可以看到错误提示
+telegraf --config telegraf.conf --test
+
+
+-- 覆盖自动创建的measurement的名字
+ 方法1. 在全局配置下加 measurement = "自定义名称"，然后打开[[processors.override]]  及其下的 name_override（此处指定的名称不生效，使用的是全局的名称）
+ 2. [[processors.override]] 下打开 name_override 并给name_override指定名称即可
+ 
+
+-- 多个表数组
+[[inputs.modbus]] ： 可以配置多次
+
+-- override processor plugin
+
+-- 给插件起别名: alias = "自定义"
+
+Before we dive into the usefulness of tags, let’s quickly run through
+ the data structure of line protocol and why it matters to understand 
+ its structure when using Telegraf. Line protocol is made up of 4 key components:
+Measurement name: Description and namespace for the metric
+Tags: Key/Value string pairs and usually used to identify the metric
+Fields: Key/Value pairs that are typed and usually contain the metric data
+Timestamp: Date and time associated with the fields
+
+--最佳实践
+  - 拆分大配置文件为多个，telegraf 支持从文件夹加载配置
+      默认加载位置：
+		Linux: /etc/telegraf/telegraf.d/
+		Windows: C:\Program Files\Telegraf\telegraf.d (You set this as part of the service install)
+		Mac: /usr/local/etc/telegraf.d
+	  自定义文件夹并使用 -config-directory 参数指明即可
+ 
