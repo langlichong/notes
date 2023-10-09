@@ -1,0 +1,80 @@
+image: maven:3.3.9-jdk-8
+
+stages:
+  - deps
+  - build
+  - deploy
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+
+variables:
+  #MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode -DskipTests"
+  #MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  TAG_NAME: "infra-platform-api-runner"
+  DEPLOY_BASE_DIR: "/opt/infra-platform/bin"
+  DIS_APP: "iot-1.0-SNAPSHOT.jar"
+  PLS_APP: "PLS-1.0-SNAPSHOT.jar"
+
+cache:
+  paths:
+    - $CI_PROJECT_DIR/.m2/
+    #- SYS/target/
+    #- DIS/iot/target/
+    #- PLS/target/
+
+# 安装 BOM 、SYS 依赖
+deps-install-job:
+  stage: deps
+  tags:
+    - $TAG_NAME
+  script:
+    - echo $CI_PROJECT_DIR
+    - echo $CI_PROJECT_PATH
+    - echo $HOME
+    - mvn  clean install -f BOM/pom.xml -DskipTests
+
+# 构建 DIS 服务
+dis-build-job:
+  stage: build
+  tags:
+    - $TAG_NAME
+  script:
+    - echo '----打包 DIS ----'
+    - mvn clean package -DskipTests -f DIS/pom.xml
+    - ls -l -h ./DIS/iot/target
+  needs: ["deps-install-job"]
+
+# 部署 DIS 服务
+deploy-dis-job:
+  stage: deploy
+  needs: ["dis-build-job"]
+  tags:
+    - $TAG_NAME
+  script:
+    - echo '----部署 DIS----'
+    - ls -l -h ./DIS/iot/target
+    - if [ -e "$DEPLOY_BASE_DIR/backend/$DIS_APP" ]; then sudo mv -f $DEPLOY_BASE_DIR/backend/$DIS_APP  $DEPLOY_BASE_DIR/bak/ ; fi
+    - if [ -e "./DIS/iot/target/$DIS_APP" ]; then  sudo cp -f ./DIS/iot/target/$DIS_APP  $DEPLOY_BASE_DIR/backend/ ; fi
+    - ls -l $DEPLOY_BASE_DIR/backend/
+
+# 构建 PLS 服务
+pls-build-job:
+  stage: build
+  tags:
+    - $TAG_NAME
+  script:
+    - echo '----打包 PLS ----'
+    - mvn clean package -DskipTests -f PLS/pom.xml
+    - ls -l -h ./PLS/target
+  needs: ["deps-install-job"]
+
+# 部署 PLS 服务
+deploy-pls-job:
+  stage: deploy
+  needs: ["pls-build-job"]
+  tags:
+    - $TAG_NAME
+  script:
+    - echo '----部署 PLS----'
