@@ -10,8 +10,6 @@ workflow:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
 
 variables:
-  #MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode -DskipTests"
-  #MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   TAG_NAME: "infra-platform-api-runner"
   DEPLOY_BASE_DIR: "/opt/infra-platform/bin"
   DIS_APP: "iot-1.0-SNAPSHOT.jar"
@@ -20,9 +18,6 @@ variables:
 cache:
   paths:
     - $CI_PROJECT_DIR/.m2/
-    #- SYS/target/
-    #- DIS/iot/target/
-    #- PLS/target/
 
 # 安装 BOM 、SYS 依赖
 deps-install-job:
@@ -36,28 +31,21 @@ deps-install-job:
     - mvn  clean install -f BOM/pom.xml -DskipTests
 
 # 构建 DIS 服务
-dis-build-job:
+dis-job:
   stage: build
   tags:
     - $TAG_NAME
   script:
-    - echo '----打包 DIS ----'
+    - echo '--------------------打包 DIS --------------------'
     - mvn clean package -DskipTests -f DIS/pom.xml
     - ls -l -h ./DIS/iot/target
-  needs: ["deps-install-job"]
-
-# 部署 DIS 服务
-deploy-dis-job:
-  stage: deploy
-  needs: ["dis-build-job"]
-  tags:
-    - $TAG_NAME
-  script:
-    - echo '----部署 DIS----'
-    - ls -l -h ./DIS/iot/target
+    - echo '--------------------部署 重启 DIS --------------------'
     - if [ -e "$DEPLOY_BASE_DIR/backend/$DIS_APP" ]; then sudo mv -f $DEPLOY_BASE_DIR/backend/$DIS_APP  $DEPLOY_BASE_DIR/bak/ ; fi
     - if [ -e "./DIS/iot/target/$DIS_APP" ]; then  sudo cp -f ./DIS/iot/target/$DIS_APP  $DEPLOY_BASE_DIR/backend/ ; fi
     - ls -l $DEPLOY_BASE_DIR/backend/
+    - sudo systemctl restart infra-platform-dis-api.service
+  needs: ["deps-install-job"]
+    
 
 # 构建 PLS 服务
 pls-build-job:
@@ -65,16 +53,26 @@ pls-build-job:
   tags:
     - $TAG_NAME
   script:
-    - echo '----打包 PLS ----'
+    - echo '---------------------打包 PLS -------------------'
     - mvn clean package -DskipTests -f PLS/pom.xml
     - ls -l -h ./PLS/target
   needs: ["deps-install-job"]
+  # 使用artifacts将target下内容进行传递
+  artifacts:
+    paths:
+      - PLS/target/*.jar
 
-# 部署 PLS 服务
+# 部署 PLS 服务： 使用dependencies获取前序任务的artifacts( job 之间是没有状态的，每个job都是在一个独立的新环境下进行的)
 deploy-pls-job:
   stage: deploy
   needs: ["pls-build-job"]
   tags:
     - $TAG_NAME
+  dependencies:
+    - pls-build-job
   script:
-    - echo '----部署 PLS----'
+    - echo '---------------------部署 PLS---------------------'
+    - ls -l ./PLS/target/
+    - if [ -e "$DEPLOY_BASE_DIR/backend/$PLS_APP" ]; then sudo mv -f $DEPLOY_BASE_DIR/backend/$PLS_APP  $DEPLOY_BASE_DIR/bak/ ; fi
+    - if [ -e "./PLS/target/$PLS_APP" ]; then  sudo cp -f ./PLS/target/$PLS_APP  $DEPLOY_BASE_DIR/backend/ ; fi
+    - ls -l $DEPLOY_BASE_DIR/backend/
