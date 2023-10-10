@@ -8,6 +8,11 @@ stages:
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+    - changes:
+       - docs/**/*
+       - README.md
+       - .gitignore
+      when: never
 
 variables:
   TAG_NAME: "infra-platform-api-runner"
@@ -30,7 +35,7 @@ deps-install-job:
     - echo $HOME
     - mvn  clean install -f BOM/pom.xml -DskipTests
 
-# 构建 DIS 服务
+# 构建 DIS 服务: 使用一个job完成 构建部署
 dis-job:
   stage: build
   tags:
@@ -44,10 +49,10 @@ dis-job:
     - if [ -e "./DIS/iot/target/$DIS_APP" ]; then  sudo cp -f ./DIS/iot/target/$DIS_APP  $DEPLOY_BASE_DIR/backend/ ; fi
     - ls -l $DEPLOY_BASE_DIR/backend/
     - sudo systemctl restart infra-platform-dis-api.service
+    - sudo systemctl status infra-platform-dis-api.service
   needs: ["deps-install-job"]
     
-
-# 构建 PLS 服务
+# 构建 PLS 服务：使用artifacts 将当前job的产物进行 缓存，便于后续job获取构建结果（每个job都是在全新的环境下执行，job之间是无状态的）
 pls-build-job:
   stage: build
   tags:
@@ -57,12 +62,11 @@ pls-build-job:
     - mvn clean package -DskipTests -f PLS/pom.xml
     - ls -l -h ./PLS/target
   needs: ["deps-install-job"]
-  # 使用artifacts将target下内容进行传递
   artifacts:
     paths:
       - PLS/target/*.jar
 
-# 部署 PLS 服务： 使用dependencies获取前序任务的artifacts( job 之间是没有状态的，每个job都是在一个独立的新环境下进行的)
+# 部署 PLS 服务：使用dependencies 获取 pls-build-job 任务的产物
 deploy-pls-job:
   stage: deploy
   needs: ["pls-build-job"]
@@ -76,3 +80,5 @@ deploy-pls-job:
     - if [ -e "$DEPLOY_BASE_DIR/backend/$PLS_APP" ]; then sudo mv -f $DEPLOY_BASE_DIR/backend/$PLS_APP  $DEPLOY_BASE_DIR/bak/ ; fi
     - if [ -e "./PLS/target/$PLS_APP" ]; then  sudo cp -f ./PLS/target/$PLS_APP  $DEPLOY_BASE_DIR/backend/ ; fi
     - ls -l $DEPLOY_BASE_DIR/backend/
+    - sudo systemctl restart infra-platform-pls-api.service
+    - sudo systemctl status infra-platform-pls-api.service
