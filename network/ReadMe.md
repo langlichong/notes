@@ -1,0 +1,4 @@
+- https://blog.davidvarghese.dev/posts/nat-explained/
+- https://webrtc.org/
+- https://datatracker.ietf.org/doc/html/rfc8445
+- https://libnice.freedesktop.org/
