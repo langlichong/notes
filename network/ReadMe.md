@@ -2,3 +2,5 @@
 - https://webrtc.org/
 - https://datatracker.ietf.org/doc/html/rfc8445
 - https://libnice.freedesktop.org/
+- https://www.practicalnetworking.net/
+- https://notes.davidvarghese.dev/
