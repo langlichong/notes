@@ -75,8 +75,38 @@ e. 将 步骤 a, b, c, d 中的所有结果集使用 union 进行合并 得到�
 
 f. `SELECT * FROM subordinates;` 查询到最终数据
 
-> 递归过程其实是使用不同临时结果集去 关联 源数据表  employees 得到新的数据集，最后将每次关联结果集并起来
+> 递归过程其实是使用不同临时结果集去 关联 源数据表(每次临时查询出的结果集会作为 cte 基表，然后关联 源数据表)  employees 得到新的数据集，最后将每次关联结果集并起来
 
 
+### 正向与逆向查询示例
+```sql
 
+      -- 正向查询：查询自某个节点后的所有子孙节点 （从根节点到叶子节点）
+      with recursive cte(id, build_name, parent_id)
+      as (
+      
+          select id, bus_building.build_name, parent_id from bus_building where parent_id = '0'
+      
+          union
+      
+          select b.id, b.build_name , b.parent_id
+          from bus_building b
+          join cte on cte.id = b.parent_id
+      )
+      select * from cte;
+      
+      -- 反向查询: 查询某建筑节点的所有父辈节点（叶子节点到根节点）
+      with recursive cte(id, build_name, parent_id)
+      as (
+      
+              select id, bus_building.build_name, parent_id from bus_building where id = '1846457310377971713'
+      
+              union
+      
+              select b.id, b.build_name , b.parent_id
+              from bus_building b
+              join cte on cte.parent_id = b.id
+      )
+      select * from cte;
+```
 
