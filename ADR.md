@@ -1,0 +1,2 @@
+Architecture Decision Record，缩写ADR，即架构决策记录，该实践最先由Michael Nygard发起，是记录架构决策最有效的方式之一。
+简单来说，ADR是一种对架构决策的文档化记录，其目的是通过文档化的形式记录系统的架构决策、原因以及决策过程
