@@ -1,0 +1,904 @@
+
+Computer Reality:
+1. computer only natively understand a limited set of instructions 
+2. computer must be told exactly what to do 
+
+Computer Program:
+  - a sequence of instuctions that directs computer to perform certain actions in a specified order
+  - Programs are collections of instructions that manipulate data to produce a desired result.
+
+Programming Language:
+  designed to facilitate the writing of instruction for computers 
+
+Programming:
+  the act(and art) of writing a program 
+
+Runing or Executing program:
+  a computer is performing the actions described by the instructions in a computer program
+
+Hardware:
+  tipical computing device includes: 
+    CPU: (named central processing unit), the brain of the computer, which actually executes the instructions
+    Memory: where computer programs are loaded prior to execution
+    Interactive devices: (e.g. a monitor, touch screen, keyboard or mouse), which allow a person to interact with a computer 
+    Storage devices: (e.g. a hard drive, SSD or flash memory), which retain information(including installed programs) even the computer is turned off.
+
+Software:
+  broadly refers to the programs on a system that designed to be executed on hardware.
+
+  in modern computing, programs often interact with more than just hardware -- they also interact with other software on the system(particularly the operating system).
+
+Platform:
+  refers to a compatible set of hardware and software(OS, browser, etc...) that provides an environment for software to run.
+
+  platform often provide useful service for the programs running on them. for example, a desktop app might request the OS give them a chunk of free memory,
+  create a file over there or play a sound. The running program doesn't have to know how this is actually facilitated.
+
+Portable:
+  if a program uses capabilities or services provided by platform, it becomes dependent on that platform and cannot be run on other platform without modification.
+
+  A program that can be easily transered from one platform to another is said to be portable.
+
+Porting:
+  The act of modifying a program so that it runs on a different platform is called porting.
+
+Machine Language or Machine code:
+
+  A computer's CPU is incapable of understading any language like C++. 
+  Instead, CPUs are only capable of processing instructions written in machine language(or named machine code).
+
+Instruction set: 
+  The set of all possible machine language instructions that a given CPU can understand is called an instruction set. 
+
+Binary digit or bit:
+  Each instruction is composed of a sequence of 1s or 0s . each individual 0 or 1 is called a binary digit or bit for short.
+  The number of bits in a machine language instruction varies. 
+  for example , some CPUS processing instructions that are always 32 bits long, whereas some other CPUs haave instructions that can be a variable length.
+
+CPU family(ISA):
+  Each family of compatable CPUs(e.g. x86, Arm64) has its own machine language that is not compatible with the machine language of other CPU families.
+  A “CPU family” is formally called an “instruction set architecture” (“ISA” for short).
+  machine language programs written for one CPU family cannot be run on CPUs from a different family!
+
+Assembly Languages:
+  Assembler: a program that translate assembly programs into machine language that CPU can understand.
+             it do a job that takes assembly source code as input and outputs a program containning machine language instructions.
+
+  Just as each CPU family has its own machine language , each CPU fammily also has its own assembly language. 
+  This means there are many different assembly languages, each with its own distinct syntax and instructions.
+
+Low-level languages:
+  Machine languages and assembly languages are considered low-level languages.
+  These languages provide minimal abstraction from the architecture of the machine.(in other words ,the programming language itself is tailored to the specific instruction set architecture it will be run on)
+
+  Notable downsides :
+   - low-language programs are not portable
+   - to programming agaist the low-level one requires detailed knowledges of the architecture 
+   - hard to understand(e.g. a simple action presented by low-level language will be a much long instuctions)
+
+  Advantadges: low-level language is fast .
+
+High-level Languages:
+  - To address the comprehension and portability concern of low-level language , new 'high-level' languages is invented. (e.g. C , C++, Java, Perl ...).
+
+High-level language To Machine language:
+  - compiling (compiler): read the source code of one language and translate it into another language(usually a low-level langauge) named compiler.
+  - interpreting(interpreter): that directly executes the instructions in the source code without requiring them to be compiled first.
+                               interpreters tend to be more flexible than compilers but are less efficient when running programs because the interpreting process
+                               needs to be done every time the program is run. this also means the interpreter must be installed on machine prior to run program.
+  
+  tips: Most C++ compilers can be configualed to generate assembly code.
+
+  For example, a C++ compiler translates C++ source code into machine code.
+  The machine code output by the compiler can then be packaged into an executable file (containing machine language instructions) that can distributed to others and launched by the operating system. **Notably, running the executable file does not require the compiler to be installed.**
+
+Source file:
+
+Library file: that is a collection of precompiled code that has been "packaged up" for reuse in other programs.
+
+Object file: that the c++ compiler translated your source code and stored in a intermediate file .
+  the object file also contains other data to be used by linker , debugger .
+  the object file's name typically named name.o or name.obj, the name is the same as the source file .
+
+Linking object files and libraries: linker
+  that combine all of the object files and produce the desired output file(such as an executable file can be run). this process is called **linking**
+  linking processing:
+    - validate object file.
+    - ensure call cross-file dependencies are resolved properly.
+    - linking library files (third-parties and also  standard library of cpp by default for compiler's default configuration)
+    - output a executable file or a library file.
+
+Building: used to refer to the full process of converting source code files into a executable one.
+
+Build automation tools: make , build2
+
+CPP Standard Library:
+  like Input/Output library often called 'iostream'
+
+Workspace or a Solution (the term varies by IDE). 
+   --- A workspace or solution is a container that can hold one or more related projects
+
+Precompiled header files:
+  - for speed-up compiling
+
+Build configuration (build target): 
+  - gennerally, keep default will good unless you have a specific reason to change somthing
+  - waht the executable will be named
+  - which directories the IDE will look in for other source code and binray files
+  - whether to keep or strip out debugging information
+  - how much to have the compiler optimize your program
+  - .....
+
+IDE's default build configuration (mostly will set up two):
+  - A release configuration
+    - to help debug program , so this configuration turns off all optimizations and includes debugging information, which make program larger and 
+  - A debug configuration
+    - designed to releasing program to the public, this version is optimized for size and performance and doesnt contains extra debugging infos.
+
+Compiler extensions:
+  - many compilers implement their own changes to language , often to enhance compatibility with other versions of the language or for historical reasons.
+    these compiler-specific behaviors are called ** compiler extensions **.
+  - compiler extensions are often enabled by default.
+    - Because compiler extensions are never necessary, and cause your programs to be non-compliant with C++ standards, recommend turning compiler extensions off.
+    - writting programs that make use of a compiler extension allows you to write programs that are incompatible with C++ standard.
+     Programs using non-standard extensions generally will not compile on other compilers (that don’t support those same extensions), or if they do, they may not run correctly.
+
+Comments:
+  - All of these comments give the reader a good idea of what the library, program, or function is trying to accomplish without having to look at the actual code
+  - First, for a given library, program, or function, comments are best used to describe what the library, program, or function does.
+  - Second, within a library, program, or function described above, comments can be used to describe how the code is going to accomplish its goal
+  - Third,statement level, comments should be used to describe why the code is doing something. A bad statement comment explains what the code is doing
+  - If you ever write code that is so complex that needs a comment to explain what a statement is doing, you probably need to rewrite your statement, not comment it
+
+Object & Variable:
+  - in CPP , direct memory access is discouraged, instead , **momory access indirectly through an object**.
+  - an object represents a region of storage(**typically RAM or a CPU Register**)
+  - object also hava associtated properties
+  - object can be unnamed(anonymous)
+  - In C++, the term object has a narrower definition that excludes functions.
+  - variable: An object with a name(identifier) is called a variable.
+
+Data types
+  - A data type (more commonly just called a type) determines what kind of value (e.g. a number, a letter, text, etc…) the object will store
+  - The data type of an object must be known at compile-time (so the compiler knows how much memory that object requires).
+  - CPP also allows you to create your own custom types,and it’s part of what makes C++ powerful
+
+Compile-time: when the program is being compiled
+Runtime: when the program is loaded into memory and run.
+Allocation: the process of reserving storage(in RAM or CPU Register) for an object is called allocation.
+
+variable assignment('='):
+  - **copy-assignment**: default, assignment will copy the value on the right-hand of the `=` operator to the variable on the left-hand side.
+
+Initialization (initializer) forms:
+  - default-initialization(no initializer): `int a;` , this will give an indeterminate value (sometimes called a **garbage value**)
+  - copying-initialization : using `=` operator, `int b = 5;`
+  - direct-initialization: using `()` , `int b(6);` , this style is mostly used for complex objects(class types ...)
+  - list-initialization( uniform initialization ): using `{}`, `int d { 7 };` and List-initialization disallows narrowing conversions
+  - value-initialization(empty braces): `int e {} ;`
+  - other complex object(struct or others) initialization
+iostream:
+  - std::endl vs '\n':
+  - Prefer \n over std::endl when outputting text to the console
+  - std::cout (bufferd): prints data to the console (using the insertion operator << to provide the data),
+  - std::cin(buffered): reads input from keyboard
+  - for input std::cin: the  `>>` removes characters from the front of the input buffer and converts them into a value and then to a variable
+  - `>>` is copy-assignment
+  -  insertion operator (<<) and the extraction operator (>>)
+
+uninitialized variable: A variable that has not been given a known value (through initialization or assignment)
+
+Literals:
+  - also known as literal constant, is a fixed value that has bean inserted directly into the source code.
+  - its value is fixed and cannot be changed
+
+Operator
+  - operands: an opertator takes as input is called the operator's **arity**
+  - different arities: Unary , Binary , Ternary, Nullary(with zero operands, and only one in CPP, it is throw operator)
+
+Chaining operators:
+  - 操作符可以连在一起，使得一个操作符的输出可以作为另一个操作符的输入
+
+Side effect: an operator or function that has some observable effect beyond producing a return value is said to have a **side effect**
+  - In C++, the term “side effect” has a different meaning: it is an observable effect of an operator or function beyond producing a return value.
+  - 一个具有除产生返回值之外的可观察效果的（操作符或函数）被称为具有副作用。
+  - 对于我们主要调用其副作用（例如 operator= 或 operator<< ）的操作符，它们产生的返回值（如果有的话）并不总是显而易见的, x = 5 有什么返回值？
+  - operator= 和 operator<< （当用于向控制台输出值时）返回它们的左操作数。因此， x = 5 返回 x ， std::cout << 5 返回 std::cout 。这样做是为了使这些运算符可以链式使用。
+  - For example, x = y = 5 evaluates as x = (y = 5). First y = 5 assigns 5 to y. This operation then returns y, which can then be assigned to x .
+  - std::cout << "Hello " << "world!" evaluates as (std::cout << "Hello ") << "world!". This first prints "Hello " to the console. This operation returns  
+        std::cout, which can then be used to print "world!" to the console as well.
+
+Expression & Evaluation:
+  - expression is a non-empty sequence of literals, variables, operators, and function calls that calculates a value.
+  - evaluation is the process of execution an expression.
+  - x = 5           // x = 5 has side effect of assigning 5 to x, evaluates to x
+  - x = 2 + 3       // has side effect of assigning 5 to x, evaluates to x
+  - std::cout << x  // has side effect of printing value of x to console, evaluates to std::cout
+  -  expressions are always evaluated as part of statements. (表达式不能单独执行——它们必须作为语句的一部分存在)
+
+Function:
+  - a function is a reusable sequence of statements designed to do a paricular job.
+  - user-defined functions
+  - function call: tells CPU to interrupt the current function and execute another function.
+  - caller: the function  that initiating the function call is the caller.
+  - callee: the function being called(executed) is the callee.
+  - invocation: a function call , with the caller invoking the callee.
+
+User-defined function:
+  - function header: tells the compiler about the existence of the function. e.g. `returnType functionName()`
+  - function body: tells compiler what the function does.
+  - Nested functions are not supported.
+
+metasyntactic variables: e.g. foo, bar, baz. 
+  - 对词源学（词语如何演变）感兴趣的人来说，RFC 3092 可以说明
+
+Return value:
+  - return expression
+  - return by value: returning a copied value back to the caller .
+
+main function:
+  - status code: the return value from the `main` is sometimes called a status code(or exit code); and zero `0` means program ran normally.
+  - Function main will implicitly return 0 if no return statement is provided.
+
+Function parameters and arguments:
+	- parameter: is a variable used in the header of function.
+	- parameters are initialized with a value provided by the caller of the function.
+	- argument: is a value that is passed from the caller to the function when a function call is made.
+	- "Pass by value": arguments is copied into the matching parameter( using copy initialization)
+	- unreferenced parameters: some parameter is not used in the function body
+	- unnamed parameter: 函数定义中，函数的参数的名称是可选的，在需要参数但不在函数体中使用的情况下，可以省略名称, 称为匿名参数. e.g. `void do(int){}`
+	- 匿名参数主要是为了避免大量的修改代码。
+
+Local scope(block scope):
+
+Temporary object(anonymous object): 
+  - Temporary objects are generated by the compiler when they are needed
+  - is an unnamed object that is used to hold a value that is only needed for a short period of time
+
+Forward declarations and definitions:
+  - the compiler compiles the contents of code files sequentially. (e.g. call a function that defined after main funciton will compile fail)
+  - forward declaration allows us to tell the compiler about the existence of an identifier before actually defining the identifier.
+  - this allows us to tell the compiler about the existence of a function before we define the function’s body.
+  - function declaration:
+    - To write a forward declaration for a function ,we use a function declaration statement (also called a **function prototype**).
+    - function prototype: consist of return type, name and parameter types and terminated with a semicolon; ` int add(int x, int y); `
+    - function declarations are often placed in header files.
+    - 前置声明通常用于函数。然而，在 C++中，前置声明也可以用于其他标识符，例如变量和类型。变量和类型的声明语法不同
+    - C++设计得使得每个源文件都可以独立编译，无需了解其他文件的内容。因此，实际编译文件的顺序不应相关
+
+declaration: tells the compiler about the existence of an identifier and its associated type information.
+definition: that actually implements (for funcitions and types) or instantiates (for variables) the identifier.
+  - In C++, all definitions are declarations.
+  - ODR : The one definition rule (ODR)
+
+namespace:
+  - naming collision (or naming conflict).
+  - If two identical identifiers are introduced into the same program in a way that the compiler or linker can’t tell them apart, 
+    the compiler or linker will produce an error
+  - scope region: A namespace provides another type of scope region (called namespace scope) 
+  - global namespace: any name that is not defined inside a class, function, or a namespace is considered to be part of an implicitly-defined namespace called "global namespace"
+  - std namespace
+  - explicitly namespace qualifier(using qualified name) : e.g. std::cout
+  - using directive:  allows us to access the names in a namespace without using a namespace prefix.  e.g. `using namespace std;  cout << 1;`
+  - using directive is highly discouraged.
+
+preprocessing:
+  - prior to compilation, each code(.cpp) file goes through a preprocessing phase.
+  - preprocessor: will make various changes to the text fo code file before compilation.(不会在原始源文件中修改，该过程一般是在内存中或临时文件中进行的)
+  - translation unit: the result of the preprocessor has finished processing a code file.
+
+#include
+  - include content: When you #include a file, the preprocessor replaces the #include directive with the contents of the included file. 
+
+#define
+  - macro defines: #define can be used to create macro (object-like macros, and function-like macros)
+  - Object-like macros with substitution text
+  - Object-like macros with substitution text were used (in C) as a way to assign names to literals.
+  - object-like macros is no longer necessary, as better methods are available in C++ (using inline variables)
+  - Function-like macros act like functions,
+
+Conditional compilation:
+  - allow you to specify under what conditions something will or won't compile.
+  - #ifdef: 允许预处理器检查一个标识符是否已经被之前通过 #define 定义过,如果是，则编译 #ifdef 和匹配的 #endif 之间的代码。如果不是，则忽略该代码.
+  - #ifndef
+  - #endif
+  - #if 0: exclude a block of code from being compiled (as if it were inside a comment block)
+  - #if 1: enable compile
+
+Header files:
+  - mainly simplify the large amount of duplication "forward declaration" 
+  - Header files allow us to put declarations in one place and then import them wherever we need them. This can save a lot of typing in multi-file programs.
+  - Using header files to propagate forward declarations
+  - header guards
+  - 使用尖括号include时，是告诉预处理器这是一个我们自己没有编写的头文件。预处理器只会在由 include directories 指定的目录中搜索头文件（预处理器不会在您的项目源代码目录中搜索头文件）。
+  - 双引号时，告诉预处理器这是一个我们编写的头文件。预处理器首先会在当前目录中搜索头文件。如果在那里找不到匹配的头文件，它将接着搜索 include directories 。
+  - 为什么 iostream（或任何其他标准库头文件）没有.h 扩展名？”答案是 iostream.h 是一个与 iostream 不同的头文件！
+    - 当语言被 ANSI 委员会标准化时，他们决定将标准库中使用的所有名称移动到 std 命名空间中，如果他们将所有名称都移动到 std 命名空间中，那么包含 iostream.h 的所有旧程序将不再工作！
+    - 为了解决这个问题，C++引入了没有.h 扩展名的新头文件。这些新头文件声明了 std 命名空间内的所有名称。这样，包含 #include <iostream.h> 的旧程序无需重写，而新程序可以 #include <iostream> 。
+  - transitive includes: 每个文件应明确包含它编译所需的全部头文件。不要依赖于从其他头文件间接包含的头文件
+
+Header guard (include guard):
+  - 解决多次引入同一个header文件所引发的重复定义问题
+  - Header guards are conditional compilation directives that take the following forms `#ifndef SOME_UNIQUE_NAME_HERE #define SOME_UNIQUE_NAME_HERE`
+  - 所有头文件都应该有头文件保护, guard 的名称可以是任何你想要的名字，但按照惯例设置为头文件的完整文件名，全部大写，用下划线代替空格或标点符号
+  - 由于存在守卫名称冲突的可能性，许多开发者建议在头文件守卫中使用更复杂/独特的名称。一些好的建议是使用 PROJECT_PATH_FILE_H、FILE_LARGE-RANDOM-NUMBER_H 
+  - 一般不建议在头文件中包含函数定义
+
+#pragma once： 现代编译器支持使用 #pragma 预处理器指令的更简单、替代形式的头文件保护（#pragma once 具有与头文件保护符相同的作用：防止头文件被多次包含。）
+  - 因为 #pragma once 不是 C++标准定义的，所以某些编译器可能没有实现它
+
+Data types:
+  - void: 
+    - 函数返回值 
+    - 在C中 void用于表示一个函数不接收任何参数(e.g. int getValue(void)), c++中可以编译通过，但建议使用空参数列表代替 void 来表示一个函数没有参数。
+    - 空指针
+  - sizeof: 它接受一个类型或变量，并返回该类型对象的尺寸（以字节为单位）; sizeof 返回一个类型为 std::size_t 的值.
+  - Fixed-width integers: header file <cstdint> `std::int32_t`
+  - 8 位固定宽度整数类型通常被当作字符而不是整数值来处理（并且这可能会因系统而异）。16 位及更宽的整数类型不受此问题影响
+  - float, double, long double: same as integers, c++ does not define the actual size of these types. ( IEEE 754 兼容的格式)
+  - bool: 在任何可以将整数转换为布尔值的环境中，整数 0 转换为 false ，任何其他整数转换为 true
+  - 条件表达式的结果被转换为布尔值：非零值转换为布尔值 true ，零值转换为布尔值 false
+  - 字符数据类型是一个整型，意味着其底层值以整数的形式存储；一个 char 变量存储的整数被解释为 ASCII character
+  - std::cin.get() 函数来执行提取，因为这个函数不会忽略前导空格
+  - type conversion： 尽管称为转换，类型转换实际上并不改变要转换的值或值的类型。相反，要转换的值用作输入，转换结果产生一个目标类型的新值
+  - Explicit type conversion： static_cast 函数， static_cast<new_type>(expression)
+
+scientific notation: 科学计数法
+  - 理解科学记数法将有助于您了解浮点数的工作原理
+  - 科学记数法最重要的东西是：尾数（'e'前面的部分）中的数字被称为有效数字（或有效数字）。有效数字越多，一个数就越精确
+  - 表示格式: significand x 10exponent (即 尾数 x 10 的指数次幂)
+  - 因为 C++中输入或显示指数可能比较困难，所以我们使用字母'e'（有时也用'E'）来表示“乘以 10 的幂”的部分。 （例如， 1.2 x 10⁴ 将被写作 1.2e4 ）
+  - 对于小于 1 的数，指数可以是负数。数 5e-2 等同于 5 * 10⁻² ，也就是 5 / 10² ，或者是 0.05
+  - 输出浮点数时， std::cout 默认精度为 6 位——也就是说，它假定所有浮点变量只对 6 位有效（浮点数的最小精度），因此它将截断之后的任何内容。
+
+Constants:
+  - Named constants (symbolic constant): are constant values that are associated with an identifier.
+  - Literal constants: are constant values that are not associated with an identifier.
+  - Constant variables: `const double gravity {9.8}` or like such style `int const sidesInSquare {5}`
+  - C++ will accept the const qualifier either before or after the type, it’s much more common to use const before the type 
+  - Const variables must be initialized
+  - Const function parameters: `void printInt(const int x)`
+  - Prefer constant variables to preprocessor macros(Prefer constant variables over object-like macros with substitution text)
+
+type qualifiers:
+  - A type qualifier (sometimes called a qualifier for short) is a keyword that is applied to a type that modifies how that type behaves.
+  - cv-qualifiers: like `const` and `volatile`
+  - cv-unqualified: is a type with no type qualifiers , like `int`
+  - for example `const` is also called 'const qualifier'
+  - volatile qualifier is used to tell the compiler that an object may have its value changed at any time.
+
+Optimization & Profiler :
+  - optimizer: A program that optimizes another program is called an optimizer.
+  - Optimizers typically work at a low-level, looking for ways to improve statements or expressions by rewriting, reordering, or eliminating them.
+  - profiler: a profiler can be used to see how long various parts of the program are taking to run, and which are impacting overall performance
+  - Constant folding: compiler replaces expressions that have literal operands with the result of the expression.(e.g. replace `3+4` with `7`)
+  - Constant propagation: 
+  - Dead code elimination: removes code that may be executed but has no effect on the program’s behavior
+
+Constexpr variables:
+  - constexpr 关键字（它是“常量表达式”的缩写），而不是 const
+  - onstexpr 变量始终是编译时常量。因此，constexpr 变量必须用常量表达式初始化，否则将导致编译错误
+  - constexpr function: is a function that can be called in a constant expression
+
+string:
+  - C-style string: In modern C++, C-style string variables are best avoided.
+  - std::string and std::string_view aren’t fundamental types , they’re class types
+  - std::string: lives in the <string> header
+  - std::string being expensive to initialize (or copy)
+  - Whenever a std::string is initialized, a copy of the string used to initialize it is made. Making copies of strings is expensive
+  - std::string supports a capability called move semantics, which allows an object that will be destroyed at the end of the function to instead be returned by value 
+     without making a copy
+  - extract a string from std::cin, operator>> only returns characters up to the first whitespace it encounters. Any other characters are left inside std::cin for next extraction
+  - use std::getline() to input text when get string from end users. `std::getline(std::cin, name)`
+  - std::ws input manipulator tells std::cin to ignore any leading whitespace before extraction.
+  - std::string_view: <string_view> header
+  - std::string_view provides read-only access to an existing string (a C-style string, a std::string, or another std::string_view) without making a copy
+  - Convert an existing std::string_view to a std::string using static_cast
+  - Assigning a new string to a std::string_view causes the std::string_view to view the new string. It does not modify the prior string being viewed in any way。
+  - sv suffix： create string literals with type std::string_view， `"sss"sv`
+  - s suffix: create a std::string , ` "xyz"s `
+
+owners and viewers:
+  - std::string is a owner
+  - std::string_view is a viewer
+
+Operators 及 side effect:
+  - ++:prefix-increment, e.g.  `++x` => increment x , then return x
+  - --: `--x` => decrement x then return x 
+  - postfix increment `x++` => copy x, then increment x , then return the copy
+  - postfix decrement `x--` => copy x, then decrement x,  then return the copy
+  - comma: `x,y` => evaluate x then y, return value of y , discouraged in reality
+  - conditional(?:) : `c?x:y`
+
+Bit flags & bit manipulation:
+  - std::bitset
+  - 位操作在特定的编程环境中使用得很多（例如图形、加密、压缩、优化），但在一般编程中并不常用。
+  - Bit numbering and bit positions: 给定一个比特序列，我们通常从右到左对比特进行编号，从 0 开始（而不是 1）。每个数字表示一个比特位置。
+  - bit flags: When individual bits of an object are used as Boolean values, the bits are called bit flags
+  - In computing, a flag is a value that signals when some condition exists in a program. With a bit flag, a value of true means the condition exists
+
+Bitwise operators:
+  - bit manipulation operators, often called bitwise operators
+  - left shift (<<) , right shift(>>), ~, &, |, ^
+  - how the '<<' know to do bitwise operation or output (std::cout): decided by the left operand type (if left is std::cout then do output or do shift)
+
+Bit masks:
+  - 位掩码本质上对位执行相同的功能 -- 位掩码阻止位运算符修改我们不希望修改的位，并允许访问我们希望修改的位
+  - 使用 0 来屏蔽我们不关心的位，使用 1 来表示我们想要修改的位
+  - 因为 C++14 支持二进制字面量: `constexpr std::uint8_t mask3{ 0b0000'1000 }; // represents bit 3`
+  - 简单的方法是使用左移运算符将单个位移入正确的位置: `constexpr std::uint8_t mask1{ 1 << 1 }; // 0000 0010 即 将 1 移动到 1 号位`
+  - In order to manipulate individual bits (e.g. turn them on or off), we need some way to identify the specific bits we want to manipulate. 
+  - A bit mask is a predefined set of bits that is used to select which specific bits will be modified by subsequent operations
+  - 翻转使用异或，
+
+user-defined namespace:
+  - use 'namespace' keyword
+  - scope resolution operator: be used in front of an identifier without providing a namespace name (e.g. ::doSomething). is looked for in the global namespace.
+  - Identifier resolution
+  - Nested namespaces: `namespace Foo::Goo // Goo is a namespace inside the Foo namespace (C++17 style) ` or directly write by level `namespace x { namespace y {}}`
+  - namespace aliases: `namespace x = Foo::Goo ;` 
+
+global namespace scope:  (commonly called global scope, and sometimes informally called file scope), 
+  - which means they are visible from the point of declaration until the end of the file in which they are declared
+  - name hiding or shadowing: the nested variable “hides” the outer variable in areas where they are both in scope.
+
+linkage:
+  - external linkage:
+  - internal linkage:
+
+Inline functions and variables:
+  - 每次处理task时候，若重新定义function，虽然简单、明了，缺点是每次调用函数时，都会产生一定量的性能开销（caller 与 callee需在栈上切换）
+  - 对于大型和/或执行复杂任务的函数，函数调用的开销通常与函数运行所需的时间相比微不足道。
+  - 在小型函数频繁调用的场景中，使用函数可能比直接编写相同代码导致显著的性能损失。 一般会进行 内联展开优化
+
+Inline : 
+  - a process where a function call is replaced by the code from the called function’s definition
+  - inline keyword: 历史中用于向编译器提示一个函数（可能）会从内联展开中受益的提示; 在现代 C++中， inline 关键字不再用于请求将函数展开为内联.
+  - 在现代 C++中，术语 inline 已演变为表示“允许有多个定义”。因此，内联函数是指可以在多个翻译单元中定义的函数（而不违反 ODR）
+  - inline variable
+
+伪随机数(PRNG)：
+  - 梅森旋转算法（Mersenne Twister）
+  - 随机种子：C 和 C++有使用当前时间（使用 std::time() 函数）作为 PRNG 种子值的长久历史
+
+Function overloading: 
+  - allows create multiple functions with the same name, 
+  - so long as each identically named function has different parameter types (or the functions can be otherwise differentiated).
+  - Overloading based on number of parameters
+  - Overloading based on type of parameters
+  - The return type of a function is not considered for differentiation
+
+Function template:
+  -  function template is a function-like definition that is used to generate one or more overloaded functions,each with a different set of actual types.
+  - template types(placeholder types or type template parameters)
+  - template system was designed to simplify the process of creating functions (or classes) that are able to work with different data types.
+  - in a template we can use one or more placeholder types
+  - the compiler can use the template to generate as many overloaded functions (or classes) as needed
+  - function templates may also be overloaded.
+  - Non-type template parameters
+  - 模板需要在多个文件中使用时，应在头文件中定义，然后根据需要包含。这允许编译器看到完整的模板定义，并在需要时实例化模板。
+
+abbreviated function template:
+  - 'auto' keyword
+  - with auto marked in a function,compiler automatically convert the function into a function template with each auto parameter becoming an independent template type parameter.
+
+Compound data types:
+  - Every data type is either a fundamental type or a compound type
+
+value categories:
+  - The value category of an expression (or subexpression) indicates whether an expression resolves to a value, a function, or an object of some kind
+  - expressions can produce side effects that outlive the expression
+  - all expressions in C++ have two properties: a type and a value category
+  - The compiler can use the type of an expression to determine whether an expression is valid in a given context
+  - lvalue: short for “left value” or “locator value”, is an expression that evaluates to an identifiable object or function (or bit-field).
+  - rvalue:  Rvalues aren’t identifiable (meaning they have to be used immediately, because it has no identifier)
+  - Rvalues are often temporary objects or literals that are not addressable (i.e., they don't have a memory location that can be accessed directly).
+  - In modern C++ (C++11 and later), rvalues can be "moved" from, enabling efficient resource transfer (e.g., moving a dynamically allocated array instead of copying it).
+  - C++11 introduced rvalue references (&&), which allow you to bind to rvalues. `void process(int&& x){}`
+
+reference:
+  - in C++, a reference is an alias for an existing object. 
+  - can use a reference to read or modify the object being referenced
+  - Modern C++ contains two types of references: lvalue references, and rvalue references
+  - define: `int&       // an lvalue reference to an int object`
+
+Pass by reference :
+  - Some objects are expensive to copy, like std::string
+  - When using pass by reference, we declare a function parameter as a reference type (or const reference type) rather than as a normal type
+
+Pointers:
+  - In fact, pointers behave a lot like lvalue references.
+  - The address-of operator (&): returns the memory address of its operand
+  - dereference operator (*):  (also occasionally called the indirection operator) returns the value at a given memory address as an lvalue.
+  - A pointer is an object that holds a memory address (typically of another variable) as its value. 
+  - In modern C++, the pointers we are talking about here are sometimes called “raw pointers” or “dumb pointers”.
+  - pointer type: A type that specifies a pointer (e.g. int*) is called a pointer type. like reference types are declared using an ampersand (&) character.
+  - When declaring a pointer type, place the asterisk next to the type name. (best practice: int* ptr other than int *int)
+  - wild pointer: A pointer that has not been initialized, Wild pointers contain a garbage address, and dereferencing a wild pointer will result in undefined behavior.
+  - When we use a pointer without a dereference (ptr), we are accessing the address held by the pointer.
+  - When we dereference a pointer (*ptr), we are accessing the object being pointed at.
+  - use `typeid(X).name()` to see type 
+  - The size of a pointer is dependent upon the architecture the executable is compiled for.
+  - dangling pointer is a pointer that is holding the address of an object that is no longer valid 
+  - 优先使用引用而非指针: 由于引用不能绑定到 null，我们不必担心空引用。并且因为引用必须在创建时绑定到有效对象，然后不能重新绑定，因此悬空引用更难创建。
+  -  void pointer, also known as the generic pointer, is a special type of pointer that can be pointed at objects of any data type! `void* ptr {};`
+
+Function pointer:
+  - `int (*fcnPtr)();`
+  - When a function is called (via operator()), execution jumps to the address of the function being called
+  - When a function is referred to by name (without parenthesis), C++ converts the function into a function pointer (holding the address of the function).
+  - Calling a function using a function pointer
+  - Passing functions as arguments to other functions, most case for callback
+  - Making function pointers prettier with type aliases: `using ValidateFunction = bool(*)(int, int);`
+  - std::function
+
+Null pointers:
+  - Besides a memory address, there is one additional value that a pointer can hold: a null value. 
+  - A null value (often shortened to null) is a special value that means something has no value,it means the pointer is not pointing at anything.
+  - nullptr : represents a null pointer literal. `int* ptr { nullptr };`
+  - Use nullptr to avoid dangling pointers: like dangling pointers , there is no way to detect whether a pointer is dangling.
+  - pointers convert to Boolean false if they are null, and Boolean true if they are non-null
+
+const and pointer:
+  - Pointer to const value: a pointer to const can point to non-const variables too
+  - Const pointers: whose address can not be changed after initialization.  (int* const ptr {&x};)
+
+pass by value: make a copy from origin one.
+pass by reference: no copy, just a alias for origin one.
+  - References are normally implemented by the compiler using pointers.
+  - This means that behind the scenes, pass by reference is essentially just a pass by address
+pass by address:
+  - instead of providing an object as an argument, the caller provides an object’s address (via a pointer).
+  - This pointer (holding the address of the object) is copied into a pointer parameter of the called function
+  - The function can then dereference that pointer to access the object whose address was passed.
+  - When we pass an address to a function, that address is copied from the argument into the pointer parameter 
+  - Since an address is typically only 4 or 8 bytes, a pointer is only 4 or 8 bytes, so copying a pointer is always fast.
+  - If a function is not supposed to modify the object being passed in, the function parameter should be made a pointer-to-const , `void changeValue(const int* ptr)`
+  - Prefer pass by reference to pass by address unless you have a specific reason to use pass by address.
+  - std::nullptr_t: can holder a nullptr value
+
+return types:
+  - copying is typically expensive for class types (such as std::string).
+  - return by reference
+    - Using return by reference has one major caveat: the programmer must be sure that the object being referenced outlives the function returning the reference
+    -  left dangling (referencing an object that has been destroyed)
+    - Never return a (non-static) local variable or temporary by reference.
+  - return by address
+    - the object being returned by address must outlive the scope of the function returning the address, otherwise the caller will receive a dangling pointer
+    - major advantage of return by address over return by reference is that we can have the function return nullptr
+    - Prefer return by reference over return by address unless the ability to return “no object” (using nullptr) is important.
+  - Returning a std::optional
+  - Return a std::optional (instead of a sentinel value) for functions that may fail, unless your function needs to return additional information about why it failed
+
+In Parameters:
+Out Parameters:
+  - Out parameters have an unnatural usage syntax
+  - Out-parameters, while functional, have a few downsides.
+  - Avoid out-parameters (except in the rare case where no better options exist).
+  - Prefer pass by reference for non-optional out-parameters.
+In/out parameters:
+  
+type-deduction:
+  - auto keyword
+
+enumeration(enum):
+  - Unscoped enumerations are defined via the enum keyword.
+  - Name your enumerated types starting with a capital letter. Name your enumerators starting with a lower case letter.
+  - Prefer putting your enumerations inside a named scope region (such as a namespace or class) so the enumerators don’t pollute the global namespace.
+  - Scoped enumerations(enum class): scoped enumeration (often called an enum class in C++ for reasons that will become obvious shortly).
+
+operator overloading:
+  - define overloads of existing operators, so that we can make those operators work with our program-defined data types.
+  - Operators can also be overloaded as member functions of the left-most operand
+  - `std::istream& operator>>(std::istream& in, Pet& pet){ do stuff}`
+
+struct:
+  - member access operator: `.`
+  - aggregate data type (also called an aggregate) is any type that can contain multiple data members.
+  - Some types of aggregates allow members to have different types (e.g. structs), while others require that all members must be of a single type (e.g. arrays)
+  - Struct aggregate initialization
+  - memberwise initialization: which means each member in the struct is initialized in the order of declaration
+  - `Employee robert ( 3, 45, 62500.0 ); `
+  - designated initializers:  allow you to explicitly define which initialization values map to which members,and must be initialized in the same order in which they are declared in the struct, otherwise a warning or error will result
+  - `Foo f1{ .a{ 1 }, .c{ 3 } }; // ok: f1.a = 1, f1.b = 0 (value initialized), f1.c = 3`
+  - For aggregates, prefer value initialization (with an empty braces initializer) to default initialization (with no braces).
+  - passing and return struct：
+    - Passing structs (by reference)
+    - Passing temporary structs
+  - struct allows to nested 
+  - Practice safe structs. Don’t let your member dangle: ensure each data member has an owning type (e.g. not a viewer, pointer, or reference).
+  - member selection from pointer operator (->) :  arrow operator, that can be used to select members from a pointer to an object
+  - Thus ptr->id is equivalent to (*ptr).id.
+  - chaining operator->
+
+Struct size and data structure alignment:
+  - Typically, the size of a struct is the sum of the size of all its members, but not always!
+  - size of a struct will be at least as large as the size of all the variables it contains
+  - But struct's size could be larger than all members size sum:  For performance reasons, the compiler will sometimes add gaps into structures (this is called padding).
+  - padding: data structure alignment
+  - You can minimize padding by defining your members in decreasing order of size: The C++ compiler is not allowed to reorder members, so this has to be done manually.
+
+Class templates:
+  - class template is a template definition for instantiating class types,A “class type” is a struct, class, or union type.
+  - Just like function templates, class templates are typically defined in header files so they can be included into any code file that needs them
+  - Class template argument deduction (CTAD) 
+  - Type template parameters with default values: `template <typename T=int, typename U=int> // default T and U to type int`
+  - CTAD doesn’t work with non-static member initialization: `std::pair p2{ 1, 2 };           // compile error, CTAD can't be used in this context`
+  - CTAD doesn’t work with function parameters
+  - Alias templates: `using Coord = Pair<T>; // Coord is an alias for Pair<T>`
+
+object-oriented:
+  - OOP: the focus is on creating program-defined data types that contain both properties and a set of well-defined behaviors
+  - Class Invariant Problem: 类不变量是指在类的整个生命周期中，对象的状态必须始终满足的条件或约束。这些条件通常在类的构造函数、方法和析构函数中维护
+  - struct虽与class在某些情况下类似，但它不是类不变性的解决方案。
+  - 在 C 语言中，结构体只有数据成员，没有成员函数， 但C++可以
+  - 结构体和类将有一个统一的规则集（这意味着结构体可以做类能做的任何事情，反之亦然），而惯例将决定结构体实际上如何被使用
+  - 现代 C++中，结构体拥有成员函数是可以的。这排除了构造函数,结构体应避免定义构造函数成员函数，因为这样做会使它们成为非聚合类型
+  - 类的成员变量通常以“m_”为前缀
+  - member functions: 
+  - 隐藏的“this”指针和成员函数链: Inside a member function, any member identifier that is not prefixed with the member selection operator (.) is associated with the implicit object
+  - 使用成员函数，我们隐式地将对象传递给函数以进行操作，并且通过该对象隐式访问成员
+  - 成员变量和函数可以按任意顺序定义(在class内，成员定义顺序不受 forward declaration 限制 其本质是编译器自动进行顺序调整 )
+  - If your class type has no data members, prefer using a namespace.(即将function定义到namespace中)
+  - The members of a struct are public by default,but The members of a class are private by default
+  - Consider naming your private data members starting with an “m_” prefix to help distinguish them from the names of local variables, function parameters, and member functions.
+  - static keyword means the function is not associated with objects of the class
+  - static member variables and Static member functions
+
+stdinitializer_list:
+  - When a compiler sees an initializer list, it automatically converts it into an object of type std::initializer_list. 
+  - Therefore, if we create a constructor that takes a std::initializer_list parameter, we can create objects using the initializer list as an input.
+
+Object relationships:
+  - object composition: This process of building complex objects from simpler ones
+  - stuct and class sometimes called composite types.
+  - object composition's two basic subtype: composition and aggregation.
+  - Composition relationships are part-whole relationships
+  - 聚合仍然是一种部分-整体关系，其中部分包含在整体中，并且是一种单向关系。然而，与组合不同，部分可以同时属于多个对象，整体对象不负责部分的存在和生命周期。当创建聚合时，聚合不负责创建部分。当聚合被销毁时，聚合不负责销毁部分.
+  - 因为聚合与组合相似，它们都是部分与整体的关系，它们几乎以相同的方式实现，它们之间的区别主要在于语义。在组合中，我们通常使用常规成员变量（或指针，其中分配和释放过程由组合类处理）将我们的部分添加到组合中.
+  - 在聚合中，我们也将部分作为成员变量添加。然而，这些成员变量通常是引用或指针，用于指向在类作用域之外创建的对象。因此，聚合通常要么将它们将要指向的对象作为构造函数参数，要么开始时为空，然后通过访问函数或运算符添加子对象。
+  - 实现满足您程序需求的 simplest 关系类型，而不是现实生活中看起来正确的类型.
+  - Association: 关联。与对象组合关系不同，在关联中不存在隐含的整体/部分关系; 关联通过指针实现，其中对象指向关联的对象.
+  - reflexive association: 有时，对象可能与同一类型的其他对象存在关系。这被称为自反关联。自反关联的一个好例子是大学课程与其先决条件（也是大学课程）之间的关系。
+  - dependencies: 一个依赖关系发生在某个对象调用另一个对象的功能以完成某些特定任务时。
+
+friendship:
+  - Inside the body of a class, a friend declaration (using the friend keyword) can be used to tell the compiler that some other class or function is now a friend.
+  - a friend is a class or function (member or non-member) that has been granted full access to the private and protected members of another class.(如管理与信息显示责任分离的设计)
+  - 通过这种方式，一个类可以选择性地给予其他类或函数对其成员的完全访问权限，而不会影响其他任何内容
+  - A function can be a friend of more than one class at the same time.
+  - Think of a friend as an extension of the class itself, with all the same access rights. As such, access is expected, not a violation
+  - 一个友元函数应尽可能优先使用类接口而不是直接访问
+  - Friend classes and friend member functions
+
+Ref qualifiers:
+  - allows us to overload a member function based on whether it is being called on an lvalue or an rvalue implicit object.
+
+constructors:
+  - Member initialization via a member initialization list
+  - Member initialization order: the members in a member initializer list are always initialized in the order in which they are defined inside the class (not in the order they are defined in the member initializer list).
+  - best practice: Member variables in a member initializer list should be listed in order that they are defined in the class.
+  - A default constructor is a constructor that accepts no arguments.
+  - Overloaded constructors
+  - implicit default constructor(a non-aggregate class type object has no user-declared constructors, the compiler will generate a public default constructor )
+  - Using = default to generate an explicitly defaulted default constructor. `Foo() = default; // generates an explicitly defaulted default constructor`
+  - Delegating constructors: Constructors are allowed to delegate (transfer responsibility for) initialization to another constructor from the same class type.
+  - copy constructor: used to initialize an object with an existing object of the same type.
+  - Using = default to generate a default copy constructor 
+  - Using = delete to prevent copies
+  - Copy elision is a compiler optimization technique that allows the compiler to remove unnecessary copying of objects. 
+  - explicit keyword to tell the compiler that a constructor should not be used as a converting constructor.
+
+destructors:
+  - Destructors are designed to allow a class to do any necessary clean up before an object of the class is destroyed
+  - 析构函数必须与类名相同，前面加一个波浪号(~)。
+  - 一个类只能有一个析构函数。
+  - implicit destructor: a non-aggregate class type object has no user-declared destructor, the compiler will generate a destructor with an empty body
+
+hidden this pointer:
+  - nside every member function, the keyword this is a const pointer that holds the address of the current implicit object.
+  - Returning *this: This is called function chaining (or method chaining).
+
+
+const and class:
+  - Once a const class type object has been initialized, any attempt to modify the data members of the object is disallowed
+  - 常量对象可能无法调用非常量成员函数
+
+class access specifier:
+  - public:, private: , protected: 
+  -  gennerally, structs to be aggregates, and aggregates can only have public members
+  - for struct: Using the public: access specifier would be redundant with the default, and using private: or protected: would make the struct a non-aggregate.
+  - Access functions come in two flavors: getters and setters
+  - Getters (also sometimes called accessors) ; Setters (also sometimes called mutators)
+  - Prefer to use the return value of a member function that returns by reference immediately
+
+encapsulation or data hiding:
+  - data hiding (also called information hiding or data abstraction)
+  - Data hiding makes it possible to change implementation details without breaking existing programs
+
+class and header files:
+  - C++ allows us to separate the “declaration” portion of the class from the “implementation” portion by defining member functions outside of the class definition.
+  - must prefix the member function names with the name of the class type (in this case, Date::) so the compiler knows we’re defining a member of that class type rather than a non-member.
+  - Putting class definitions in a header file
+
+Containers and Arrays:
+  - 容器对象本身通常有一个名称（否则我们怎么使用它呢？），但容器中的元素是无名的
+  - An array is a container data type that stores a sequence of values contiguously (meaning each element is placed in an adjacent memory location, with no gaps).
+  - C++ contains three primary array types: (C-style) arrays, the std::vector container class, and the std::array container class.
+
+iterators:
+  -  an object designed to traverse through a container (e.g. the values in an array, or the characters in a string)
+  - Pointers as an iterator 
+  - begin() and end()
+  - 通常使用 operator!= 来测试迭代器是否已到达末尾元素: for (auto p{ begin }; p != end; ++p);某些迭代器类型不可关系比较。 operator!= 与所有迭代器类型兼容。
+  - range-based for loops: for (int i : array)
+
+standard library algorithms:
+  - begin() and end()
+  - 显式传递 arr.begin() 和 arr.end() 给每个算法有点烦人。但不用担心——C++20 增加了范围，这允许我们简单地传递 arr
+  - std::sort
+  - std::find
+  - std::find_if 
+  - std::count 和 std::count_if
+  -  std::for_each
+
+Dynamic memory allocation:
+  - new , 
+  - delete: 删除操作符实际上并不删除任何内容。它只是将指向的内存归还给操作系统。
+  - `int* ptr{ new int }; // dynamically allocate an integer and assign the address to ptr so we can access it later`
+  - dangling pointer: A pointer that is pointing to deallocated memory is called a dangling pointer. 
+  - 将已删除的指针设置为 nullptr，除非它们在之后立即超出作用域。
+  - `int* value { new (std::nothrow) int }; // value will be set to a null pointer if the integer allocation fails and if no nothrow when failed program will crash`
+  - Memory leaks: Memory leaks happen when your program loses the address of some bit of dynamically allocated memory before giving it back to the operating system.
+  - 当这种情况发生时，你的程序无法删除动态分配的内存，因为它不再知道它在哪。操作系统也无法使用这块内存，因为这块内存被认为仍然被你的程序使用
+  - `int* array{ new int[length]{} }; // use array new.  Note that length does not need to be constant!`
+  - 当删除动态分配的数组时，我们必须使用数组版本的 delete，即 delete[]
+
+RAII  资源获取即初始化（RAII）:
+  - 在 C++中，RAII 通过具有构造函数和析构函数的类来实现.
+  - RAII 的主要优点是它有助于防止资源泄漏（例如，未释放的内存）因为所有持有资源的对象都会自动清理
+
+Heap and stack:
+  - The memory that a program uses is typically divided into a few different areas, called segments
+  - The code segment (also called a text segment), where the compiled program sits in memory. The code segment is typically read-only.
+  - The bss segment (also called the uninitialized data segment), where zero-initialized global and static variables are stored.
+  - The data segment (also called the initialized data segment), where initialized global and static variables are stored.
+  - The heap, where dynamically allocated variables are allocated from.
+  - The call stack, where function parameters, local variables, and other function-related information are stored.
+    - The call stack segment
+    - When a function call is encountered, the function is pushed onto the call stack. When the current function ends, that function is popped off the call stack (this process is sometimes called unwinding the stack). 
+    - stack frames:  A stack frame keeps track of all of the data associated with one function call.
+    - stack pointer (sometimes abbreviated “SP”): (a small piece of memory in the CPU) 
+    - stack pointer keeps track of where the top of the call stack currently is
+
+The call stack in action:
+ The program encounters a function call.
+  A stack frame is constructed and pushed on the stack. The stack frame consists of:
+  The address of the instruction beyond the function call (called the return address). This is how the CPU remembers where to return to after the called function exits.
+  All function arguments.
+  Memory for any local variables
+  Saved copies of any registers modified by the function that need to be restored when the function returns
+  The CPU jumps to the function’s start point.
+  The instructions inside of the function begin executing.
+
+When the function terminates, the following steps happen:
+  Registers are restored from the call stack
+  The stack frame is popped off the stack. This frees the memory for all local variables and arguments.
+  The return value is handled.
+  The CPU resumes execution at the return address.
+  Return values can be handled in a number of different ways, depending on the computer’s architecture. Some architectures include the return value as part of the stack frame. Others use CPU registers.
+
+Stack overflow:
+  - The stack has a limited size, and consequently can only hold a limited amount of information
+  - Stack overflow is generally the result of allocating too many variables on the stack, and/or making too many nested function calls (like recursive)
+
+recursive:
+  - Memoization algorithms  备忘录算法
+  - Recursive vs iterative: 
+    - This is because every time you call a function there is some amount of overhead that takes place in pushing and popping stack frames
+    - Iterative functions avoid this overhead(call stack's push and pop action)
+
+Lambda:
+  - A lambda expression (also called a lambda or closure) allows us to define an anonymous function inside another function
+  - function literal.
+  - Lambda captures
+  - Mutable captures 
+  - Capture by reference
+  -  default capture (also called a capture-default) captures all variables that are mentioned in the lambda
+  - When a lambda definition is executed, for each variable that the lambda captures, a clone of that variable is made (with an identical name) inside the lambda. These cloned variables are initialized from the outer scope variables of the same name at this point.
+  - 实际上，lambda 不是函数（这也是它们避免 C++ 不支持嵌套函数限制的一部分）。它们是一种特殊类型的对象，称为函子。函子是包含重载的 operator() 使其可以像函数一样调用的对象。
+
+Operator Overloading:
+  - 操作符表示: for example, 如 `operator+` ， `operator<<`
+  - In C++, operators are implemented as functions.
+  - By using function overloading on the operator functions, you can define your own versions of the operators that work with different data types.
+  - compiler will use the function overload resolution algorithm to see if it can find an overloaded operator that is an unambiguous best match.
+  - First, almost any existing operator in C++ can be overloaded. The exceptions are: conditional (?:), sizeof, scope (::), member selector (.), pointer member selector (.*), typeid, and the casting operators.
+  - you can only overload the operators that exist. You can not create new operators or rename existing operators
+  - there are three different ways to overload operators: the member function way, the friend function way, and the normal function way. 
+  - Overloading the I/O operators
+  - Overloading the assignment operator
+  - The copy assignment operator (operator=) is used to copy values from one object to another already existing object.
+
+shadow and deep copy:
+  - the default copy constructor and default assignment operators it provides use a copying method known as a memberwise copy (also known as a shallow copy). 
+  - C++ copies each member of the class individually (using the assignment operator for overloaded operator=, and direct initialization for the copy constructor).
+  -  when designing classes that handle dynamically allocated memory, memberwise (shallow) copying can get us in a lot of trouble!
+  - This is because shallow copies of a pointer just copy the address of the pointer -- it does not allocate any memory or copy the contents being pointed to!
+  - A deep copy allocates memory for the copy and then copies the actual value, so that the copy lives in distinct memory from the source.
+  - This way, the copy and source are distinct and will not affect each other in any way. 
+  - Doing deep copies requires that we write our own copy constructors and overloaded assignment operators.
+
+Move Semantics and Smart Pointers:
+  - it is easy to forget delete pointer or other reasons(the early return or throw statement execute): pointer variables have no inherent mechanism to clean up after themselves.
+  - classes contain destructors that automatically get executed when an object of the class goes out of scope. 
+  - So if you allocate (or acquire) memory in your constructor, you can deallocate it in your destructor
+  - and be guaranteed that the memory will be deallocated when the class object is destroyed,This is at the heart of the RAII programming paradigm .
+  - a class whose sole job was to hold and “own” a pointer passed to it, and then deallocate that pointer when the class object went out of scope.
+  - A Smart pointer is a composition class that is designed to manage dynamically allocated memory and ensure that memory gets deleted when the smart pointer object goes out of scope.
+  - Move semantics means the class will transfer ownership of the object rather than making a copy.
+  - r-value reference: An r-value reference is a reference that is designed to be initialized with an r-value (only).
+  - `int& lref{ x }; // l-value reference initialized with l-value x`
+  - `int&& rref{ 5 }; // r-value reference initialized with r-value 5`
+  - R-values references cannot be initialized with l-values
+  - R-value references are more often used as function parameters
+  - C++11 defined a  Move constructors and a move assignment
+  - the goal of the move constructor and move assignment is to move ownership of the resources from one object to another (which is typically much less expensive than making a copy).
+  - std::move: casts (using static_cast) its argument into an r-value reference, so that move semantics can be invoked
+
+compiler will create an implicit move constructor and move assignment operator if :
+  - There are no user-declared copy constructors or copy assignment operators
+  - There are no user-declared move constructors or move assignment operators.
+  - There is no user-declared destructor.
+
+These functions do a memberwise move, which behaves as follows:
+  - If member has a move constructor or move assignment (as appropriate), it will be invoked.
+  - Otherwise, the member will be copied.
+
+Virtual Functions:
+  - inheritance implies an is-a relationship between two classes.
+  -  pointers and references to the base class of derived objects: 即基类指针或引用只能调用函数的基类版本，而不能调用派生类版本.
+  - 虚拟函数是一种特殊的成员函数，当调用时，将解析为引用或指向的对象的实际类型的函数的最派生版本.
+  - 使函数成为虚函数，只需在函数声明前放置“virtual”关键字即可。
+  - 只有通过指向或引用类类型对象的指针或引用调用虚成员函数时，虚函数解析才起作用。这是因为编译器可以区分指针或引用的类型与被指向或引用的对象的类型
+  - 如果一个函数是虚函数，则派生类中所有匹配的覆盖函数都是隐式虚函数
+  - 为什么不直接将所有函数都设置为虚拟呢？答案是这不够高效——解析虚拟函数调用所需的时间比解析常规调用要长
+  - 为了让虚函数工作，编译器必须为具有虚函数的类的每个对象分配一个额外的指针。这给原本体积很小的对象增加了很多开销
+  - 为了解决意图为重写但未重写的函数问题，可以将 override 指定符应用于任何虚函数，以告知编译器强制该函数为重写。 override 指定符放置在成员函数声明末尾
+  - 如果一个标记为 override 的函数没有重写基类函数（或应用于非虚函数），编译器将把该函数标记为错误
+  - 存在一种特殊情况，派生类虚函数重写可以具有与基类不同的返回类型，但仍被视为匹配重写
+  - 协变返回类型(Covariant return types)：如果虚函数的返回类型是指向某个类的指针或引用，则重写函数可以返回指向派生类的指针或引用.
+
+virtual table:
+  - A vtable is a table of function pointers that the compiler generates for classes with virtual functions.
+  - Each class that has virtual functions (or inherits virtual functions) has its own vtable.
+  - The vtable is used at runtime to resolve calls to virtual functions, ensuring the correct function is called based on the actual object type (not the pointer/reference type).
+  - Multiple Inheritance: In cases of multiple inheritance, each base class with virtual functions will have its own vtable, and the derived class will have multiple vptrs.
+
+How is a Vtable Created?：
+  - When a class declares one or more virtual functions, the compiler will add vtable
+  - Populates the vtable with pointers to the virtual functions defined in the class.
+  - Adds a hidden pointer (called the vptr or virtual pointer) to each object of the class. This vptr points to the vtable of the class.
+
+structure of vtable:
+  - The vtable is essentially an array of function pointers.
+  - Each entry in the vtable corresponds to a virtual function in the class
+  - If a class overrides a virtual function from its base class, the vtable entry for that function points to the overridden version.
+
+call a virtual function through a base class pointer or reference?:
+  - The compiler uses the vptr (hidden pointer in the object) to locate the vtable for the actual object type.
+  - It looks up the appropriate function pointer in the vtable
+  - It calls the function through the function pointer.
+  - this process above is called dynamic dispatch or late binding.
+
+Vtable (Virtual Table) is a class-level data structure:
+  - It is created by the compiler for each class that has virtual functions (or inherits virtual functions). 
+  - There is only one vtable per class, and it is shared by all objects of that class.
+
+Vptr (Virtual Pointer) is an object-level pointer:
+  - Each object of a class with virtual functions contains a hidden vptr member that points to the vtable of its class. 
+  - This vptr is unique to each object and is used at runtime to resolve calls to virtual functions.
+
+polymorphism:
+  - Compile-time polymorphism refers to forms of polymorphism that are resolved by the compiler. These include function overload resolution, as well as template resolution.
+  - Runtime polymorphism refers to forms of polymorphism that are resolved at runtime. This includes virtual function resolution.
