@@ -1,0 +1,56 @@
+知道 BEM 吗？
+
+说一下你对 BFC 的了解
+
+说一下回流和重绘？怎么触发？有什么区别？如何优化
+
+CSS 居中的方案？
+
+知道 transition 和 animation 吗？有什么区别？什么场景下使用
+
+js 中 0.1+0.2 等于多少？ 为什么会这样？怎么做处理？整数可以用 parseFloat 吗
+
+说一下闭包 概念？应用场景？为什么需要？
+
+模拟 const 的实现
+
+讲一下防抖和节流 在什么场景下使用？
+
+数组 和 类数组 区别、用法 类数组怎么变成数组
+
+call apply bind 有什么区别
+
+说一下 promise 优点 缺点 用法
+
+缺点：无法取消（有概率会阻塞总线程）、错误捕获不好定位
+说一下箭头函数
+
+为什么需要箭头函数？ 个人理解：弱化了以前 function 的写法 以前的 function 既可以表示方法又可以是构造方法，现在将其拆解为箭头函数()=>{}和类 class ，因为箭头函数不能成为构造函数
+
+箭头函数和普通函数的区别？ A:没有 argument
+
+如何获取箭头函数的 argument ？ A：使用...
+
+const arrow = (...args)=>{
+	console.log(arg)
+}
+检测数据类型有哪些方法？ instanceof 的原理是什么（原型链）
+
+知道哪些设计模式？发布订阅和观察者的差别
+
+深拷贝怎么做的？ JSON 的做法有缺陷，手写的话可以递归
+
+听说过 webWorker 吗
+
+听说过 serviceWorker 吗 了解 WAP 吗
+
+http 的缓存策略是什么？强缓存和协商缓存的关键字段是什么？
+
+强缓存：Cache-Control 、Expires
+协商缓存：ETag(响应内容唯一标识）、Last-Modified （上次修改时间）
+浏览器的渲染机制是什么？从获取到 html 开始
+
+HTML → 解析 → DOM 树 CSS → 解析 → CSSOM 树 DOM + CSSOM → 构建 Render Tree （渲染树） → Layout （计算位置大小） → Paint （绘制像素） → Composite （合成层合并） → 屏幕显示
+浏览器的垃圾回收机制是什么？什么会导致内存泄漏？
+
+有没有用过什么打包库？ webpack 和 vite?
