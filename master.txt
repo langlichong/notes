@@ -1,0 +1,42 @@
+------------------------
+SQL migration tools: flyway ,sqlx 
+jvm bootstrap arguments: mostly used 
+postgresql: best practise 
+git workflow and general branch manage policy 
+git confict 
+
+concurrency: 
+thread, process, green thread 
+async vs sync vs blocking 
+
+bio,nio,nio.2,aio
+
+memory related:
+stack , heap
+garbage collection 
+
+embeded database: sqlite
+
+cache system: redis , 
+
+message: 
+mqtt
+websocket
+http, tcp protocal 
+kafka or others 
+
+CEP: flink , rust ecosystem
+
+OLAP: clickhouse, polars, duckdb
+
+profiling: perf , tcpdump , wireshark 
+
+OOP, FP thinking
+DevOps
+
+Auto Testing: selenium, playwrite, puppeteer
+---------------------------------------
+fish
+zed
+vscode remote/server
+mise：jdk, nodejs, rust
