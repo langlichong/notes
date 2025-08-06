@@ -1,3 +1,4 @@
+```md
 源码
  └── lambda表达式：s -> doSomething(s)
        ↓
@@ -11,7 +12,7 @@ LambdaMetafactory
  └── 生成实现类 + 用 MethodHandle 绑定
        ↓
 返回一个接口实现（如 Function 实例）
-
+```
 
 - 反编译lambda 验证: `javap -c -v -p YourClass.class`
 
@@ -55,6 +56,9 @@ public class LambdaDemo {
         System.out.println(fn.apply("world"));  // 输出: Hello, world
     }
 }
-
-
   ```
+LambdaMetafactory.altMetafactory 支持的更多高级参数
+
+✅ 如何动态构造多个参数的函数式接口（如 BiFunction）
+
+✅ 如何通过自定义 ClassLoader + ASM 或 MethodHandles.Lookup.defineClass() 生成 class 而不是 lambda
