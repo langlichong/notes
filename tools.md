@@ -1,0 +1,19 @@
+- dendron: Personal Knowledge Management tool available in vscode
+- Typora
+- FreeTube
+- Sleek
+- Ticktick: toto management
+- Logseq
+- QuiteRss
+- Snipaste
+- Excalidraw
+- SumartPDF
+- 稻壳阅读
+- Calibre: ebook
+- Mqtt Explore
+- Redis Insight
+- Zed
+- Mermaid: draw tech diagram
+- https://github.com/reqable/reqable-app/blob/main/README_CN.md
+- Google Driver
+- faststunnel.in
