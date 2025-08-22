@@ -4,6 +4,7 @@
 - Sleek
 - Ticktick: toto management
 - Logseq
+- Appflowy
 - QuiteRss
 - Snipaste
 - Excalidraw
@@ -12,8 +13,22 @@
 - Calibre: ebook
 - Mqtt Explore
 - Redis Insight
-- Zed
+- Zed editor
 - Mermaid: draw tech diagram
 - https://github.com/reqable/reqable-app/blob/main/README_CN.md
 - Google Driver
 - faststunnel.in
+- Clash vpn client
+- IDM downloader
+- Neat Download manager
+- mise: package version mangement
+- MPV player
+- MPC BE player
+- PsTools
+- Pure Data
+- Reqable
+- BareTail
+- TailBlazer
+- youtube-music client
+- upx
+- WizTree
