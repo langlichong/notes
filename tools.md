@@ -9,6 +9,7 @@
 - Snipaste
 - Excalidraw
 - Graphviz
+- PlantUML
 - SumartPDF
 - 稻壳阅读
 - Calibre: ebook
