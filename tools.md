@@ -34,3 +34,4 @@
 - youtube-music client
 - upx
 - WizTree
+- Inkscape:  a free and open-source vector graphics editor
