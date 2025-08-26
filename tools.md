@@ -8,13 +8,14 @@
 - QuiteRss
 - Snipaste
 - Excalidraw
+- Graphviz
 - SumartPDF
 - 稻壳阅读
 - Calibre: ebook
 - Mqtt Explore
 - Redis Insight
 - Zed editor
-- Mermaid: draw tech diagram
+- Mermaid js: draw tech diagram
 - https://github.com/reqable/reqable-app/blob/main/README_CN.md
 - Google Driver
 - faststunnel.in
