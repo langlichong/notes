@@ -1,4 +1,6 @@
 - dendron: Personal Knowledge Management tool available in vscode
+- tldr cli tool: quick view command usage
+- pgcli
 - Typora
 - FreeTube
 - Sleek
