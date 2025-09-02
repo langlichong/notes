@@ -1,0 +1,6 @@
+- Annotation-based Style (Classic)
+	 This approach uses annotations like @ServiceActivator and @MessagingGateway on separate classes or methods. You define MessageChannel beans and then connect your components by referencing these channel names in the annotations. 
+	This method can be a bit fragmented because you must manually trace which component connects to which channel to understand the overall flow.
+
+- IntegrationFlow Java DSL Style (Modern)
+	Java DSL Style (Modern): This is a newer, more fluent way to define a complete flow. You define a single @Bean of type IntegrationFlow and use a builder pattern to chain components together. The framework automatically creates and manages the channels between the components in the flow, so you don't need to define them yourself. This makes the flow much more readable and self-contained
