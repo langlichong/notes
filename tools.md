@@ -1,20 +1,29 @@
 - dendron: Personal Knowledge Management tool available in vscode
 - tldr cli tool: quick view command usage
+- localsend
 - pgcli
 - Typora
 - FreeTube
 - Sleek
 - Ticktick: toto management
+- Listary
 - Logseq
+- fork: git gui tool
+- windterm
+- wintop
+- Directory Opus
 - Appflowy
 - QuiteRss
 - Snipaste
+- Pinxin
 - Excalidraw
 - Graphviz
 - PlantUML
+- evcapture
 - SumartPDF
 - 稻壳阅读
 - Calibre: ebook
+- koreader
 - Mqtt Explore
 - Redis Insight
 - Zed editor
