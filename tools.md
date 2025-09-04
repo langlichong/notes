@@ -8,6 +8,7 @@
 - Ticktick: toto management
 - Listary
 - Logseq
+- eDiary
 - fork: git gui tool
 - windterm
 - wintop
