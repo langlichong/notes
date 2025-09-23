@@ -1,0 +1,1 @@
+Code → Wait → Integrate → Test → Wait → Deploy
