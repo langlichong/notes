@@ -36,6 +36,9 @@
 - IDM downloader
 - Neat Download manager
 - mise: package version mangement
+- volta: 版本管理
+- nvm
+- nrm
 - MPV player
 - MPC BE player
 - PsTools
