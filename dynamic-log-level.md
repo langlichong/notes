@@ -1,0 +1,28 @@
+- Change logback log level dynamically
+
+  ```java
+@Controller
+@RequestMapping("/log")
+public class LogLevelController {
+
+    @GetMapping("set-level")
+    public ResponseEntity<String> setLogLevel(@RequestParam("loggerName") String loggerName, @RequestParam("level")String newLevel) {
+
+        // 1. Get the LoggerContext
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        // 2. Get the specific Logger instance
+        Logger logger = context.getLogger(loggerName);
+
+        if (logger != null) {
+            // 3. Set the new level (case-insensitive conversion)
+            logger.setLevel(Level.toLevel(newLevel));
+
+            return ResponseEntity.ok("Changed logger " + loggerName + " to level: " + newLevel);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+}
+  ```
