@@ -1,1 +1,2 @@
--- https://github.com/be5invis/Iosevka
+- https://github.com/be5invis/Iosevka
+- https://github.com/ryanoasis/nerd-fonts
