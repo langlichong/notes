@@ -20,6 +20,7 @@
 - Excalidraw
 - Graphviz
 - PlantUML
+- https://github.com/terrastruct/d2
 - evcapture
 - SumartPDF
 - 稻壳阅读
