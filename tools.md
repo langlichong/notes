@@ -1,4 +1,5 @@
 - dendron: Personal Knowledge Management tool available in vscode
+- spark email client
 - tldr cli tool: quick view command usage
 - localsend
 - pgcli
