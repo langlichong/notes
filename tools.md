@@ -2,6 +2,7 @@
 - spark email client
 - tldr cli tool: quick view command usage
 - localsend
+- BBDOWN: https://github.com/nilaoda/BBDown bili downloader
 - pgcli
 - Typora
 - FreeTube
