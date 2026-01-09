@@ -19,4 +19,4 @@
     MemorySegment segment = MemorySegment.ofArray(byteArray);
     short tId = (short) modbusLayout.varHandle(PathElement.groupElement("transId")).get(segment);
   ```
-- 工业级大杀器：Kaitai Struct (跨语言)
+- 工业级大杀器：Kaitai Struct (跨语言) 配合在线IDE https://ide.kaitai.io/
