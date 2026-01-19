@@ -1,3 +1,4 @@
+- NUMA VS vNUMA
 - multipath
 - VRRP Protocol
 - Pacemaker
