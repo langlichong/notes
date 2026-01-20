@@ -1,4 +1,5 @@
-- dendron: Personal Knowledge Management tool available in vscode
+- zealdocs/zeal: 离线开发文档浏览工具
+- dendron: Personal Knowledge Management tool available in vscode    
 - spark email client
 - Mininet 
 - tldr cli tool: quick view command usage
