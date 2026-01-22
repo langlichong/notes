@@ -7,7 +7,8 @@
 - localsend
 - BBDOWN: https://github.com/nilaoda/BBDown bili downloader
 - pgcli
-- Typora
+- Typora 
+- Trilium Notes
 - FreeTube
 - Sleek
 - Ticktick: toto management
