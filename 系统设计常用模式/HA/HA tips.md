@@ -1,4 +1,8 @@
 - Pacemaker + Corosync + DRBD
+- 纯文件同步 Syncthing or 配置简单的 Rsync + Inotify
+- PG: Patroni
+- Proxmox VE: 这是一个开源的虚拟化平台，自带基于 Corosync 的双机/多机 HA 功能，点点鼠标就能实现虚拟机在物理机故障时的自动迁移
+- GlusterFS / Ceph: 定位: 分布式文件系统 、 用法: 将两台机器的存储合并为一个大的虚拟磁盘，两边写入，两边都能读到
 
 第一层：基础设施/硬件层 HA (Infrastructure HA)
 解决的问题：硬件坏了怎么办？
