@@ -1,3 +1,5 @@
+- Pacemaker + Corosync + DRBD
+
 第一层：基础设施/硬件层 HA (Infrastructure HA)
 解决的问题：硬件坏了怎么办？
 
