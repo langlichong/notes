@@ -9,6 +9,8 @@
 - pgcli
 - Typora 
 - Trilium Notes
+- zotero 文献管理软件 (Reference Manager)
+- Notion
 - FreeTube
 - Sleek
 - Ticktick: toto management
