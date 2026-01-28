@@ -16,6 +16,7 @@
 - Ticktick: toto management
 - Listary
 - Logseq
+- GanttProject
 - eDiary
 - fork: git gui tool
 - windterm
