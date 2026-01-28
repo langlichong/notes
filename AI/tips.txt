@@ -1,0 +1,11 @@
+About Concepts or Thinking  or Tools 
+
+- Token
+- Embeddings
+- Transformer
+- Prompt
+- Agent
+- RAG
+- MCP
+- AWS Working Backwards(PR(Press Release)/FAQ)
+- Skill
