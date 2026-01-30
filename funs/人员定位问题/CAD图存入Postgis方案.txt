@@ -1,0 +1,16 @@
+- GDAL/OGR (C++)
+- georust/gdal rust的C++绑定
+- py 调用 ogr2ogr
+
+
+Geo Server
+- GeoServer java生态
+- Martin rust生态
+- TiPG py
+
+- tips:
+	-  入库用 GDAL (C++)，出图用 Martin (Rust)
+	-  Python 原生绑定 osgeo.ogr,每一条线进行精细操作（比如：“如果是红色的线就导入，绿色的不要”），那命令行就不够用了
+
+
+OSGeo4W

@@ -1,0 +1,8 @@
+- pg_bitemporal 
+- xtdb(Cross time db)(cross交叉一般在命名学中使用X形象表达交叉)
+
+
+技术词汇都遵循这个规则：
+XSS (Cross-Site Scripting, 跨站脚本攻击) $\rightarrow$ 不是 CSS。
+CSRF/XSRF (Cross-Site Request Forgery, 跨站请求伪造) $\rightarrow$ 经常混用。
+X-Platform (Cross-Platform, 跨平台) $\rightarrow$ 不是 C-Platform
