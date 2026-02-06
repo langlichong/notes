@@ -1,4 +1,10 @@
 - pgboucer
 - RLS实现多租户
 - set search_path , set local search_path
-- UNLOGGED table 
+- UNLOGGED table
+- PostgreSQL Advisory Locks
+- PGXN PG扩展管理工具
+- pg_partman
+- pg_cron / pgAgent
+- 使用与表同名view
+- current_setting(会话级配置变量查询函数)
