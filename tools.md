@@ -1,6 +1,7 @@
 - zealdocs/zeal: 离线开发文档浏览工具
 - termius 终端
-- dendron: Personal Knowledge Management tool available in vscode      
+- dendron: Personal Knowledge Management tool available in vscode        
+- dendron: 可在 vscode 中使用的个人知识管理工具
 - spark email client
 - Mininet 
 - tldr cli tool: quick view command usage
@@ -14,6 +15,8 @@
 - FreeTube
 - Sleek
 - Ticktick: toto management
+- Anytype https://github.com/anyproto/anytype-ts
+- Goole keep / tasks
 - Listary
 - Logseq
 - GanttProject
