@@ -2,6 +2,18 @@
 - JOL: Library , 让你看对象本身
 - HSDB: JDK Internal Tools 让你看类元数据（Klass + vtable + 字段布局）
 
+### Java 对象会这么臃肿？（三座大山）
+> 在 Java 的内存模型里，一个对象包含的不仅仅是你定义的字段，还有：
+- 对象头（Header）： 至少 12 字节。哪怕你是个空类。
+- 继承开销（Inheritance Baggage）： 就像你发现的，哪怕是私有字字段，子类也必须物理持有且占用内存。如果继承树很深（比如 5 层继承，每层加点字段），一个末端子类对象就会变得非常巨大。
+- 对齐填充（Padding）： 为了 CPU 读取效率，对象大小必须是 8 的倍数。如果你背着的“行李”刚好让你超过了 32 字节一点点，JVM 就会强行帮你填满到 40 字节。
+
+`结论： 在 Java 里，想存几个 byte 数据，最终在堆里可能要消耗 24 或 32 字节。这种“空间膨胀率”非常惊人`
+
+> JDK 官方的终极优化方案：Project Valhalla
+> 
+**_在 Project Valhalla 正式落地之前，Java 社区已经形成了一套共识来应对这种内存开销。这就是你经常听到的：多用组合，少用继承（Composition over Inheritance）_**
+
 ### Layout 
 1. Mark Word 的最后三位是锁状态的“信号灯： mark word中identity_hashcode是懒加载，第一次调用 hashCode() 相关方法时，JVM 才会计算并将其写入 Mark Word
 	- 正常/无锁 (Unlocked)
@@ -38,3 +50,8 @@
 	- HSDB (HotSpot Debugger)： 这是 JDK 自带的图形化探测工具
 	- 运行方式：java -cp %JAVA_HOME%/lib/sa-jdi.jar sun.jvm.hotspot.HSDB (旧版) 或 jhsdb hsdb (新版)
 	- ./jhsdb.exe clhsdb --pid 3704
+
+7. 继承与访问修饰符背后
+   - B 继承 A,实际内存布局中B其实拥有所有A的东西(包含了私有及其他的): 若只继承public或protected，则对一个public方法x，若B的实例调用b.x(), x内部可能会调用A的私有方法，如果B内存结构中抛弃A的私有部分则肯定报错(反证法)
+   - 可以使用 JOL lib 进行打印子类的实例 ClassLayout.parseInstance(子类实例).toPrintable()
+   - 子类必须背着父类所有的行李（所有字段），哪怕有些行李你永远不准打开看：确实是Java 被诟病**“内存大户”**的核心原因之一
