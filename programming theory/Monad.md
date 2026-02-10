@@ -48,3 +48,26 @@ _追本溯源、从第一性原理触发_
   - user.getCompany() -> 可能返回 null
   - company.getCEO() -> 可能返回 null
 
+  ```java
+    // 每一行都必须手动拆包、判断、再进行下一步: 防御性泥潭
+    User user = findUser(id);
+    if (user != null) {
+        Company company = user.getCompany();
+        if (company != null) {
+            CEO ceo = company.getCEO();
+            if (ceo != null) {
+                System.out.println(ceo.getName());
+            } else {
+                // 错误处理逻辑散落在各处
+            }
+        }
+    }
+
+    // 利用 Optional 这个 Monadic 容器，逻辑可以在“安全舱”内部像流水一样流动
+    Optional.ofNullable(id): 
+    .flatMap(this::findUser)   // 语义：如果上步有值，就去找用户
+    .flatMap(User::getCompany) // 语义：如果用户存在，就去找公司
+    .map(Company::getCEO)      // 语义：如果公司存在，就获取CEO
+    .ifPresent(System.out::println);
+  ```
+
