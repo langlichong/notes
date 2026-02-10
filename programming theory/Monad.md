@@ -32,3 +32,11 @@ _追本溯源、从第一性原理触发_
   - 1989年： 计算机科学家 Eugenio Moggi 发现范畴论里的 Monad 竟然完美契合了程序中的“副作用”描述。
   - 1990年代： Philip Wadler 将这个理念带入了 Haskell 语言，从而彻底改变了函数式编程的世界。
 > 当时为什么要引入它？因为函数式编程追求“纯粹”，导致它没法处理现实中“不纯”的操作（如改变量、写文件）。Monad 提供了一个**“隔离区”**，让程序员在不破坏纯粹性的前提下，优雅地处理不纯的行为
+
+4. java中Monad的体现  4. java 中 Monad 的
+ - 在 Java 中，Monad 主要被用来消除样板代码（flatMap 在 Java 中就是 Monad 的代名词）：
+  - Optional 帮你消灭了 if (null != x)
+  - Stream 帮你消灭了 for (Item i : list) { for (...) }
+  - CompletableFuture 帮你消灭了回调地狱（Callback Hell）
+
+> 所有的这些“消灭”，核心都是利用了 Monad 的 “上下文管理” 和 “链式平滑组合” 的能力
