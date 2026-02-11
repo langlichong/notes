@@ -1,5 +1,6 @@
 - zealdocs/zeal: 离线开发文档浏览工具
-- sourcegraph: 代码阅读神器
+- sourcegraph: 代码阅读
+- https://elixir.bootlin.com/ 公认阅读内核最佳在线应用
 - github.dev: 在github任意仓库中，直接敲`.`即可将当前repo加载到在线vscode中，支持编辑(github1s 只能查看)
 - feedly rss
 - Quite rss
