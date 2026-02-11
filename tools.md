@@ -1,4 +1,6 @@
 - zealdocs/zeal: 离线开发文档浏览工具
+- feedly rss
+- Quite rss
 - termius 终端
 - dendron: Personal Knowledge Management tool available in vscode        
 - dendron: 可在 vscode 中使用的个人知识管理工具
