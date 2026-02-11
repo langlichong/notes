@@ -1,4 +1,5 @@
 - zealdocs/zeal: 离线开发文档浏览工具
+- sourcegraph: 代码阅读神器
 - feedly rss
 - Quite rss
 - exiftool 图片的exif元信息操作工具(自动按年份/月份分类, 回归拍摄日期)
