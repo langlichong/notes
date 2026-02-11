@@ -1,6 +1,8 @@
 - zealdocs/zeal: 离线开发文档浏览工具
 - feedly rss
 - Quite rss
+- exiftool 图片的exif元信息操作工具(自动按年份/月份分类, 回归拍摄日期)
+- ExifToolGUI
 - termius 终端
 - dendron: Personal Knowledge Management tool available in vscode        
 - dendron: 可在 vscode 中使用的个人知识管理工具
