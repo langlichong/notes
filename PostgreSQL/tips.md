@@ -1,4 +1,4 @@
-- pgboucer
+- pgboucer 连接池  
 - RLS实现多租户
 - set search_path , set local search_path
 - UNLOGGED table
