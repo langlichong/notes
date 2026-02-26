@@ -1,0 +1,521 @@
+{
+  "version": 6,
+  "entities": [
+    {
+      "entity": {
+        "type": "Project",
+        "id": "3d3b1adc-c540-49e8-8cae-0d857c62f51f",
+        "name": "Autodesk APS"
+      },
+      "children": [
+        {
+          "entity": {
+            "type": "Service",
+            "id": "b50fca30-730d-4212-966c-98933be2ad7a",
+            "name": "Auth"
+          },
+          "children": [
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "requestBody": true,
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+                  "name": "POST"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": [
+                      {
+                        "enabled": true,
+                        "type": "Text",
+                        "name": "grant_type",
+                        "value": "client_credentials"
+                      },
+                      {
+                        "enabled": true,
+                        "type": "Text",
+                        "name": "scope",
+                        "value": "bucket:create bucket:read data:read data:write code:all"
+                      },
+                      {
+                        "enabled": true,
+                        "type": "Text",
+                        "name": "client_id",
+                        "value": "9HHA4lyvYyHJBBqcEhcdwkrAnY1bcPh3ZbNhMyuNpTBLVaoU"
+                      },
+                      {
+                        "enabled": true,
+                        "type": "Text",
+                        "name": "client_secret",
+                        "value": "nXQQAZmGCEuMRQrImw43tFHOUGiZtUipTHOARSm99UwhhhlSEkFYbg5GOt5TTyzV"
+                      }
+                    ]
+                  },
+                  "bodyType": "Form"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/authentication/v2/token"
+                },
+                "id": "67db4b25-de41-4881-9029-1dd97e54ad2a",
+                "name": "1. 获取Token",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "name": "Authorization",
+                    "value": "Basic OUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VOm5YUVFBWm1HQ0V1TVJRckltdzQzdEZIT1VHaVp0VWlwVEhPQVJTbTk5VXdoaGhsU0VrRlliZzVHT3Q1VFR5elY="
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "requestBody": true,
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+                  "name": "POST"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": "{\n    \"bucketKey\":\"modely\",\n    \"policyKey\":\"transient\"\n }"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/oss/v2/buckets"
+                },
+                "id": "b62e4830-235b-4b40-b461-03ac97a44a7a",
+                "name": "2. 创建OSS Bucket",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoiM2VyQWJYN3lXTHVGZjZBSUk3aEh5UWRYUXowN3FyVzVraWVCTG1VeTdheDNuN2RCVXNweFpFUEp3N3htdjk4ViIsImV4cCI6MTc3MjA5NTg2OX0.WOzuQoVBQreuumwYq5LljWc-Tix7FtLd7yRg7w0QE680SXh58WbS8LSmS-cZSmyG3znI1BKgfBr0Ei9eu3V-aWKownRb9tiJAw8TUvT3MVesBtB8jILtUwBH17c9_REvwoOqeL8BDkgmi7qFIixBc1ZK44Nm9GROniuypcgzrKGNg6ZYbQps14dBt-x7UUq4Z1lCXdEH33k8HVHyUWdOZUlUY4iENuPyRUv0OmEWCd3rwVJJS8qyKc4ovXrjTrnt2zo8GYVy9dstNNjrtaRGAYwwZ6qACHDKVgWhWQfC2O0GXcmdaWZpoyqgkG2uQ3j-662dGU-t5PSvVWX95bE9XA"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+                  "name": "GET"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": ""
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/oss/v2/buckets"
+                },
+                "id": "6680282e-c9a7-4ae9-9798-2405141faf2d",
+                "name": "3. 获取OSS Buckets",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoiM2VyQWJYN3lXTHVGZjZBSUk3aEh5UWRYUXowN3FyVzVraWVCTG1VeTdheDNuN2RCVXNweFpFUEp3N3htdjk4ViIsImV4cCI6MTc3MjA5NTg2OX0.WOzuQoVBQreuumwYq5LljWc-Tix7FtLd7yRg7w0QE680SXh58WbS8LSmS-cZSmyG3znI1BKgfBr0Ei9eu3V-aWKownRb9tiJAw8TUvT3MVesBtB8jILtUwBH17c9_REvwoOqeL8BDkgmi7qFIixBc1ZK44Nm9GROniuypcgzrKGNg6ZYbQps14dBt-x7UUq4Z1lCXdEH33k8HVHyUWdOZUlUY4iENuPyRUv0OmEWCd3rwVJJS8qyKc4ovXrjTrnt2zo8GYVy9dstNNjrtaRGAYwwZ6qACHDKVgWhWQfC2O0GXcmdaWZpoyqgkG2uQ3j-662dGU-t5PSvVWX95bE9XA"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+                  "name": "GET"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": ""
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/oss/v2/buckets/modelx/details"
+                },
+                "id": "85bbe49d-50c3-4b2a-81f3-911e8c6134d5",
+                "name": "4. 获取OSS Bucket Details by bucket key",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoiM2VyQWJYN3lXTHVGZjZBSUk3aEh5UWRYUXowN3FyVzVraWVCTG1VeTdheDNuN2RCVXNweFpFUEp3N3htdjk4ViIsImV4cCI6MTc3MjA5NTg2OX0.WOzuQoVBQreuumwYq5LljWc-Tix7FtLd7yRg7w0QE680SXh58WbS8LSmS-cZSmyG3znI1BKgfBr0Ei9eu3V-aWKownRb9tiJAw8TUvT3MVesBtB8jILtUwBH17c9_REvwoOqeL8BDkgmi7qFIixBc1ZK44Nm9GROniuypcgzrKGNg6ZYbQps14dBt-x7UUq4Z1lCXdEH33k8HVHyUWdOZUlUY4iENuPyRUv0OmEWCd3rwVJJS8qyKc4ovXrjTrnt2zo8GYVy9dstNNjrtaRGAYwwZ6qACHDKVgWhWQfC2O0GXcmdaWZpoyqgkG2uQ3j-662dGU-t5PSvVWX95bE9XA"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+                  "name": "GET"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": ""
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/oss/v2/buckets/modely/objects/inventor_sample.ipt/signeds3upload"
+                },
+                "id": "8e2578e9-d4f1-4699-82f6-1d377ab54efd",
+                "name": "5. 获取一个S3 OSS Signed URL(bucket is modely, filename is skyscpr1.3ds)",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoiM2VyQWJYN3lXTHVGZjZBSUk3aEh5UWRYUXowN3FyVzVraWVCTG1VeTdheDNuN2RCVXNweFpFUEp3N3htdjk4ViIsImV4cCI6MTc3MjA5NTg2OX0.WOzuQoVBQreuumwYq5LljWc-Tix7FtLd7yRg7w0QE680SXh58WbS8LSmS-cZSmyG3znI1BKgfBr0Ei9eu3V-aWKownRb9tiJAw8TUvT3MVesBtB8jILtUwBH17c9_REvwoOqeL8BDkgmi7qFIixBc1ZK44Nm9GROniuypcgzrKGNg6ZYbQps14dBt-x7UUq4Z1lCXdEH33k8HVHyUWdOZUlUY4iENuPyRUv0OmEWCd3rwVJJS8qyKc4ovXrjTrnt2zo8GYVy9dstNNjrtaRGAYwwZ6qACHDKVgWhWQfC2O0GXcmdaWZpoyqgkG2uQ3j-662dGU-t5PSvVWX95bE9XA"
+                  },
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "requestBody": true,
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+                  "name": "POST"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "File",
+                  "textBody": ""
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/oss/v2/buckets/modely/objects//signeds3upload"
+                },
+                "id": "6c8b88a3-5043-46be-9396-e4fa8e6e5a74",
+                "name": "6. 上传文件( Signed URL)",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/octet-stream"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "requestBody": true,
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+                  "name": "POST"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": "{\n  \"uploadKey\": \"AQICAHgB0_c1BgCj8aoPMoGEiCHL7OWTA8Bfl4E7wlPt-IuydAE0dz1Sa9XvvvXeTxw164kZAAAB0TCCAc0GCSqGSIb3DQEHBqCCAb4wggG6AgEAMIIBswYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAxnJ6Masa449l00-0ICARCAggGER6O5ksqQ3HO_VFcOGFex_8CH-5wMU-hYa0jSSw3z02_af4325hkrl-bvn3d23VV1h-J4fkto9BadtykXArfdfkfORlBMqarUooZtqZ1-ALzvMWazOff4Rbw930_O40vvTBRCYRzcz3TfkW1RXvXxF7ty29zCBrVvj_Wfo9ph6wbFy4hVyOcqr5kJ6yhx8V6GDZ8OGGdtERfsmhyqFlUclqX2PWwtUeOQ0h713hl6NQqNCw1okDkeBIjlgN74HlQt7a9bPr-Pw1rZv8qPJrEMhbGupve0H4dgx--Z6L6LBm3_BWOufH10rMkf1VeypE0NQSi98qct7TD2Tyryxq8aM1pPqyWlSrKnISJZ9wQoVhOOU9kpnCcyvcSpU4X857EC943u3HIEWP75s9Qhi_a4FoTlZUfl5sf2UsdphC-8smit8LPgN5rpyNjR37fFtTsOhrTJp78bTfdYipLCr67cVTwoQv_52yyTsUH1RXC-1SfmkUNwHaIkrKmQBUfJK5VtZcuquA==\"\n}"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/oss/v2/buckets/modely/objects/inventor_sample.ipt/signeds3upload"
+                },
+                "id": "b759e7fe-a342-41d4-880f-4fc1d76f5443",
+                "name": "7. 完成OSS Signed URL 文件上传",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoiM2VyQWJYN3lXTHVGZjZBSUk3aEh5UWRYUXowN3FyVzVraWVCTG1VeTdheDNuN2RCVXNweFpFUEp3N3htdjk4ViIsImV4cCI6MTc3MjA5NTg2OX0.WOzuQoVBQreuumwYq5LljWc-Tix7FtLd7yRg7w0QE680SXh58WbS8LSmS-cZSmyG3znI1BKgfBr0Ei9eu3V-aWKownRb9tiJAw8TUvT3MVesBtB8jILtUwBH17c9_REvwoOqeL8BDkgmi7qFIixBc1ZK44Nm9GROniuypcgzrKGNg6ZYbQps14dBt-x7UUq4Z1lCXdEH33k8HVHyUWdOZUlUY4iENuPyRUv0OmEWCd3rwVJJS8qyKc4ovXrjTrnt2zo8GYVy9dstNNjrtaRGAYwwZ6qACHDKVgWhWQfC2O0GXcmdaWZpoyqgkG2uQ3j-662dGU-t5PSvVWX95bE9XA"
+                  },
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "enabled": true,
+                    "name": "x-ads-meta-Content-Type",
+                    "value": "application/octet-stream"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "requestBody": true,
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.3",
+                  "name": "POST"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": "{\n  \"input\": {\n    \"urn\": \"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ=\"\n  },\n  \"output\": {\n    \"formats\": [\n      { \"type\": \"svf\", \"views\": [\"2d\", \"3d\"] }\n    ]\n  }\n}\n"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/modelderivative/v2/designdata/job"
+                },
+                "id": "af8fa7b2-a427-4ff7-8e29-fefd041b16a6",
+                "name": "8. APS云端转换ipt文件(为获取文件中参数做准备)",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoidnZMOFRtVGJQNHNwQTVxNFd6REpwSXZTYW0xSUY4QVo1TmFRUkhkekZFdVBwTFRBd05UMzJxYk55Njl4dDZheSIsImV4cCI6MTc3MjA5OTU1MH0.D7md3JhtoEvIGwTN1k-taPiCtwsptGrJdtIXwU27jdABG-FzAM0O89kOPgFlBA7icqZpsQxwzkVGOObyqp15v8Q7fPGvUEPazIcf9dv7jdjcNhCoN43allQugO7OPTli4CIdSRVZ_wFb_e2eXATG7qraOdMzxByUq3MkLdPXhlbChkPekEnYN1s18aNJ68DttE98z5U7Btwb-_8dGGNmn8kRytk9rb0SnAfvKhbO998GacGY4gf_Z6_tzEmqkEA3XJGnK_X0PvMbtrXGeyWzfvls9LZj-v7nINYhb-rwk84D_MOrtPlchSgTMewFrKDdSFxJACts2ALopijA24KlUA"
+                  },
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+                  "name": "GET"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": "{\n  \"input\": {\n    \"urn\": \"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ=\"\n  },\n  \"output\": {\n    \"formats\": [\n      { \"type\": \"svf\", \"views\": [\"2d\", \"3d\"] }\n    ]\n  }\n}\n"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/modelderivative/v2/designdata/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ=/manifest"
+                },
+                "id": "397b1d58-1516-4d23-ad4c-184cb5612a4c",
+                "name": "9. 获取 GUID (获取视图标识)",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoidnZMOFRtVGJQNHNwQTVxNFd6REpwSXZTYW0xSUY4QVo1TmFRUkhkekZFdVBwTFRBd05UMzJxYk55Njl4dDZheSIsImV4cCI6MTc3MjA5OTU1MH0.D7md3JhtoEvIGwTN1k-taPiCtwsptGrJdtIXwU27jdABG-FzAM0O89kOPgFlBA7icqZpsQxwzkVGOObyqp15v8Q7fPGvUEPazIcf9dv7jdjcNhCoN43allQugO7OPTli4CIdSRVZ_wFb_e2eXATG7qraOdMzxByUq3MkLdPXhlbChkPekEnYN1s18aNJ68DttE98z5U7Btwb-_8dGGNmn8kRytk9rb0SnAfvKhbO998GacGY4gf_Z6_tzEmqkEA3XJGnK_X0PvMbtrXGeyWzfvls9LZj-v7nINYhb-rwk84D_MOrtPlchSgTMewFrKDdSFxJACts2ALopijA24KlUA"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+                  "name": "GET"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": "{\n  \"input\": {\n    \"urn\": \"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ=\"\n  },\n  \"output\": {\n    \"formats\": [\n      { \"type\": \"svf\", \"views\": [\"2d\", \"3d\"] }\n    ]\n  }\n}\n"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/modelderivative/v2/designdata/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ/metadata"
+                },
+                "id": "391ce9f0-85d6-49ca-aaec-4265d2b300f0",
+                "name": "9.1. 获取APS认可的model的GUID",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoidnZMOFRtVGJQNHNwQTVxNFd6REpwSXZTYW0xSUY4QVo1TmFRUkhkekZFdVBwTFRBd05UMzJxYk55Njl4dDZheSIsImV4cCI6MTc3MjA5OTU1MH0.D7md3JhtoEvIGwTN1k-taPiCtwsptGrJdtIXwU27jdABG-FzAM0O89kOPgFlBA7icqZpsQxwzkVGOObyqp15v8Q7fPGvUEPazIcf9dv7jdjcNhCoN43allQugO7OPTli4CIdSRVZ_wFb_e2eXATG7qraOdMzxByUq3MkLdPXhlbChkPekEnYN1s18aNJ68DttE98z5U7Btwb-_8dGGNmn8kRytk9rb0SnAfvKhbO998GacGY4gf_Z6_tzEmqkEA3XJGnK_X0PvMbtrXGeyWzfvls9LZj-v7nINYhb-rwk84D_MOrtPlchSgTMewFrKDdSFxJACts2ALopijA24KlUA"
+                  }
+                ]
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+                  "name": "GET"
+                },
+                "body": {
+                  "formBody": {
+                    "overrideContentType": true,
+                    "encoding": "application/x-www-form-urlencoded",
+                    "items": []
+                  },
+                  "bodyType": "Text",
+                  "textBody": "{\n  \"input\": {\n    \"urn\": \"dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ=\"\n  },\n  \"output\": {\n    \"formats\": [\n      { \"type\": \"svf\", \"views\": [\"2d\", \"3d\"] }\n    ]\n  }\n}\n"
+                },
+                "uri": {
+                  "query": {
+                    "delimiter": "&",
+                    "items": []
+                  },
+                  "scheme": {
+                    "secure": true,
+                    "name": "https",
+                    "version": "V11"
+                  },
+                  "host": "developer.api.autodesk.com",
+                  "path": "/modelderivative/v2/designdata/dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bW9kZWx5L2ludmVudG9yX3NhbXBsZS5pcHQ/metadata/c0c491c6-c79f-425b-84b7-deb82fd62af5/properties"
+                },
+                "id": "3225ab96-a396-4aca-956f-8b971548a244",
+                "name": "9.2. 根据GUID获取模型的参数表",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlZiakZvUzhQU3lYODQyMV95dndvRUdRdFJEa19SUzI1NiIsInBpLmF0bSI6ImFzc2MifQ.eyJzY29wZSI6WyJidWNrZXQ6Y3JlYXRlIiwiYnVja2V0OnJlYWQiLCJkYXRhOnJlYWQiLCJkYXRhOndyaXRlIiwiY29kZTphbGwiXSwiY2xpZW50X2lkIjoiOUhIQTRseXZZeUhKQkJxY0VoY2R3a3JBblkxYmNQaDNaYk5oTXl1TnBUQkxWYW9VIiwiaXNzIjoiaHR0cHM6Ly9kZXZlbG9wZXIuYXBpLmF1dG9kZXNrLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tIiwianRpIjoidnZMOFRtVGJQNHNwQTVxNFd6REpwSXZTYW0xSUY4QVo1TmFRUkhkekZFdVBwTFRBd05UMzJxYk55Njl4dDZheSIsImV4cCI6MTc3MjA5OTU1MH0.D7md3JhtoEvIGwTN1k-taPiCtwsptGrJdtIXwU27jdABG-FzAM0O89kOPgFlBA7icqZpsQxwzkVGOObyqp15v8Q7fPGvUEPazIcf9dv7jdjcNhCoN43allQugO7OPTli4CIdSRVZ_wFb_e2eXATG7qraOdMzxByUq3MkLdPXhlbChkPekEnYN1s18aNJ68DttE98z5U7Btwb-_8dGGNmn8kRytk9rb0SnAfvKhbO998GacGY4gf_Z6_tzEmqkEA3XJGnK_X0PvMbtrXGeyWzfvls9LZj-v7nINYhb-rwk84D_MOrtPlchSgTMewFrKDdSFxJACts2ALopijA24KlUA"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
