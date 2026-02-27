@@ -1,5 +1,11 @@
 ## 使用Autodesk的APS云服务修改自定义的参数化模型的参数值的POC
+### 主要涉及如下方面
+  - OSS 存储与签名链接（如何生成 PUT/GET 链接，如何处理过期）: 用于存储参数化模型、参数化模型修改后的结果等
+  - WorkItem 的异步提交机制（前端提交 -> 云端排队 -> 获取报告）
+  - AppBundle/Activity 的层级管理（Alias 别名映射关系）
+
 ### 方案A 完全基于APS 提供的各类RestAPI
+  - 工作量比较大、且繁琐
 ### 方案B 基于Visual Studio Code 的APS 插件(Autodesk Platform Services)
   - 该APS插件已经对APS的服务进行了分组，通过鼠标操作即可完成修改参数
     - 可以使用官方提供的一个修改参数的万能 AppBundle 
@@ -15,4 +21,5 @@
     - 提交workitem: 在activity的alias上右键选择 Create WorkItem(workitem中自动会出现其关联的AppBundle、activity的相关参数)
       - <img width="1445" height="423" alt="image" src="https://github.com/user-attachments/assets/5d55ab79-5cf0-49f9-a7e3-59730371fb9b" />
       - inputParams示例 `data:application/json,{"width":"50 in", "height":"20 in"}`                                
+
 
