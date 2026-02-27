@@ -11,8 +11,8 @@
       - <img width="391" height="190" alt="image" src="https://github.com/user-attachments/assets/5918e398-d95d-413f-be71-120f276177c9" />
     - 上传AppBundle: 在Automation -> Owned App Bundles 中上传万能AppBundle 并 在bundle创建成功后的子项 alias下为该bundle创建一个别名(后续需要用的)
     - 创建Activity: 在 Automation -> Owned Activities 上右键菜单中选择 create activity （一个成功创建的Activity 如下图），成功后为activity创建alias(后续创建workitem需要)
-      - <img width="1545" height="647" alt="image" src="https://github.com/user-attachments/assets/498e278a-63c4-48ee-b8f7-6ab7b6298c2b" />
+      - <img width="1424" height="723" alt="image" src="https://github.com/user-attachments/assets/e6337788-7d55-452c-a589-9a13abb93f94" />
     - 提交workitem: 在activity的alias上右键选择 Create WorkItem(workitem中自动会出现其关联的AppBundle、activity的相关参数)
-      - <img width="1597" height="676" alt="image" src="https://github.com/user-attachments/assets/f568ce4c-d43c-4d7c-aada-ecc34d04b1e3" />
-      - inputParams示例 `data:application/json,{"width":"50 in", "height":"20 in"}`
-- 创建 Activity: 在 Automation -> Owned Activities 上右键菜单中选择 create                                  
+      - <img width="1445" height="423" alt="image" src="https://github.com/user-attachments/assets/5d55ab79-5cf0-49f9-a7e3-59730371fb9b" />
+      - inputParams示例 `data:application/json,{"width":"50 in", "height":"20 in"}`                                
+
